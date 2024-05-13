@@ -51,6 +51,16 @@ return [
     */
 
     'channels' => [
+        'changes' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/changes.log'),
+            'level' => 'debug',
+        ],
+        'login_logout' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/login_logout.log'),
+            'level' => 'debug',
+        ],
 
         'stack' => [
             'driver' => 'stack',
