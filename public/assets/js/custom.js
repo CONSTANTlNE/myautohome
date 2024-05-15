@@ -467,7 +467,12 @@ function openFullscreen() {
   }
 }
 
-document.getElementById('fullscreenButton').addEventListener('click', openFullscreen);
+let fullscreenButton =document.getElementById('fullscreenButton')
+if(fullscreenButton){
+  fullscreenButton.addEventListener('click', openFullscreen);
+
+}
+
 
 /* count-up */
 var i = 1;

@@ -45,13 +45,13 @@
                             <a  href="{{route('users')}}" class="side-menu__item htmxlink">მომხმარებლების მართვა</a>
                         </li>
                         <li class="slide ">
-                            <a  href="{{route('other')}}" class="side-menu__item htmxlink">მართვის პანელი</a>
+                            <a hx-get="{{route('other')}}" hx-target="#main-content"  class="side-menu__item htmxlink">მართვის პანელი</a>
                         </li>
                         <li class="slide ">
                             <a  href="{{route('upload.index')}}" class="side-menu__item htmxlink">ატვირთვა</a>
                         </li>
                         <li class="slide ">
-                            <a  hx-get="{{route('main2')}}"  hx-target="#htmx" class="side-menu__item htmxlink">მთვარი</a>
+                            <button  hx-indicator="#indicator"  hx-get="{{route('main2')}}"  hx-target="#main-content" class="side-menu__item htmxlink">მთვარი</button>
                         </li>
                     </ul>
                 </li>

@@ -11,6 +11,7 @@ use App\Http\Controllers\StatusController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserController;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
@@ -40,7 +41,12 @@ use Laravel\Fortify\RoutePath;
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/',[MainController::class, 'index'])->name('main');
+    Route::get('/search',[MainController::class, 'appsearch'])->name('search.app');
+    Route::get('/searchhtmx',[MainController::class, 'htmxsearch'])->name('search.htmx');
+    Route::get('/clear',[MainController::class, 'clearSearch'])->name('search.clear');
+
     Route::get('/htmx',[MainController::class, 'index2'])->name('main2');
+
 
     Route::get('/admin/users',[UserController::class, 'index'])->name('users');
     Route::get('/admin/manage',[PanelController::class, 'index'])->name('other');
@@ -55,8 +61,9 @@ Route::group(['middleware' => 'auth'], function () {
 
 
     Route::post('app/create',[ApplicationController::class, 'store'])->name('app.create');
-
-
+    Route::get('app/edit/{id}',[ApplicationController::class, 'edit'])->name('app.edit');
+    Route::post('app/update',[ApplicationController::class, 'update'])->name('app.update');
+    Route::get('app/details/{id}',[ApplicationController::class, 'details'])->name('app.details');
 
 });
 
@@ -67,6 +74,14 @@ Route::get('randuser',function(){
     return User::inRandomOrder()->first()->id;
 
 });
+
+Route::get('cache',function(){
+    cache()->forget('cars');
+    cache()->forget('models');
+
+});
+
+
 
 
 
