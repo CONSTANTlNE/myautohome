@@ -146,7 +146,7 @@
                 <select name="model" class="ti-form-select rounded-sm !p-0" id="modelsselect"
                         autocomplete="off">
 
-                        <option  value="{{$application->car_model_id}}">{{$models->where('id', $application->car_model_id)->first()->name}}</option>
+                        <option  value="{{$application->car_model_id}}">{{$application->model->name}}</option>
 
 
                     <option></option>

@@ -24,16 +24,15 @@
                     <path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z"></path>
                 </svg></div>
             <ul class="main-menu">
-                <!-- Start::slide__category -->
-                <li class="slide__category"><span class="category-name">Admin</span></li>
-                <!-- End::slide__category -->
 
-                <!-- Start::slide -->
+{{--                Admin Menu--}}
+
                 <li class="slide has-sub">
                     <a href="javascript:void(0);" class="side-menu__item">
-                        <i class="bx bx-home side-menu__icon"></i>
-                        <span class="side-menu__label">Admin
-                            <span class="badge !bg-warning/10 !text-warning !py-[0.25rem] !px-[0.45rem] !text-[0.75em] ms-2">12</span></span>
+           <span style="margin-right: 5px" class="material-symbols-outlined text-primary">settings</span>
+                        <span class="side-menu__label">ადმინი
+{{--                            <span class="badge !bg-warning/10 !text-warning !py-[0.25rem] !px-[0.45rem] !text-[0.75em] ms-2">12</span>--}}
+                        </span>
                         <i class="fe fe-chevron-right side-menu__angle"></i>
                     </a>
                     <ul class="slide-menu child1">
@@ -45,48 +44,31 @@
                             <a  href="{{route('users')}}" class="side-menu__item htmxlink">მომხმარებლების მართვა</a>
                         </li>
                         <li class="slide ">
-                            <a hx-get="{{route('other')}}" hx-target="#main-content"  class="side-menu__item htmxlink">მართვის პანელი</a>
+                            <a hx-get="{{route('other')}}" hx-trigger="click " hx-target="#main-content" hx-indicator="#indicator" class="side-menu__item htmxlink">მართვის პანელი</a>
                         </li>
                         <li class="slide ">
                             <a  href="{{route('upload.index')}}" class="side-menu__item htmxlink">ატვირთვა</a>
                         </li>
                         <li class="slide ">
-                            <button  hx-indicator="#indicator"  hx-get="{{route('main2')}}"  hx-target="#main-content" class="side-menu__item htmxlink">მთვარი</button>
+                            <button  hx-indicator="#indicator" hx-trigger="click throttle:2s"  hx-get="{{route('main2')}}"  hx-target="#main-content" class="side-menu__item htmxlink">მთვარი</button>
                         </li>
                     </ul>
                 </li>
-                <!-- End::slide -->
 
-                <!-- Start::slide__category -->
-                <li class="slide__category"><span class="category-name">Pages</span></li>
-                <!-- End::slide__category -->
 
-                <!-- Start::slide -->
-                <li class="slide has-sub">
-                    <a href="javascript:void(0);" class="side-menu__item">
-                        <i class="bx bx-file-blank side-menu__icon"></i>
-                        <span class="side-menu__label">Pages<span
-                                    class="text-secondary text-[0.75em] rounded-sm !py-[0.25rem] !px-[0.45rem] badge !bg-secondary/10 ms-2">New</span></span>
-                        <i class="fe fe-chevron-right side-menu__angle"></i>
+{{--                General Menu--}}
+                <li class="slide ">
+                    <a href="{{route('existing.clients')}}" class="side-menu__item">
+                    <span  style="color:green;margin-right: 5px" class="material-symbols-outlined">group</span>
+                        <span class="side-menu__label">არსებული კლიენტები</span>
                     </a>
-                    <ul class="slide-menu child1">
-                        <li class="slide side-menu__label1"><a href="javascript:void(0)">Pages</a></li>
-                        <li class="slide"><a href="about-us.html" class="side-menu__item">About Us</a></li>
-                        <li class="slide has-sub"><a href="javascript:void(0);" class="side-menu__item">Blog<i
-                                        class="fe fe-chevron-right side-menu__angle"></i></a>
-                            <ul class="slide-menu child2">
-                                <li class="slide"><a href="blog.html" class="side-menu__item">Blog</a></li>
-                                <li class="slide"><a href="blog-details.html" class="side-menu__item">Blog
-                                        Details</a>
-                                </li>
-                                <li class="slide"><a href="blog-create.html" class="side-menu__item">Create Blog</a>
-                                </li>
-                            </ul>
-                        </li>
-
-                    </ul>
                 </li>
-                <!-- End::slide -->
+                <li class="slide ">
+                    <a href="{{route('potential.clients')}}" class="side-menu__item">
+            <span style="color:orange;margin-right: 5px"  class="material-symbols-outlined">group</span>
+                        <span class="side-menu__label">პოტენციური კლიენტები</span>
+                    </a>
+                </li>
 
             </ul>
             <div class="slide-right" id="slide-right"><svg xmlns="http://www.w3.org/2000/svg" fill="#7b8191" width="24"

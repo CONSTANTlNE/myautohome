@@ -11,20 +11,18 @@ class StatusController extends Controller
     {
 
         $status = new Status();
+        $status -> color = $request -> badge;
         $status -> name = $request -> name;
         $status -> save();
         return back();
-
-
     }
+
 
     public function  update(Request $request)
     {
-
         $status = Status::find($request->id);
         $status -> name = $request -> name;
         $status -> save();
         return back();
-
     }
 }

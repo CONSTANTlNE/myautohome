@@ -2,6 +2,7 @@
 
 use App\CustomAuthenticatedSessionController;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\PanelController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\UserController;
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
 use Laravel\Fortify\Features;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 use Laravel\Fortify\Http\Controllers\ConfirmablePasswordController;
@@ -42,12 +44,19 @@ use Laravel\Fortify\RoutePath;
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/',[MainController::class, 'index'])->name('main');
     Route::get('/search',[MainController::class, 'appsearch'])->name('search.app');
-    Route::get('/searchhtmx',[MainController::class, 'htmxsearch'])->name('search.htmx');
     Route::get('/clear',[MainController::class, 'clearSearch'])->name('search.clear');
 
+
+    // HTMX routes
     Route::get('/htmx',[MainController::class, 'index2'])->name('main2');
+    Route::get('/searchhtmx',[MainController::class, 'htmxsearch'])->name('search.htmx');
+    Route::get('htmx/edit/{id}',[ApplicationController::class, 'htmxedit'])->name('edit.htmx');
+    Route::get('htmx/carsearch',[MainController::class, 'carsearch'])->name('carsearch');
+    Route::post('htmx/appcreate',[ApplicationController::class, 'htmxstore'])->name('htmxstore');
+    Route::get('htmx/details/{id}',[ApplicationController::class, 'htmxdetails'])->name('htmxdetails');
 
 
+    //  Admin
     Route::get('/admin/users',[UserController::class, 'index'])->name('users');
     Route::get('/admin/manage',[PanelController::class, 'index'])->name('other');
     Route::post('/admin/company/create',[CompanyController::class, 'store'])->name('company.create');
@@ -58,12 +67,22 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/admin/status/update',[StatusController::class, 'update'])->name('status.update');
     Route::post('/admin/source/create',[SourceController::class, 'store'])->name('source.create');
     Route::post('/admin/source/update',[SourceController::class, 'update'])->name('source.update');
+    Route::post('/admin/user/create',[UserController::class, 'store'])->name('user.create');
+    Route::get('/admin/user/applications/{id}',[UserController::class, 'userapps'])->name('user.apps');
 
 
+
+    // App
     Route::post('app/create',[ApplicationController::class, 'store'])->name('app.create');
     Route::get('app/edit/{id}',[ApplicationController::class, 'edit'])->name('app.edit');
     Route::post('app/update',[ApplicationController::class, 'update'])->name('app.update');
     Route::get('app/details/{id}',[ApplicationController::class, 'details'])->name('app.details');
+
+     // clients
+    Route::get('app/clients/existing',[ClientController::class, 'existingIndex'])->name('existing.clients');
+    Route::get('app/clients/potential',[ClientController::class, 'potentialIndex'])->name('potential.clients');
+
+
 
 });
 
@@ -75,9 +94,9 @@ Route::get('randuser',function(){
 
 });
 
-Route::get('cache',function(){
-    cache()->forget('cars');
-    cache()->forget('models');
+Route::get('session',function(){
+
+    Session::forget(['request_counter2']);
 
 });
 

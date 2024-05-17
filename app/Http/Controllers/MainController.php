@@ -18,91 +18,34 @@ class MainController extends Controller
     public function index()
     {
 
-        $applications = Application::with('client', 'source', 'status', 'product', 'car.models', 'comments.user', 'user', 'companies')
-            ->latest()
-            ->limit(5)
-            ->get();
-
-//        $applications = Application::with([
-//            'client:id,name,mobile1,pid',
-//            'source:id,name',
-//            'status:id,name',
-//            'product:id,name',
-//            'car.models',
-//            'comments.user:id,name',
-//            'user:id,name',
-//            'companies:id,name'
-//        ])  ->latest()
-//            ->limit(5)
+//        $applications = Application::with('client', 'source', 'status', 'product', 'car.models', 'comments.user', 'user', 'companies')
+//            ->latest()
+//            ->limit(500)
 //            ->get();
 
-        $companies=Company::all();
-        $statuses=Status::all();
-        $products=Product::all();
-        $sources=Source::all();
-
-//
-//        if(Cache::has('cars')) {
-//            $cars = Cache::get('cars');
-//        }
-//
-//        else {
-//            $cars=Car::with('models')->get();
-//            Cache::put('cars', $cars, now()->addMinutes(10));
-////            dd('cars');
-//        }
-
-        $cars=Car::with('models')->get();
-        $models    = CarModel::all();
-
-//
-//        if(Cache::has('models')) {
-//            $models = Cache::get('models');
-//        }
-//
-//        else {
-//            $models    = CarModel::all();
-//            Cache::put('models', $models, now()->addMinutes(10));
-//        }
-//        $carsJson = $cars->toJson();
-        $carsJson =$cars->toJson();
-        return view('pages.main' ,compact('companies','statuses','products','sources','applications','carsJson','models'));
-//        return view('pages.main' ,compact('carsJson','applications'));
-    }
-
-    public function index2(Request $request)
-    {
-
-        if($request->session()->has('request_counter')) {
-            $counter = $request->session()->get('request_counter')+1;
-            $request->session()->put('request_counter', $counter);
-
-        } else {
-            $counter = 1;
-            $request->session()->put('request_counter', $counter);
-        }
-
-
         $applications = Application::with([
-            'client:id,name,mobile1',
+            'client:id,name,mobile1,pid',
             'source:id,name',
-            'status:id,name',
+            'status',
             'product:id,name',
             'car:id,make',
             'comments.user:id,name',
             'user:id,name',
             'companies:id,name'
         ])  ->latest()
-            ->limit(1)
+            ->limit(100)
             ->get();
+
         $companies=Company::all();
         $statuses=Status::all();
         $products=Product::all();
         $sources=Source::all();
-        $cars=Car::with('models')->get();
-        $models    = CarModel::all();
-        $carsJson = $cars->toJson();
-        return view('pages.htmx' ,compact('models','companies','statuses','products','sources','carsJson','applications','counter'));
+//        $cars=Car::with('models')->get();
+        $cars=Car::all();
+
+//        $carsJson =$cars->toJson();
+        return view('pages.main' ,compact('companies','statuses','products','sources','applications','cars'));
+
     }
 
 
@@ -133,6 +76,48 @@ class MainController extends Controller
 
 
 
+//  =================  HTMX  =======================
+
+
+
+
+    public function index2(Request $request)
+    {
+
+        if($request->session()->has('request_counter')) {
+            $counter = $request->session()->get('request_counter')+1;
+            $request->session()->put('request_counter', $counter);
+
+        } else {
+            $counter = 1;
+            $request->session()->put('request_counter', $counter);
+        }
+
+        $applications = Application::with([
+            'client:id,name,mobile1,pid',
+            'source:id,name',
+            'status',
+            'product:id,name',
+            'car:id,make',
+            'comments.user:id,name',
+            'user:id,name',
+            'companies:id,name'
+        ])  ->latest()
+            ->limit(300)
+            ->get();
+
+        $companies=Company::all();
+        $statuses=Status::all();
+        $products=Product::all();
+        $sources=Source::all();
+//        $cars=Car::with('models')->get();
+        $cars=Car::all();
+
+//        $carsJson =$cars->toJson();
+        return view('htmx.htmx' ,compact('companies','statuses','products','sources','applications','cars','counter'));
+    }
+
+
     public function htmxsearch(Request $request){
         $applications = Client::where('mobile1', 'like',"%{$request->search}%")
             ->orWhere('pid', 'like', "%{$request->search}%")
@@ -140,12 +125,34 @@ class MainController extends Controller
             ->with('applications.status', 'applications.user')
             ->limit(30)
             ->first();
-        return view('pages.htmxsearch', compact('applications'));
+        return view('htmx.htmxsearch', compact('applications'));
 
     }
+
+
 
     public function clearSearch(Request $request){
 
-        return view('pages.clear');
+        return view('htmx.clear');
     }
+
+    public function carsearch(Request $request){
+
+        if($request->session()->has('request_counter2')) {
+            $counter2 = $request->session()->get('request_counter2')+1;
+            $request->session()->put('request_counter2', $counter2);
+
+        } else {
+            $counter2 = 1;
+            $request->session()->put('request_counter2', $counter2);
+        }
+
+        $models=CarModel::where('car_id',$request->car)->get();
+
+        return view('htmx.carmodels',compact('models','counter2'));
+    }
+
+
+
+
 }

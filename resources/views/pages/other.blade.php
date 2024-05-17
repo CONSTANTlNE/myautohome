@@ -74,7 +74,110 @@
                      <input type="text" name="name" class="form-control" id="form-password" >
                   </div>
 
+
                   <button class="ti-btn ti-btn-primary-full" type="submit">დამატება</button>
+                  <a href="javascript:void(0);" class="hs-dropdown-toggle ti-btn ti-btn-primary-full" data-hs-overlay="#todo-compose">ფერის არჩევა
+                  </a>
+                  <div id="todo-compose" class="hs-overlay hidden ti-modal">
+                     <div class="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out">
+                        <div class="ti-modal-content">
+                           <div class="ti-modal-header">
+                              <h6 class="modal-title text-[1rem] font-semibold" id="mail-ComposeLabel">სტატუსის ფერი</h6>
+                              <button type="button" class="hs-dropdown-toggle !text-[1rem] !font-semibold !text-defaulttextcolor" data-hs-overlay="#todo-compose">
+                                 <span class="sr-only">Close</span>
+                                 <i class="ri-close-line"></i>
+                              </button>
+                           </div>
+                           <div class="ti-modal-body px-4 text-center">
+
+                              <div class="form-check">
+                                 <input class="form-check-input mx-2" type="radio" name="badge"
+                                        id="flexRadioDefault1" value="badge bg-outline-primary">
+                                 <label for="flexRadioDefault1">
+                                 <span style="font-size: 14px" class="badge bg-outline-primary">სტატუსი</span>
+                                 </label>
+                              </div>
+                              <div class="form-check">
+                                 <input class="form-check-input mx-2" type="radio" name="badge"
+                                        id="flexRadioDefault2" value="badge bg-outline-secondary">
+                                 <label for="flexRadioDefault2">
+                                 <span style="font-size: 14px" class="badge bg-outline-secondary">სტატუსი</span>
+                                 </label>
+                              </div>
+                              <div class="form-check">
+                                 <input class="form-check-input mx-2" type="radio" name="badge"
+                                        id="flexRadioDefault3" value="badge bg-outline-success">
+                                 <label for="flexRadioDefault3">
+                                 <span style="font-size: 14px" class="badge bg-outline-success">სტატუსი</span>
+
+                                 </label>
+                              </div>
+                              <div class="form-check">
+                                 <input class="form-check-input mx-2" type="radio" name="badge"
+                                        id="flexRadioDefault3" value="badge bg-outline-success2">
+                                 <label for="flexRadioDefault3">
+                                    <span style="font-size: 14px" class="badge bg-outline-success2">სტატუსი</span>
+
+                                 </label>
+                              </div>
+                              <div class="form-check">
+                                 <input class="form-check-input mx-2" type="radio" name="badge"
+                                        id="flexRadioDefault4" value="badge bg-outline-danger">
+                                 <label for="flexRadioDefault4">
+                                 <span style="font-size: 14px" class="badge bg-outline-danger">სტატუსი</span>
+                                 </label>
+                              </div>
+
+                              <div class="form-check">
+                                 <input class="form-check-input mx-2" type="radio" name="badge"
+                                        id="flexRadioDefault5" value="badge bg-outline-warning">
+                                 <label for="flexRadioDefault5">
+                                 <span style="font-size: 14px" class="badge bg-outline-warning">სტატუსი</span>
+                                 </label>
+                              </div>
+
+                              <div class="form-check">
+                                 <input class="form-check-input mx-2" type="radio" name="badge"
+                                        id="flexRadioDefault5" value="badge bg-outline-warning2">
+                                 <label for="flexRadioDefault5">
+                                    <span style="font-size: 14px" class="badge bg-outline-warning2">სტატუსი</span>
+                                 </label>
+                              </div>
+                              <div class="form-check">
+                                 <input class="form-check-input mx-2" type="radio" name="badge"
+                                        id="flexRadioDefault6" value="badge bg-outline-info">
+                                 <label for="flexRadioDefault6">
+                                 <span style="font-size: 14px" class="badge bg-outline-info">სტატუსი</span>
+                                 </label>
+                              </div>
+                              <div class="form-check">
+                                 <input class="form-check-input mx-2" type="radio" name="badge"
+                                        id="flexRadioDefault8" value="badge bg-outline-light !text-black dark:!text-defaulttextcolor/70">
+                                 <label for="flexRadioDefault8">
+                                 <span style="font-size: 14px" class="badge bg-outline-light !text-black dark:!text-defaulttextcolor/70">სტატუსი</span>
+                                 </label>
+                              </div>
+                              <div class="form-check">
+                                 <input  class="form-check-input mx-2" type="radio" name="badge"
+                                        id="flexRadioDefault9" value="badge bg-outline-dark dark:!text-defaulttextcolor/70">
+                                 <label for="flexRadioDefault9">
+                                 <span style="font-size: 14px" class="badge bg-outline-dark dark:!text-defaulttextcolor/70">სტატუსი</span>
+                                 </label>
+                              </div>
+
+
+                           </div>
+                           <div class="ti-modal-footer">
+                              <button type="button"
+                                      class="hs-dropdown-toggle ti-btn  ti-btn-secondary-full align-middle"
+                                      data-hs-overlay="#todo-compose">
+                                 არჩევა
+                              </button>
+
+                           </div>
+                        </div>
+                     </div>
+                  </div>
                </div>
             </form>
             <div class="box-footer hidden border-t-0">
@@ -296,7 +399,11 @@
                      <tbody>
                      @foreach($statuses as $index => $status)
                         <tr class="border-b border-primary/10 text-center">
-                           <td style="white-space:normal;max-width: 100px; word-wrap: break-word; overflow-wrap: break-word;" class="text-center">{{$status->name}}</td>
+                           <td style="white-space:normal;max-width: 100px; word-wrap: break-word; overflow-wrap: break-word;" class="text-center">
+                              <span  style="font-size: 15px;text-align: center!important" class="{{$status->color}}"> {{$status->name}}</span>
+
+
+                           </td>
                            <td style="width: 15px!important">
                               <div class="hstack flex justify-center gap-3 text-[.9375rem]">
                                  {{--                              <a aria-label="anchor" href="javascript:void(0);" class="ti-btn ti-btn-sm ti-btn-info !rounded-full"></a>--}}

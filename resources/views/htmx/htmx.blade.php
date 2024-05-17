@@ -1,4 +1,8 @@
 
+
+@error('customer_pid')
+{{$message}}
+@enderror()
 <table id="example" class="display nowrap" style="width:100%">
     <thead>
     <tr>
@@ -33,6 +37,8 @@
     </thead>
     <tbody>
     @foreach($applications as $index=> $application)
+
+        {{--            @php dd($application->car->models->where('id', )->first()) @endphp--}}
         <tr style="text-align: center!important">
 
             <td style="white-space: normal !important;text-align: center!important" >{{$application->created_at}}</td>
@@ -49,11 +55,10 @@
             <td>{{$application->product->name}}</td>
             <td>
                 @foreach($application->companies as $index2c=> $company)
-
                     {{$company->name}} <br>
                 @endforeach
             </td>
-            <td>{{$application->comments->last()?->name}}</td>
+            <td>{{$application->comments->last()?->comment}}</td>
 
             <td>
                 <div class="hs-dropdown ti-dropdown">
@@ -63,64 +68,71 @@
                         <i class="fe fe-more-vertical text-[0.8rem]"></i>
                     </a>
                     <ul style="position: absolute" class="hs-dropdown-menu ti-dropdown-menu hidden">
+
+                        {{--  TESTING ROUTES--}}
+                        @role('developer')
                         <li>
                             <a target="_blank"
                                class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
                                href="{{route('app.details', $application->id)}}">დეტალურად</a>
                         </li>
-                        @if($application->user->id == auth()->user()->id && auth()->user()->can('Own_Data'))
-                            <li>
-                                <a target="_blank"
-                                   class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
-                                   href="{{route('app.edit', $application->id)}}">რედაქტირება</a>
-                            </li>
-                        @else
-                            <li>
-                                <a target="_blank"
-                                   class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
-                                   href="{{route('app.edit', $application->id)}}">რედაქტირება</a>
-                            </li>
-                        @endif
 
+                        <li>
+                            <a
+                                    data-hs-overlay="#editmodal"
+                                    class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
+                                    href="{{route('app.edit', $application->id)}}"
+                            >რედაქტირება</a>
+                        </li>
+                        @endrole
+
+                        <li>
+                            <a data-hs-overlay="#detailsmodal" href="javascript:void(0);"
+                               hx-get="{{route('htmxdetails', $application->id)}}"
+                               hx-target="#detailtarget"
+                               hx-triger="click"
+
+                               class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
+                            >დეტალურად</a>
+                        </li>
+                        @if($application->user->id == auth()->user()->id  && auth()->user()->hasRole('operator'))
+
+                            <li hx-get="{{route('edit.htmx', $application->id)}}"
+                                hx-target="#edittarget"
+                                hx-triger="click">
+                                <a data-hs-overlay="#editmodal" href="javascript:void(0);"
+                                   class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
+
+
+                                >რედაქტირება</a>
+                            </li>
+
+                        @endif
+                        {{--ADMIN ROUTES--}}
+                        @role('admin')
+                        <li hx-get="{{route('edit.htmx', $application->id)}}"
+                            hx-target="#edittarget"
+                            hx-triger="click">
+                            <a data-hs-overlay="#editmodal" href="javascript:void(0);"
+                               class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
+                            >რედაქტირება</a>
+                        </li>
+
+                        @endrole
                         <li>
                             <a href="javascript:void(0);"
                                class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
-                               data-hs-overlay="#delete{{$index}}">წაშლა
+                               data-hs-overlay="#delete{{$index}}"
+                            >წაშლა
+
                             </a>
                         </li>
 
                     </ul>
-                    <div id="delete{{$index}}" class="hs-overlay hidden ti-modal">
-                        <div class="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out">
-                            <div class="ti-modal-content">
-                                <div class="ti-modal-header">
-                                    {{--                                        <h6 class="modal-title text-[1rem] font-semibold text-center" >Delete Purchase</h6>--}}
-                                    {{--                                        <button type="button" class="hs-dropdown-toggle !text-[1rem] !font-semibold !text-defaulttextcolor" data-hs-overlay="#todo-compose{{$index}}">--}}
-                                    {{--                                            <span class="sr-only">Close</span>--}}
-                                    {{--                                            <i class="ri-close-line"></i>--}}
-                                    {{--                                        </button>--}}
-                                </div>
-                                <div class="ti-modal-body px-4">
-                                    ტექსტი
-                                </div>
-                                <div class="ti-modal-footer">
-                                    <button type="button"
-                                            class="hs-dropdown-toggle ti-btn  ti-btn-secondary-full align-middle"
-                                            data-hs-overlay="#delete{{$index}}">
-                                        Close
-                                    </button>
-                                    <form action="">
-                                        <input type="hidden" name="id" value="{{$application->id}}">
-                                        @csrf
-                                        <button class="ti-btn bg-primary text-white !font-medium">წაშლა</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                </div></td>
 
+                </div>
+            </td>
 
         </tr>
 
@@ -140,11 +152,10 @@
         <th>კომპანია</th>
         <th>ბოლო კომენტარი</th>
         <th>მოქმედება</th>
-
-
     </tr>
     </tfoot>
 </table>
+
 
     <script>
 
@@ -155,7 +166,7 @@
             lengthMenu: [10, 100, 150, {label: 'All', value: -1}],
 
             columnDefs: [
-                {orderable: false, targets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]}
+                {orderable: false, targets: [ 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]}
             ],
 
 

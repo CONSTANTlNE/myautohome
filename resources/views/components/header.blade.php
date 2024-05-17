@@ -27,6 +27,7 @@
                 <!-- End::header-element -->
             </div>
 
+
             <div class="flex justify-center items-center gap-4 ">
 
 
@@ -48,12 +49,12 @@
 
             <div class="header-content-right">
 
-                <div class="header-element py-[1rem] md:px-[0.65rem] px-2 header-search">
-                    <button aria-label="button" type="button" data-hs-overlay="#search-modal"
-                            class="inline-flex flex-shrink-0 justify-center items-center gap-2  rounded-full font-medium focus:ring-offset-0 focus:ring-offset-white transition-all text-xs dark:bg-bgdark dark:hover:bg-black/20 dark:text-[#8c9097] dark:text-white/50 dark:hover:text-white dark:focus:ring-white/10 dark:focus:ring-offset-white/10">
-                        <i class="bx bx-search-alt-2 header-link-icon"></i>
-                    </button>
-                </div>
+{{--                <div class="header-element py-[1rem] md:px-[0.65rem] px-2 header-search">--}}
+{{--                    <button aria-label="button" type="button" data-hs-overlay="#search-modal"--}}
+{{--                            class="inline-flex flex-shrink-0 justify-center items-center gap-2  rounded-full font-medium focus:ring-offset-0 focus:ring-offset-white transition-all text-xs dark:bg-bgdark dark:hover:bg-black/20 dark:text-[#8c9097] dark:text-white/50 dark:hover:text-white dark:focus:ring-white/10 dark:focus:ring-offset-white/10">--}}
+{{--                        <i class="bx bx-search-alt-2 header-link-icon"></i>--}}
+{{--                    </button>--}}
+{{--                </div>--}}
 
                 <!-- start header country -->
 {{--                <div class="header-element py-[1rem] md:px-[0.65rem] px-2  header-country hs-dropdown ti-dropdown  hidden sm:block [--placement:bottom-left]">--}}
@@ -601,41 +602,41 @@
 {{--                    </button>--}}
                     <div class="md:block hidden dropdown-profile">
                         <p class="font-semibold mb-0 leading-none text-[#536485] text-[0.813rem] ">@if(auth()->check()){{auth()->user()->name}} @endif</p>
-                        <span class="opacity-[0.7] font-normal text-[#536485] block text-[0.6875rem] ">Web Designer</span>
+{{--                        <span class="opacity-[0.7] font-normal text-[#536485] block text-[0.6875rem] ">Web Designer</span>--}}
                     </div>
-                    <div
-                            class="hs-dropdown-menu ti-dropdown-menu !-mt-3 border-0 w-[11rem] !p-0 border-defaultborder hidden main-header-dropdown  pt-0 overflow-hidden header-profile-dropdown dropdown-menu-end"
-                            aria-labelledby="dropdown-profile">
+{{--                    <div--}}
+{{--                            class="hs-dropdown-menu ti-dropdown-menu !-mt-3 border-0 w-[11rem] !p-0 border-defaultborder hidden main-header-dropdown  pt-0 overflow-hidden header-profile-dropdown dropdown-menu-end"--}}
+{{--                            aria-labelledby="dropdown-profile">--}}
 
-                        <ul class="text-defaulttextcolor font-medium dark:text-[#8c9097] dark:text-white/50">
-                            <li>
-                                <a class="w-full ti-dropdown-item !text-[0.8125rem] !gap-x-0  !p-[0.65rem] !inline-flex" href="profile.html">
-                                    <i class="ti ti-user-circle text-[1.125rem] me-2 opacity-[0.7]"></i>Profile
-                                </a>
-                            </li>
-                            <li>
-                                <a class="w-full ti-dropdown-item !text-[0.8125rem] !gap-x-0  !p-[0.65rem] !inline-flex" href="mail.html"><i
-                                            class="ti ti-inbox text-[1.125rem] me-2 opacity-[0.7]"></i>Inbox <span
-                                            class="!py-1 !px-[0.45rem] !font-semibold !rounded-sm text-success text-[0.75em] bg-success/10 ms-auto">25</span>
-                                </a>
-                            </li>
-                            <li><a class="w-full ti-dropdown-item !text-[0.8125rem] !gap-x-0 !p-[0.65rem] !inline-flex" href="todo.html"><i
-                                            class="ti ti-clipboard-check text-[1.125rem] me-2 opacity-[0.7]"></i>Task Manager</a></li>
-                            <li><a class="w-full ti-dropdown-item !text-[0.8125rem] !gap-x-0 !p-[0.65rem] !inline-flex" href="mail-settings.html"><i
-                                            class="ti ti-adjustments-horizontal text-[1.125rem] me-2 opacity-[0.7]"></i>Settings</a></li>
-                            <li><a class="w-full ti-dropdown-item !text-[0.8125rem] !gap-x-0 !p-[0.65rem] !inline-flex " href="javascript:void(0);"><i
-                                            class="ti ti-wallet text-[1.125rem] me-2 opacity-[0.7]"></i>Bal: $7,12,950</a></li>
-                            <li><a class="w-full ti-dropdown-item !text-[0.8125rem] !p-[0.65rem] !gap-x-0 !inline-flex" href="chat.html"><i
-                                            class="ti ti-headset text-[1.125rem] me-2 opacity-[0.7]"></i>Support</a></li>
-                            <li>
-                                <form action="{{route('logout')}}" method="post">
-                                    @csrf
-                                <button class="w-full ti-dropdown-item !text-[0.8125rem] !p-[0.65rem] !gap-x-0 !inline-flex"><i
-                                            class="ti ti-logout text-[1.125rem] me-2 opacity-[0.7]"></i>Log Out</button>
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
+{{--                        <ul class="text-defaulttextcolor font-medium dark:text-[#8c9097] dark:text-white/50">--}}
+{{--                            <li>--}}
+{{--                                <a class="w-full ti-dropdown-item !text-[0.8125rem] !gap-x-0  !p-[0.65rem] !inline-flex" href="profile.html">--}}
+{{--                                    <i class="ti ti-user-circle text-[1.125rem] me-2 opacity-[0.7]"></i>Profile--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                            <li>--}}
+{{--                                <a class="w-full ti-dropdown-item !text-[0.8125rem] !gap-x-0  !p-[0.65rem] !inline-flex" href="mail.html"><i--}}
+{{--                                            class="ti ti-inbox text-[1.125rem] me-2 opacity-[0.7]"></i>Inbox <span--}}
+{{--                                            class="!py-1 !px-[0.45rem] !font-semibold !rounded-sm text-success text-[0.75em] bg-success/10 ms-auto">25</span>--}}
+{{--                                </a>--}}
+{{--                            </li>--}}
+{{--                            <li><a class="w-full ti-dropdown-item !text-[0.8125rem] !gap-x-0 !p-[0.65rem] !inline-flex" href="todo.html"><i--}}
+{{--                                            class="ti ti-clipboard-check text-[1.125rem] me-2 opacity-[0.7]"></i>Task Manager</a></li>--}}
+{{--                            <li><a class="w-full ti-dropdown-item !text-[0.8125rem] !gap-x-0 !p-[0.65rem] !inline-flex" href="mail-settings.html"><i--}}
+{{--                                            class="ti ti-adjustments-horizontal text-[1.125rem] me-2 opacity-[0.7]"></i>Settings</a></li>--}}
+{{--                            <li><a class="w-full ti-dropdown-item !text-[0.8125rem] !gap-x-0 !p-[0.65rem] !inline-flex " href="javascript:void(0);"><i--}}
+{{--                                            class="ti ti-wallet text-[1.125rem] me-2 opacity-[0.7]"></i>Bal: $7,12,950</a></li>--}}
+{{--                            <li><a class="w-full ti-dropdown-item !text-[0.8125rem] !p-[0.65rem] !gap-x-0 !inline-flex" href="chat.html"><i--}}
+{{--                                            class="ti ti-headset text-[1.125rem] me-2 opacity-[0.7]"></i>Support</a></li>--}}
+{{--                            <li>--}}
+{{--                                <form action="{{route('logout')}}" method="post">--}}
+{{--                                    @csrf--}}
+{{--                                <button class="w-full ti-dropdown-item !text-[0.8125rem] !p-[0.65rem] !gap-x-0 !inline-flex"><i--}}
+{{--                                            class="ti ti-logout text-[1.125rem] me-2 opacity-[0.7]"></i>Log Out</button>--}}
+{{--                                </form>--}}
+{{--                            </li>--}}
+{{--                        </ul>--}}
+{{--                    </div>--}}
                 </div>
                 <!-- End Header Profile -->
 

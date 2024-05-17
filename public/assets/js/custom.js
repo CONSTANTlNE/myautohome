@@ -2,15 +2,15 @@
   "use strict";
 
   /* page loader */
-  function hideLoader() {
-    const loader = document.getElementById("loader");
-    loader.classList.add("!hidden");
-  }
-  window.addEventListener("load", hideLoader);
+  // function hideLoader() {
+  //   const loader = document.getElementById("loader");
+  //   loader.classList.add("!hidden");
+  // }
+  // window.addEventListener("load", hideLoader);
   /* page loader */
 
   /* footer year */
-  document.getElementById("year").innerHTML = new Date().getFullYear();
+  // document.getElementById("year").innerHTML = new Date().getFullYear();
   /* footer year */
   /*Start Sidemenu Scroll */
   var myElement = document.getElementById("sidebar-scroll");

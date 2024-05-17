@@ -40634,6 +40634,8 @@ h6 {
   border-color: rgb(var(--success));
   color: rgb(var(--success));
 }
+
+
 .bg-outline-danger {
   border-width: 1px;
   border-style: solid;

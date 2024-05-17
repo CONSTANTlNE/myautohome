@@ -36,7 +36,9 @@ class FortifyServiceProvider extends ServiceProvider
         $this->app->instance(LogoutResponse::class, new class implements LogoutResponse {
             public function toResponse($request)
             {
-                return redirect(route('login'));
+                $now = Carbon::now('Asia/Tbilisi');
+
+                Log::channel('login_logout')->info('მომხმარებელი : ' . auth()->user()->name . ' გავიდა სისტემიდან  '  . $now->format('Y-m-d H:i:s'));                return redirect(route('login'));
             }
         });
 

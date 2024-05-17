@@ -39,16 +39,16 @@ class GeneralSeeder extends Seeder
         Company::create(['name' => 'ტერა/თბს']);
         Company::create(['name' => 'ტერა/თბს/სილქ როუდი']);
 
-        Status::create(['name' => 'ონლაინი']);
-        Status::create(['name' => 'ოპერატორის შექმნილი']);
-        Status::create(['name' => 'მუშავდება']);
-        Status::create(['name' => 'ვერ დავუკავშირდი']);
-        Status::create(['name' => 'მოიფიქრებს']);
-        Status::create(['name' => 'დაინტერესებულია, მოვა ფილიალში']);
-        Status::create(['name' => 'კლიენტის უარი']);
-        Status::create(['name' => 'კომპანიის უარი']);
-        Status::create(['name' => 'დუბლიკატი']);
-        Status::create(['name' => 'დასრულებული']);
+        Status::create(['name' => 'ონლაინი', 'color' => 'badge bg-outline-warning2']);
+        Status::create(['name' => 'ოპერატორის შექმნილი','color' => 'badge bg-outline-warning2']);
+        Status::create(['name' => 'მუშავდება', 'color' => 'badge bg-outline-primary']);
+        Status::create(['name' => 'ვერ დავუკავშირდი', 'color' => 'badge bg-outline-warning']);
+        Status::create(['name' => 'მოიფიქრებს','color' => 'badge bg-outline-success2']);
+        Status::create(['name' => 'დაინტერესებულია, მოვა ფილიალში','color' => 'badge bg-outline-success2']);
+        Status::create(['name' => 'კლიენტის უარი', 'color' => 'badge bg-outline-danger']);
+        Status::create(['name' => 'კომპანიის უარი','color' => 'badge bg-outline-danger']);
+        Status::create(['name' => 'დუბლიკატი','color' => 'badge bg-outline-danger']);
+        Status::create(['name' => 'დასრულებული','color' => 'badge bg-outline-success']);
 
 
         Source::create(['name' => 'საიტი']);

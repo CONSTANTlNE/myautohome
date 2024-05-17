@@ -98,6 +98,9 @@
             </div>
         </template>
         <div id="companydiv" class="w-full">
+            <div class="flex justify-center gap-6 w-full mt-2">
+                <label class="form-label text-cente m-auto">კომპანია</label>
+            </div>
             @foreach($application->companies as $index => $company)
 
                 <div class="flex justify-center gap-6 w-full mt-2">
@@ -129,7 +132,7 @@
             <div class="md:col-span-3 col-span-12 mb-4">
                 <label class="form-label">მოდელი</label>
                 <input disabled name="engine" type="text" class="form-control"
-                       aria-label="float number" value="{{$models->where('id', $application->car_model_id)->first()->name}}">
+                       aria-label="float number" value="{{$application->model->name}}">
 
             </div>
             <div class="md:col-span-3 col-span-12 mb-4">

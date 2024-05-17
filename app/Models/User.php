@@ -45,11 +45,11 @@ class User extends Authenticatable
 
     public  function applications()
     {
-        $this->hasMany(Application::class);
+      return  $this->hasMany(Application::class, 'user_id', 'id');
     }
 
     public  function comments(){
-        $this->hasMany(Comment::class);
+        return  $this->hasMany(Comment::class);
     }
 
 
