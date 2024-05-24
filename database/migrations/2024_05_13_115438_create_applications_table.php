@@ -21,9 +21,9 @@ return new class extends Migration
             $table->foreignId('client_id')->constrained();
             $table->foreignId('source_id')->constrained();
             $table->foreignId('status_id')->constrained();
-            $table->foreignId('product_id')->constrained()->nullable();
-            $table->foreignId('car_id')->constrained()->nullable();
-            $table->foreignId('car_model_id')->constrained()->nullable();
+            $table->foreignId('product_id')->nullable()->constrained();
+            $table->foreignId('car_id')->nullable()->constrained();
+            $table->foreignId('car_model_id')->nullable()->constrained();
             $table->timestamps();
         });
     }

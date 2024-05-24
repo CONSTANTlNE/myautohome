@@ -1,6 +1,7 @@
 @extends('layout')
-
-
+@php
+//dd($users);
+ @endphp
 @section('users')
 
 {{--    User Applications Modal--}}
@@ -88,8 +89,11 @@
         <tr style="text-align: center!important;">
             <td style="text-align: center!important;">შექმნის თარიღი</td>
             <td style="text-align: center!important;">მომხმარებელი</td>
+            <td style="text-align: center!important;">როლი</td>
+            <td style="text-align: center!important;">მეილი</td>
             <td style="text-align: center!important;">მობილური</td>
             <td style="text-align: center!important;">განცხადებები</td>
+            <td style="text-align: center!important;">პაროლის ცვლილება</td>
         </tr>
         </thead>
         <tbody>
@@ -97,16 +101,51 @@
             <tr style="text-align: center!important;" >
                 <td style="text-align: center!important;">{{$user->created_at}}</td>
                 <td style="text-align: center!important;">{{$user->name}}</td>
+                <td style="text-align: center!important;">{{$user->roles->first()->name}}</td>
+                <td style="text-align: center!important;">{{$user->email}}</td>
                 <td style="text-align: center!important;">{{$user->mobile}}</td>
                 <td style="text-align: center!important;">
-{{--                    <a href="{{route('user.apps',$user->id)}}" target="_blank">--}}
-{{--                        <span data-hs-overlay="#hs-full-screen-modal"  style="font-size: 1.2rem" class="badge !bg-warning/10 !text-warning !py-[0.25rem] !px-[0.45rem] !text-[0.75em] ms-2">{{$user->applications_count}}</span>--}}
-{{--                    </a>--}}
+
 
     <span style="cursor: pointer" hx-get="{{route('user.apps',$user->id)}}" hx-target="#userdetails" data-hs-overlay="#hs-full-screen-modal"  style="font-size: 1.2rem" class="badge !bg-warning/10 !text-warning !py-[0.25rem] !px-[0.45rem] !text-[0.75em] ms-2">{{$user->applications_count}}</span>
 
                 </td>
+                <td style="text-align: center!important;">
+                    <a href="javascript:void(0);"  data-hs-overlay="#userpasswordupdate{{$index}}" class="side-menu__item hs-dropdown-toggle">
+                        <span style="margin-right: 5px"   class="material-symbols-outlined text-primary">passkey</span>
+                    </a>
+                    </td>
+
             </tr>
+            <div id="userpasswordupdate{{$index}}" class="hs-overlay hidden ti-modal">
+                <div class="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out">
+                    <div class="ti-modal-content">
+                        <form action="{{route('user.password.change')}}" method="post" target="hidden_iframe">
+                            @csrf
+                            <input type="hidden" name="userid" value="{{$user->id}}">
+                            <div class="ti-modal-header">
+                                <h6 class="modal-title text-[1rem] font-semibold" id="mail-ComposeLabel">
+                                    {{$user->name}}
+                                </h6>
+                                <button type="button" class="hs-dropdown-toggle !text-[1rem] !font-semibold !text-defaulttextcolor" data-hs-overlay="#userpasswordupdate{{$index}}">
+                                    <span class="sr-only">Close</span>
+                                    <i class="ri-close-line"></i>
+                                </button>
+                            </div>
+                            <div class="ti-modal-body px-4">
+                                <div class="md:col-span-3  col-start-2 col-span-12 mb-4">
+                                    <label class="form-label">ახალი პაროლი</label>
+                                    <input  name="password" type="text" class="form-control" aria-label="newpass">
+                                </div>
+                            </div>
+                            <div class="ti-modal-footer">
+                                <button type="submit" data-hs-overlay="#userpasswordupdate{{$index}}" class="userpasschange ti-btn bg-primary text-white !font-medium">შეცვლა</button>
+                            </div>
+                        </form>
+                    </div>
+                    <iframe name="hidden_iframe" style="display:none;"></iframe>
+                </div>
+            </div>
         @endforeach
         </tbody>
 {{--        <tfoot>--}}

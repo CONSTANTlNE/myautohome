@@ -1,8 +1,6 @@
 
 
-@error('customer_pid')
-{{$message}}
-@enderror()
+
 <table id="example" class="display nowrap" style="width:100%">
     <thead>
     <tr>
@@ -23,12 +21,12 @@
     <tr style="text-align: center">
         <th style="text-align: center">შექმნის დრო</th>
         <th style="text-align: center">განახლების დრო</th>
-        <th style="text-align: center">ნომერი </th>
+        <th style="text-align: center">ნომერი</th>
         <th style="text-align: center">ოპერაოტრი</th>
         <th style="text-align: center">კლიენტი</th>
         <th style="text-align: center">მობილური</th>
         <th style="text-align: center">წყარო</th>
-        <th style="text-align: center">სტატუსი</th>
+        <th style="text-align: center;width: 100px!important">სტატუსი</th>
         <th style="text-align: center">პროდუქტი</th>
         <th style="text-align: center">კომპანია</th>
         <th style="text-align: center">ბოლო კომენტარი</th>
@@ -37,25 +35,26 @@
     </thead>
     <tbody>
     @foreach($applications as $index=> $application)
-
-        {{--            @php dd($application->car->models->where('id', )->first()) @endphp--}}
         <tr style="text-align: center!important">
 
-            <td style="white-space: normal !important;text-align: center!important" >{{$application->created_at}}</td>
+            <td style="white-space: normal !important;text-align: center!important">{{$application->created_at}}</td>
             <td style="white-space: normal !important;text-align: center!important">{{$application->updated_at}}</td>
             <td>{{$application->number}}</td>
-            <td >{{$application->user->name}}</td>
+            <td>{{$application->user->name}}</td>
             <td style="white-space: normal !important;">
                 {{$application->client->name}}
                 {{$application->client->pid}}
             </td>
             <td>{{$application->client->mobile1}}</td>
             <td>{{$application->source->name}}</td>
-            <td>{{$application->status->name}}</td>
+            <td style="text-align: center!important;width: 100px;!important;white-space: normal !important">
+                <span  style="font-size: 15px;text-align: center!important" class="{{$application->status->color}}">{{$application->status->name}}</span>
+
+            </td>
             <td>{{$application->product->name}}</td>
             <td>
                 @foreach($application->companies as $index2c=> $company)
-                    {{$company->name}} <br>
+                    {{$company->name}}<br>
                 @endforeach
             </td>
             <td>{{$application->comments->last()?->comment}}</td>
@@ -74,51 +73,39 @@
                         <li>
                             <a target="_blank"
                                class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
-                               href="{{route('app.details', $application->id)}}">დეტალურად</a>
+                               href="{{route('app.details', $application->id)}}">დეტალურად 1</a>
                         </li>
 
                         <li>
-                            <a
-                                    data-hs-overlay="#editmodal"
-                                    class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
-                                    href="{{route('app.edit', $application->id)}}"
-                            >რედაქტირება</a>
+
+                            <a target="_blank"
+                               class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
+                               href="{{route('app.edit', $application->id)}}"
+                            >რედაქტირება 1</a>
                         </li>
-                        @endrole
 
-                        <li>
-                            <a data-hs-overlay="#detailsmodal" href="javascript:void(0);"
-                               hx-get="{{route('htmxdetails', $application->id)}}"
-                               hx-target="#detailtarget"
-                               hx-triger="click"
-
+                        <li
+                                hx-get="{{route('edit.htmx', $application->id)}}"
+                                hx-target="#edittarget"
+                                hx-indicator="#indicator">
+                            <a data-hs-overlay="#editmodal" href="javascript:void(0);"
                                class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
                             >დეტალურად</a>
                         </li>
-                        @if($application->user->id == auth()->user()->id  && auth()->user()->hasRole('operator'))
-
-                            <li hx-get="{{route('edit.htmx', $application->id)}}"
-                                hx-target="#edittarget"
-                                hx-triger="click">
-                                <a data-hs-overlay="#editmodal" href="javascript:void(0);"
-                                   class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
-
-
-                                >რედაქტირება</a>
-                            </li>
-
-                        @endif
-                        {{--ADMIN ROUTES--}}
-                        @role('admin')
-                        <li hx-get="{{route('edit.htmx', $application->id)}}"
-                            hx-target="#edittarget"
-                            hx-triger="click">
-                            <a data-hs-overlay="#editmodal" href="javascript:void(0);"
-                               class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
-                            >რედაქტირება</a>
-                        </li>
 
                         @endrole
+
+                        <li
+                                hx-get="{{route('edit.htmx', $application->id)}}"
+                                hx-target="#edittarget"
+                                hx-indicator="#indicator">
+                            <a data-hs-overlay="#editmodal" href="javascript:void(0);"
+                               class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
+                            >დეტალურად</a>
+                        </li>
+
+                        {{--ADMIN ROUTES--}}
+                        @role('admin')
                         <li>
                             <a href="javascript:void(0);"
                                class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
@@ -127,15 +114,17 @@
 
                             </a>
                         </li>
+                        @endrole
+
 
                     </ul>
 
 
                 </div>
+
             </td>
 
         </tr>
-
     @endforeach
     </tbody>
     <tfoot>
@@ -152,6 +141,8 @@
         <th>კომპანია</th>
         <th>ბოლო კომენტარი</th>
         <th>მოქმედება</th>
+
+
     </tr>
     </tfoot>
 </table>
@@ -159,16 +150,22 @@
 
     <script>
 
+        if (typeof table{{$counter-1}} !== 'undefined'  ) {
+            table{{$counter-1}}.destroy();
+        }
+
+
         let table{{$counter}};
 
        table{{$counter}} = new DataTable('#example', {
             //Generall SETTINGS
+
             lengthMenu: [10, 100, 150, {label: 'All', value: -1}],
 
             columnDefs: [
                 {orderable: false, targets: [ 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]}
             ],
-
+           order: [[0, 'desc']],
 
             // lengthMenu: [ {label: 'All', value: -1}],
             language: {
@@ -263,6 +260,10 @@
                 .search(this.value)
                 .draw();
         });
+
+        if (typeof table{{$counter-1}} !== 'undefined'  ) {
+            table{{$counter-1}}.destroy();
+        }
 
 
     </script>

@@ -10,6 +10,15 @@ use Illuminate\Http\Request;
 
 class PanelController extends Controller
 {
+
+    public function manage(Request $request)
+    {
+        if ($request->has('type') && $request->type == 'other') {
+            return $this->index2();
+        }
+        return $this->index();
+    }
+
     public function index()
     {
 
@@ -18,12 +27,18 @@ class PanelController extends Controller
         $products  = Product::all();
         $sources   = Source::all();
 
-        return view('pages.other', compact('companies', 'statuses', 'products', 'sources'));
+        return view('htmx.other', compact('companies', 'statuses', 'products', 'sources'));
     }
 
-    public function create(Request $request)
+    public function index2()
     {
-        dd($request);
+
+        $companies = Company::all();
+        $statuses  = Status::all();
+        $products  = Product::all();
+        $sources   = Source::all();
+
+        return view('pages.other', compact('companies', 'statuses', 'products', 'sources'));
     }
 
 

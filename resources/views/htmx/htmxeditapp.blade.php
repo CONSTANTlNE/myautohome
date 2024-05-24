@@ -1,29 +1,56 @@
-
-
-<div class="flex justify-center w-full mb-6 mt-2">
-    <input  style="max-width:200px!important;" class="form-control text-center " disabled type="text" value="განაცხადი No {{$application->number}}" >
+{{--    @if($application->user->id == auth()->user()->id && auth()->user()->can('Own_Data'))--}}
+<div class="flex justify-center w-full mb-6 mt-2 gap-5">
+    <div class="text-center">
+        <p>განაცხადი</p>
+        <input style="max-width:100px!important;" class="form-control text-center " disabled type="text"
+               value="{{$application->number}}">
+    </div>
+    <div class="text-center">
+        <p>ოპერატორი</p>
+        <input style="max-width:100px!important;" class="form-control text-center " disabled type="text"
+               value="{{$application->user->name}}">
+    </div>
+    <div class="text-center">
+        <p>შეიქმნა</p>
+        <button style="max-width:250px!important;" class="form-control text-center " disabled type="text"
+               value="">{{$application->created_at}}</button>
+    </div>
+    @if($application->created_at !== $application->updated_at)
+    <div class="text-center">
+        <p>ბოლო განახლება</p>
+        <button style="max-width:250px!important;z-index: -5;" class="form-control text-center " disabled type="text"
+                value="">  <a style="z-index: 200" target="_blank" href="{{route('customlogviewer',['query'=>$application->number])}}">{{$application->updated_at}} </a>
+        </button>
+    </div>
+    @endif
 </div>
+<div class="flex justify-center w-full">
+    <form style="max-width: 650px!important;background-color: rgb(var(--body-bg));padding: 20px"
+          @if($userid==$application->user->id)
+              action="{{route('app.update')}}"
+          @else
+              action="{{route('update2.htmx')}}"
+          @endif
 
-
-    <form style="max-width: 650px!important;background-color: rgb(var(--body-bg));padding: 20px" action="{{route('app.update')}}" method="post">
+          method="post">
         @csrf
         <input type="hidden" name="id" value="{{$application->id}}">
 
-        <div class="ti-modal-body">
+        <div style="padding: 0!important" class="ti-modal-body">
             <div class="grid grid-cols-12 text-center sm:gap-x-6 sm:gap-y-2">
                 <div class="md:col-span-3  col-start-2 col-span-12 mb-4">
                     <label class="form-label">პირადი ნომერი</label>
-                    <input name="customer_pid" type="text" class="form-control"
+                    <input name="customer_pid" type="text" class="form-control" data-disabled-input
                            aria-label="ninedigitnumber" value="{{$application->client->pid}}">
                 </div>
                 <div class="md:col-span-4 col-span-12 mb-4">
                     <label class="form-label">სახელი / გვარი</label>
-                    <input name="customer_name" type="text" class="form-control"
+                    <input name="customer_name" type="text" class="form-control" data-disabled-input
                            aria-label="FullName" value="{{$application->client->name}}">
                 </div>
                 <div class="md:col-span-2 col-span-12 mb-4">
                     <label class="form-label">მობილური</label>
-                    <input aria-label="tel" name="customer_mobile"
+                    <input aria-label="tel" name="customer_mobile" data-disabled-input
                            style="padding-left: 0!important;padding-right: 0!important"
                            type="text"
                            class="form-control"
@@ -32,7 +59,8 @@
                 </div>
                 <div class="md:col-span-3 col-span-12 mb-4">
                     <label class="form-label">წყარო</label>
-                    <select name="source" class=" sm:mb-0 form-select !py-3" id="inlineFormSelectPref">
+                    <select data-disabled-input name="source" class=" sm:mb-0 form-select !py-3"
+                            id="inlineFormSelectPref">
 
                         <option value="{{$application->source->id}}">{{$application->source->name}}</option>
                         @foreach($sources as $index => $source)
@@ -52,7 +80,8 @@
                 </div>
                 <div class="md:col-span-6 col-span-12 mb-4">
                     <label class="form-label">პროდუქტი</label>
-                    <select name="product" class=" sm:mb-0 form-select !py-3" id="inlineFormSelectPref">
+                    <select data-disabled-input name="product" class=" sm:mb-0 form-select !py-3"
+                            id="inlineFormSelectPref">
                         <option value="{{$application->product->id}}">{{$application->product->name}}</option>
                         @foreach($products as $index => $product)
                             <option value="{{$product->id}}">{{$product->name}}</option>
@@ -81,7 +110,8 @@
                     <button type="button" class="ti-btn ti-btn-danger ti-btn-wave removecompany2">წაშლა
                     </button>
 
-                    <select style="max-width: 200px" name="company[]" class=" sm:mb-0 form-select !py-3"
+                    <select data-disabled-input style="max-width: 200px" name="company[]"
+                            class=" sm:mb-0 form-select !py-3"
                             id="inlineFormSelectPref">
                         <option selected="">არ არის არჩეული</option>
                         @foreach($companies as $company)
@@ -95,10 +125,12 @@
                 @foreach($application->companies as $index => $company)
 
                     <div class="flex justify-center gap-6 w-full mt-2">
-                        <button type="button" class="ti-btn ti-btn-danger ti-btn-wave removecompany2">წაშლა
-                        </button>
-
-                        <select style="max-width: 200px" name="company[]" class=" sm:mb-0 form-select !py-3"
+                        @if(auth()->user()->id === $application->user_id)
+                            <button type="button" class="ti-btn ti-btn-danger ti-btn-wave removecompany2">წაშლა
+                            </button>
+                        @endif
+                        <select style="pointer-events: none;max-width: 200px" data-disabled-input style="max-width: 200px" name="company[]"
+                                class=" sm:mb-0 form-select !py-3"
                                 id="inlineFormSelectPref">
 
                             <option value="{{$company->id}}">{{$company->name}}</option>
@@ -112,40 +144,45 @@
 
                 @endforeach
             </div>
-            <div class="flex justify-center mt-7  mb-4">
-                <button id="newcompany2" type="button" class="ti-btn ti-btn-primary-full ti-btn-wave">
-                    ახალი კომპანიის დამატება
-                </button>
-            </div>
-
+            @if(auth()->user()->id === $application->user_id)
+                <div class="flex justify-center mt-7  mb-4">
+                    <button id="newcompany2" type="button" class="ti-btn ti-btn-primary-full ti-btn-wave">
+                        ახალი კომპანიის დამატება
+                    </button>
+                </div>
+            @endif
             {{--                            <p class="mb-4 text-center w-full">ავტომობილი მონაცემები</p>--}}
             <div class="grid grid-cols-12 text-center sm:gap-x-6 sm:gap-y-2 mt-7">
                 <div class="md:col-span-3 col-span-12 mb-4">
                     <label class="form-label">მწარმოებელი</label>
 
                     <select
+                            data-disabled-input aria-label="car" name="car" class="ti-form-select rounded-sm !p-0"
                             hx-get="{{route('carsearch')}}"
                             hx-trigger="change"
-                            hx-target="#editsselect"
-                            aria-label="car" name="car" class="ti-form-select rounded-sm !p-0"
-                            id="carselect2"
-                            autocomplete="off">
-                        <option value="{{$application->car_id}}" >{{$application->car->make}}</option>
+                            hx-target="#modelsselect2"
 
+                            id="carsselect2"
+                            autocomplete="off">
+                        @if($application->car_id!==null)
+                            <option value="{{$application->car_id}}">{{$application->car->make}}</option>
+                        @endif
                         <option></option>
                         @foreach($cars as $car)
                             <option value="{{$car->id}}">{{$car->make}}</option>
                         @endforeach
+
+
                     </select>
                 </div>
                 <div class="md:col-span-3 col-span-12 mb-4">
                     <label class="form-label">მოდელი</label>
 
-                    <select name="model" class="form-control " id="editsselect"
+                    <select data-disabled-input name="model" class="ti-form-select rounded-sm !p-0" id="modelsselect2"
                             autocomplete="off">
-
-                        <option  value="{{$application->car_model_id}}">{{$application->model->name}}</option>
-
+                        @if($application->car_id!==null)
+                            <option value="{{$application->car_model_id}}">{{$application->model->name}}</option>
+                        @endif
 
                         <option></option>
 
@@ -153,23 +190,39 @@
                 </div>
                 <div class="md:col-span-3 col-span-12 mb-4">
                     <label class="form-label">წელი</label>
-                    <input name="year" type="text" class="form-control"
-                           aria-label="year" value="{{$application->year}}">
+                    <input data-disabled-input name="year" type="text" class="form-control"
+                           aria-label="year"
+                           @if($application->year!==null)
+                               value="{{$application->year}}"
+                            @endif
+                    >
                 </div>
                 <div class="md:col-span-3 col-span-12 mb-4">
                     <label class="form-label">ძრავი</label>
 
-                    <input name="engine" type="text" class="form-control"
-                           aria-label="float number" value="{{$application->engine}}">
+                    <input data-disabled-input name="engine" type="text" class="form-control"
+                           aria-label="float number"
+                           @if($application->engine!==null)
+                               value="{{$application->engine}}"
+                            @endif
+                    >
                 </div>
                 <div class="md:col-span-10 col-span-12 mb-4">
 
-                    <input name="link" type="url" class="form-control"
-                           aria-label="url" value="{{$application->link}}">
+                    <input data-disabled-input name="link" type="url" class="form-control"
+                           aria-label="url"
+                           @if($application->link!==null)
+                               value="{{$application->link}}"
+                            @endif
+                    >
 
                 </div>
                 <div class="md:col-span-2 col-span-12 mt-2">
-                    <a style="margin:auto!important;" class="form-control " href="{{$application->link}}" target="_blank">გადასვლა</a>
+                    <a style="margin:auto!important;" class="form-control "
+                       @if($application->link!==null)
+                           href="{{$application->link}}"
+                       @endif
+                       target="_blank">გადასვლა</a>
                 </div>
                 @foreach($application->comments as $comment)
                     <div class="md:col-span-12 col-span-12 mb-4">
@@ -187,7 +240,9 @@
 
                 <textarea name="newcomment[]" class="form-control" aria-label="With textarea"
                           rows="3"></textarea>
-                    <button type="button" class="ti-btn ti-btn-danger ti-btn-wave removecomment">წაშლა
+
+                    <button style="margin-left: 45%" type="button"
+                            class="ti-btn ti-btn-danger ti-btn-wave removecomment ">წაშლა
                     </button>
                 </div>
             </template>
@@ -198,22 +253,42 @@
                 </button>
             </div>
         </div>
-        <button class="ti-btn ti-btn-primary-full ti-btn-wave w-full">შენახვა</button>
+        <button
+                @if($userid===$application->user_id)
+                    hx-post="{{route('update.htmx')}}"
+                @else
+                    hx-post="{{route('update2.htmx')}}"
+                @endif
+                hx-target="#main-content"
+                hx-target-error="#errors2"
+                hx-indicator="#indicator"
+                id="editappsubmit"
+                class="ti-btn ti-btn-primary-full ti-btn-wave w-full">შენახვა
+        </button>
     </form>
+    <div id="errors2"></div>
+</div>
 
 
+{{--If app was not created by user, disable inputs--}}
+@if(auth()->user()->id!==$application->user_id)
+    <script>
+        document.querySelectorAll('[data-disabled-input]').forEach((input) => {
+
+            input.disabled = true
+        })
+    </script>
+@endif
 {{--companies--}}
 <script>
 
 
-
-
-     newcompany2 = document.getElementById('newcompany2');
+    newcompany2 = document.getElementById('newcompany2');
 
     newcompany2.addEventListener('click', () => {
         console.log('clicked');
-         companytemplate2 = document.getElementById('companytemplate2');
-         clone2 = document.importNode(companytemplate2.content, true)
+        companytemplate2 = document.getElementById('companytemplate2');
+        clone2 = document.importNode(companytemplate2.content, true)
 
         document.getElementById('companydiv2').appendChild(clone2);
     })
@@ -226,17 +301,16 @@
     });
 
 
-
-
 </script>
+
 {{--Comments--}}
 <script>
-     newcomment = document.getElementById('newcomment');
+    newcomment = document.getElementById('newcomment');
 
     newcomment.addEventListener('click', () => {
 
-         commenttemplate = document.getElementById('commenttemplate');
-         clone2 = document.importNode(commenttemplate.content, true)
+        commenttemplate = document.getElementById('commenttemplate');
+        clone2 = document.importNode(commenttemplate.content, true)
 
         document.getElementById('mydiv2').appendChild(clone2);
     })
@@ -253,7 +327,7 @@
 
 <script>
 
-    new TomSelect("#carselect2", {
+    new TomSelect("#carsselect2", {
         create: true,
         sortField: {
             field: "text",

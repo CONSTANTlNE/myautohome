@@ -49,7 +49,7 @@
             </div>
             <div class=" md:col-span-6 col-span-12 mb-4">
                 <label class="form-label">სტატუსი</label>
-                <select disabled name="status" class=" sm:mb-0 form-select !py-3" id="inlineFormSelectPref">
+                <select  name="status" class=" sm:mb-0 form-select !py-3" id="inlineFormSelectPref">
                     <option value="{{$application->status->id}}">{{$application->status->name}}</option>
                     @foreach($statuses as $index => $status)
                         <option value="{{$status->id}}">{{$status->name}}</option>
@@ -126,30 +126,50 @@
                 <label class="form-label">მწარმოებელი</label>
 
                 <input disabled name="engine" type="text" class="form-control"
-                       aria-label="float number" value="{{$application->car->make}}">
+                       aria-label="float number" value="
+                       @if($application->car!=null)
+                       {{$application->car->make}}"
+                        @endif
+                >
 
             </div>
             <div class="md:col-span-3 col-span-12 mb-4">
                 <label class="form-label">მოდელი</label>
                 <input disabled name="engine" type="text" class="form-control"
-                       aria-label="float number" value="{{$application->model->name}}">
+                       aria-label="float number"
+                       @if($application->car!=null)
+                       value="{{$application->model->name}}"
+                        @endif
+                >
 
             </div>
             <div class="md:col-span-3 col-span-12 mb-4">
                 <label class="form-label">წელი</label>
                 <input disabled name="year" type="text" class="form-control"
-                       aria-label="year" value="{{$application->year}}">
+                       aria-label="year"
+                       @if($application->car!=null)
+                       value="{{$application->year}}"
+                        @endif
+                >
             </div>
             <div class="md:col-span-3 col-span-12 mb-4">
                 <label class="form-label">ძრავი</label>
 
                 <input disabled name="engine" type="text" class="form-control"
-                       aria-label="float number" value="{{$application->engine}}">
+                       aria-label="float number"
+                       @if($application->car!=null)
+                       value="{{$application->engine}}"
+                        @endif
+                >
             </div>
             <div class="md:col-span-10 col-span-12 mb-4">
 
                 <input disabled name="link" type="url" class="form-control"
-                       aria-label="url" value="{{$application->link}}">
+                       aria-label="url"
+                       @if($application->car!=null)
+                       value="{{$application->link}}"
+                        @endif
+                >
 
             </div>
             <div class="md:col-span-2 col-span-12 mt-2">

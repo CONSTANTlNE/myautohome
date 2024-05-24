@@ -6,7 +6,6 @@ use App\Models\Company;
 use App\Models\Product;
 use App\Models\Source;
 use App\Models\Status;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class GeneralSeeder extends Seeder

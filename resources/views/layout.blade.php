@@ -27,11 +27,10 @@
     <!-- Tom Select Css -->
     <link rel="stylesheet" href="{{asset('assets/libs/tom-select/css/tom-select.default.min.css')}}">
 
-    <script src="https://unpkg.com/htmx.org@1.9.12"
-            integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2"
-            crossorigin="anonymous"></script>
+
     <link rel="stylesheet" href="{{asset('assets/css/myStyles.css')}}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
 
     {{--  DATATABLES CSS --}}
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.5/css/dataTables.dataTables.css"/>
@@ -43,6 +42,9 @@
     <script src="https://unpkg.com/htmx.org@1.9.12/dist/htmx.js"
             integrity="sha384-qbtR4rS9RrUMECUWDWM2+YGgN3U4V4ZncZ0BvUcg9FGct0jqXz3PUdVpU1p0yrXS"
             crossorigin="anonymous"></script>
+
+    <script src="https://unpkg.com/htmx.org@1.9.12/dist/ext/response-targets.js"></script>
+
 
     <style>
         .loader {
@@ -102,11 +104,29 @@
         /*    background-color: whitesmoke !important;*/
         /*}*/
 
+
+        #successtoast {
+            opacity: 0;
+            transition: opacity 1s ease-in-out, visibility 1s ease-in-out;
+            visibility: hidden;
+        }
+
+        #successtoast.showtoast {
+            visibility: visible;
+            opacity: 1;
+
+        }
+
+        .hiddensuccesstoast {
+            opacity: 0;
+            visibility: hidden;
+        }
+
     </style>
 
 </head>
 
-<body>
+<body hx-ext="response-targets">
 
 <!-- ========== Switcher  ========== -->
 @include('components.switcher')
@@ -124,19 +144,19 @@
          aria-label="loading">
         <span class="sr-only">Loading...</span>
     </div>
-    {{--        <img id="indicator" class="htmx-indicator" src="{{asset('assets/images/media/loader.svg')}}" alt="">--}}
-
     <!-- Start::Header -->
     @include('components.header')
     <!-- End::Header -->
+
     <!-- Start::app-sidebar -->
     @include('components.sidebar')
     <!-- End::app-sidebar -->
-    @if(request()->routeIs('main'))
 
-        {{--    create modal/ button in header--}}
+@if(request()->routeIs('main'))
+        {{--    create app modal/ button in header--}}
         <div id="hs-large-modal" class="hs-overlay hidden ti-modal">
             <div class="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out md:!max-w-2xl md:w-full m-3 md:mx-auto">
+                {{--                app.create--}}
                 <form id="htmxstore" action="{{route('htmxstore')}}" method="post">
                     @csrf
                     <div class="ti-modal-content">
@@ -144,7 +164,8 @@
                             <h6 class="ti-modal-title">
                                 განაცხადის შექმნა
                             </h6>
-                            <button type="button" class="hs-dropdown-toggle ti-modal-close-btn"
+
+                            <button id="closecreatemodal" type="button" class="hs-dropdown-toggle ti-modal-close-btn"
                                     data-hs-overlay="#hs-large-modal">
                                 <span class="sr-only">Close</span>
                                 <svg class="w-3.5 h-3.5" width="8" height="8" viewBox="0 0 8 8" fill="none"
@@ -162,7 +183,8 @@
                                     <input id="storepid" name="customer_pid" type="text" class="form-control"
                                            aria-label="ninedigitnumber"
                                     >
-                                    <p id="errorMessage" style="color:red;display: none;font-size: 12px">მინიმუმ 11 სიმბოლო</p>
+                                    <p id="errorMessage" style="color:red;display: none;font-size: 12px">მინიმუმ 11
+                                        სიმბოლო</p>
                                 </div>
                                 <div class="md:col-span-4 col-span-12 mb-4">
                                     <label class="form-label">სახელი / გვარი</label>
@@ -176,13 +198,14 @@
                                            type="text"
                                            class="form-control"
                                     >
-                                    <p id="errorMessage2" style="color:red;display: none;font-size: 12px">მინიმუმ 9 სიმბოლო</p>
+                                    <p id="errorMessage2" style="color:red;display: none;font-size: 12px">მინიმუმ 9
+                                        სიმბოლო</p>
 
                                 </div>
                                 <div class="md:col-span-3 col-span-12 mb-4">
                                     <label class="form-label">წყარო</label>
-                                    <select name="source" class=" sm:mb-0 form-select !py-3" id="inlineFormSelectPref">
-                                        <option>არ არის არჩეული</option>
+                                    <select name="source" class=" sm:mb-0 form-select !py-3" id="sourceSelectPref">
+                                        <option selected="">არ არის არჩეული</option>
                                         @foreach($sources as $index => $source)
                                             <option value="{{$source->id}}">{{$source->name}}</option>
                                         @endforeach
@@ -191,8 +214,8 @@
                                 </div>
                                 <div class="md:col-span-4 col-span-12 mb-4">
                                     <label class="form-label">სტატუსი</label>
-                                    <select name="status" class=" sm:mb-0 form-select !py-3" id="inlineFormSelectPref">
-                                        <option>არ არის არჩეული</option>
+                                    <select name="status" class=" sm:mb-0 form-select !py-3" id="statusSelectPref">
+                                        <option selected="">არ არის არჩეული</option>
                                         @foreach($statuses as $index => $status)
                                             <option value="{{$status->id}}">{{$status->name}}</option>
                                         @endforeach
@@ -201,8 +224,8 @@
                                 </div>
                                 <div class="md:col-span-4 col-span-12 mb-4">
                                     <label class="form-label">პროდუქტი</label>
-                                    <select name="product" class=" sm:mb-0 form-select !py-3" id="inlineFormSelectPref">
-                                        <option>არ არის არჩეული</option>
+                                    <select name="product" class=" sm:mb-0 form-select !py-3" id="productSelectPref">
+                                        <option selected="">არ არის არჩეული</option>
                                         @foreach($products as $index => $product)
                                             <option value="{{$product->id}}">{{$product->name}}</option>
                                         @endforeach
@@ -214,7 +237,7 @@
                                 <div class=" md:col-span-4 col-span-12 mb-4">
                                     <label class="form-label">კომპანია</label>
                                     <select name="company[]" class=" sm:mb-0 form-select !py-3"
-                                            id="inlineFormSelectPref">
+                                            id="companySelectPref">
                                         <option selected="">არ არის არჩეული</option>
                                         @foreach($companies as $company)
                                             <option value="{{$company->id}}">{{$company->name}}</option>
@@ -231,7 +254,7 @@
                                     </button>
 
                                     <select style="max-width: 200px" name="company[]" class=" sm:mb-0 form-select !py-3"
-                                            id="inlineFormSelectPref">
+                                            id="">
                                         <option selected="">არ არის არჩეული</option>
                                         @foreach($companies as $company)
                                             <option value="{{$company->id}}">{{$company->name}}</option>
@@ -280,19 +303,19 @@
                                 <div class="md:col-span-3 col-span-12 mb-4">
                                     <label class="form-label">წელი</label>
                                     <input name="year" type="text" class="form-control"
-                                           aria-label="year">
+                                           aria-label="year" id="yearinput">
                                 </div>
                                 <div class="md:col-span-3 col-span-12 mb-4">
                                     <label class="form-label">ძრავი</label>
 
                                     <input name="engine" type="text" class="form-control"
-                                           aria-label="float number">
+                                           aria-label="float number" id="engineinput">
                                 </div>
                                 <div class="md:col-span-12 col-span-12 mb-4">
                                     <label class="form-label">ლინკი</label>
 
                                     <input name="link" type="url" class="form-control"
-                                           aria-label="url">
+                                           aria-label="url" id="linkinput">
                                 </div>
                             </div>
                             <div class="md:col-span-12 col-span-12 mb-4">
@@ -306,14 +329,18 @@
                         <button id="newappsubmit" type="button"
                                 hx-post="{{route('htmxstore')}}"
                                 hx-target="#main-content"
+                                hx-target-error="#errors"
                                 hx-indicator="#indicator"
-                                data-hs-overlay="#hs-large-modal" class="ti-btn ti-btn-primary-full ti-btn-wave">შენახვა
+                                class="ti-btn ti-btn-primary-full ti-btn-wave">შენახვა
                         </button>
+                        <div id="errors"></div>
                     </div>
 
                 </form>
             </div>
+
         </div>
+    @endif
         {{-- Search Modal / button in header--}}
         <div id="searchmodal" class="hs-overlay hidden ti-modal">
             <div class="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out md:!max-w-2xl md:w-full m-3 md:mx-auto">
@@ -342,6 +369,7 @@
                                id="Search-Grid"><i class="fe fe-search header-link-icon text-[0.875rem]"></i></a>
                             <input hx-get="{{route('search.htmx')}}" hx-target="#searchtarget"
                                    hx-trigger="keyup changed delay:500ms" type="search" name="search"
+                                   hx-indicator="#indicator"
                                    class="search1 form-control border-0 px-2 !text-[0.8rem] w-full focus:ring-transparent"
                                    placeholder="პირადი ნომერი / სახელი / გვარი / მობილური" aria-label="Username">
                             <div class="inline-flex rounded-md  shadow-sm">
@@ -387,7 +415,7 @@
                             განაცხადის რედაქტირება
                         </h6>
 
-                        <button type="button" class="hs-dropdown-toggle ti-modal-close-btn"
+                        <button id="closeeditmodal" type="button" class="hs-dropdown-toggle ti-modal-close-btn"
                                 data-hs-overlay="#editmodal">
                             <span class="sr-only">Close</span>
                             <svg class="w-3.5 h-3.5" width="8" height="8" viewBox="0 0 8 8" fill="none"
@@ -442,7 +470,6 @@
 
             </div>
         </div>
-    @endif
 
 
     <!-- Start::content  -->
@@ -464,112 +491,23 @@
 
         </div>
     </div>
-    <!-- End::content  -->
-
-    <!-- ========== Search Modal ========== -->
-    {{--<div id="search-modal" class="hs-overlay ti-modal hidden mt-[1.75rem]">--}}
-    {{--  <div class="ti-modal-box">--}}
-    {{--    <div class="ti-modal-content !border !border-defaultborder dark:!border-defaultborder/10 !rounded-[0.5rem]">--}}
-    {{--      <div class="ti-modal-body">--}}
-
-    {{--        <div class="input-group border-[2px] border-primary rounded-[0.25rem] w-full flex">--}}
-    {{--          <a aria-label="anchor" href="javascript:void(0);"--}}
-    {{--            class="input-group-text flex items-center bg-light border-e-[#dee2e6] !py-[0.375rem] !px-[0.75rem] !rounded-none !text-[0.875rem]"--}}
-    {{--            id="Search-Grid"><i class="fe fe-search header-link-icon text-[0.875rem]"></i></a>--}}
-
-    {{--          <input type="search" class="form-control border-0 px-2 !text-[0.8rem] w-full focus:ring-transparent"--}}
-    {{--            placeholder="Search" aria-label="Username">--}}
-
-    {{--          <a aria-label="anchor" href="javascript:void(0);" class="flex items-center input-group-text bg-light !py-[0.375rem] !px-[0.75rem]"--}}
-    {{--            id="voice-search"><i class="fe fe-mic header-link-icon"></i></a>--}}
-    {{--          <div class="hs-dropdown ti-dropdown">--}}
-    {{--            <a aria-label="anchor" href="javascript:void(0);"--}}
-    {{--              class="flex items-center hs-dropdown-toggle ti-dropdown-toggle btn btn-light btn-icon !bg-light !py-[0.375rem] !rounded-none !px-[0.75rem] text-[0.95rem] h-[2.413rem] w-[2.313rem]">--}}
-    {{--              <i class="fe fe-more-vertical"></i>--}}
-    {{--            </a>--}}
-
-    {{--            <ul class="absolute hs-dropdown-menu ti-dropdown-menu !-mt-2 !p-0 hidden">--}}
-    {{--              <li><a--}}
-    {{--                  class="ti-dropdown-item flex text-defaulttextcolor dark:text-defaulttextcolor/70 !py-[0.5rem] !px-[0.9375rem] !text-[0.8125rem] font-medium"--}}
-    {{--                  href="javascript:void(0);">Action</a></li>--}}
-    {{--              <li><a--}}
-    {{--                  class="ti-dropdown-item flex text-defaulttextcolor dark:text-defaulttextcolor/70 !py-[0.5rem] !px-[0.9375rem] !text-[0.8125rem] font-medium"--}}
-    {{--                  href="javascript:void(0);">Another action</a></li>--}}
-    {{--              <li><a--}}
-    {{--                  class="ti-dropdown-item flex text-defaulttextcolor dark:text-defaulttextcolor/70 !py-[0.5rem] !px-[0.9375rem] !text-[0.8125rem] font-medium"--}}
-    {{--                  href="javascript:void(0);">Something else here</a></li>--}}
-    {{--              <li>--}}
-    {{--                <hr class="dropdown-divider">--}}
-    {{--              </li>--}}
-    {{--              <li><a--}}
-    {{--                  class="ti-dropdown-item flex text-defaulttextcolor dark:text-defaulttextcolor/70 !py-[0.5rem] !px-[0.9375rem] !text-[0.8125rem] font-medium"--}}
-    {{--                  href="javascript:void(0);">Separated link</a></li>--}}
-    {{--            </ul>--}}
-    {{--          </div>--}}
-    {{--        </div>--}}
-    {{--        <div class="mt-5">--}}
-    {{--          <p class="font-normal  text-[#8c9097] dark:text-white/50 text-[0.813rem] dark:text-gray-200 mb-2">Are You Looking For...</p>--}}
-
-    {{--          <span class="search-tags text-[0.75rem] !py-[0rem] !px-[0.55rem] dark:border-defaultborder/10"><i class="fe fe-user me-2"></i>People<a--}}
-    {{--              href="javascript:void(0)" class="tag-addon header-remove-btn"><span class="sr-only">Remove badge</span><i class="fe fe-x"></i></a></span>--}}
-    {{--          <span class="search-tags text-[0.75rem] !py-[0rem] !px-[0.55rem] dark:border-defaultborder/10"><i class="fe fe-file-text me-2"></i>Pages<a--}}
-    {{--              href="javascript:void(0)" class="tag-addon header-remove-btn"><span class="sr-only">Remove badge</span><i class="fe fe-x"></i></a></span>--}}
-    {{--          <span class="search-tags text-[0.75rem] !py-[0rem] !px-[0.55rem] dark:border-defaultborder/10"><i--}}
-    {{--              class="fe fe-align-left me-2"></i>Articles<a href="javascript:void(0)" class="tag-addon header-remove-btn"><span class="sr-only">Remove badge</span><i--}}
-    {{--                class="fe fe-x"></i></a></span>--}}
-    {{--          <span class="search-tags text-[0.75rem] !py-[0rem] !px-[0.55rem] dark:border-defaultborder/10"><i class="fe fe-server me-2"></i>Tags<a--}}
-    {{--              href="javascript:void(0)" class="tag-addon header-remove-btn"><span class="sr-only">Remove badge</span><i class="fe fe-x"></i></a></span>--}}
-
-    {{--        </div>--}}
-
-
-    {{--        <div class="my-[1.5rem]">--}}
-    {{--          <p class="font-normal  text-[#8c9097] dark:text-white/50 text-[0.813rem] mb-2">Recent Search :</p>--}}
-
-    {{--          <div id="dismiss-alert" role="alert"--}}
-    {{--            class="!p-2 border dark:border-defaultborder/10 rounded-[0.3125rem] flex items-center text-defaulttextcolor dark:text-defaulttextcolor/70 !mb-2 !text-[0.8125rem] alert">--}}
-    {{--            <a href="notifications.html"><span>Notifications</span></a>--}}
-    {{--            <a aria-label="anchor" class="ms-auto leading-none" href="javascript:void(0);" data-hs-remove-element="#dismiss-alert"><i--}}
-    {{--                class="fe fe-x !text-[0.8125rem] text-[#8c9097] dark:text-white/50"></i></a>--}}
-    {{--          </div>--}}
-
-    {{--          <div id="dismiss-alert1" role="alert"--}}
-    {{--            class="!p-2 border dark:border-defaultborder/10 rounded-[0.3125rem] flex items-center text-defaulttextcolor dark:text-defaulttextcolor/70 !mb-2 !text-[0.8125rem] alert">--}}
-    {{--            <a href="alerts.html"><span>Alerts</span></a>--}}
-    {{--            <a aria-label="anchor" class="ms-auto leading-none" href="javascript:void(0);" data-hs-remove-element="#dismiss-alert"><i--}}
-    {{--                class="fe fe-x !text-[0.8125rem] text-[#8c9097] dark:text-white/50"></i></a>--}}
-    {{--          </div>--}}
-
-    {{--          <div id="dismiss-alert2" role="alert"--}}
-    {{--            class="!p-2 border dark:border-defaultborder/10 rounded-[0.3125rem] flex items-center text-defaulttextcolor dark:text-defaulttextcolor/70 !mb-0 !text-[0.8125rem] alert">--}}
-    {{--            <a href="mail.html"><span>Mail</span></a>--}}
-    {{--            <a aria-label="anchor" class="ms-auto lh-1" href="javascript:void(0);" data-hs-remove-element="#dismiss-alert"><i--}}
-    {{--                class="fe fe-x !text-[0.8125rem] text-[#8c9097] dark:text-white/50"></i></a>--}}
-    {{--          </div>--}}
-    {{--        </div>--}}
-    {{--      </div>--}}
-
-    {{--      <div class="ti-modal-footer !py-[1rem] !px-[1.25rem]">--}}
-    {{--        <div class="inline-flex rounded-md  shadow-sm">--}}
-    {{--          <button type="button"--}}
-    {{--            class="ti-btn-group !px-[0.75rem] !py-[0.45rem]  rounded-s-[0.25rem] !rounded-e-none ti-btn-primary !text-[0.75rem] dark:border-white/10">--}}
-    {{--            Search--}}
-    {{--          </button>--}}
-    {{--          <button type="button"--}}
-    {{--            class="ti-btn-group  ti-btn-primary-full rounded-e-[0.25rem] dark:border-white/10 !text-[0.75rem] !rounded-s-none !px-[0.75rem] !py-[0.45rem]">--}}
-    {{--            Clear Recents--}}
-    {{--          </button>--}}
-    {{--        </div>--}}
-    {{--      </div>--}}
-    {{--    </div>--}}
-    {{--  </div>--}}
-    {{--</div>--}}
-    <!-- ========== END Search Modal ========== -->
 
     <!-- Footer Start -->
     @include('components.footer')
     <!-- Footer End -->
 
+
+</div>
+
+
+
+<div id="successtoast" class="hiddensuccesstoast" style="position: absolute;z-index: 5000;top:0;left:15%">
+    <div class="ti-toast bg-success/10 text-sm text-success" role="alert">
+        <div id="successtoasttext" class="flex p-4">
+            Hello, world! This is a toast message.
+
+        </div>
+    </div>
 </div>
 
 <!-- Back To Top -->
@@ -610,19 +548,21 @@
 
 <!-- Custom JS -->
 <script src="{{asset('assets/js/custom.js')}}"></script>
+<script src="{{asset('assets/js/createappvalidation.js')}}"></script>
 
 
 {{--    Datatables--}}
 
 
 <script src="{{asset('assets/js/datatables/datatableJquery.js')}}"></script>
-<script src="{{asset('assets/js/datatables/dataTables.js')}}"></script>
+<script src="{{asset('assets/js/datatables/datatables.js')}}"></script>
 <script src="{{asset('assets/js/datatables/datatables.buttons.js')}}"></script>
 <script src="{{asset('assets/js/datatables/jszip.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables/buttons.html5.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables/buttons.print.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables/buttons.colVis.min.js')}}"></script>
 <script src="{{asset('assets/js/datatables/dataTables.colReorder.js')}}"></script>
+
 
 {{--App Datatable--}}
 <script>
@@ -632,9 +572,9 @@
         lengthMenu: [10, 100, 150, {label: 'All', value: -1}],
 
         columnDefs: [
-            {orderable: false, targets: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]}
+            {orderable: false, targets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]}
         ],
-
+        order: [[0, 'desc']],
 
         // lengthMenu: [ {label: 'All', value: -1}],
         language: {
@@ -772,6 +712,54 @@
 
 
 </script>
+{{-- Potential Customers Datatable--}}
+<script>
+
+    let potentialclients = new DataTable('#potentialclients', {
+        //Generall SETTINGS
+        lengthMenu: [50, 100, 150, {label: 'All', value: -1}],
+
+        columnDefs: [
+            {orderable: true, targets: [0, 1, 2]}
+        ],
+
+
+        // lengthMenu: [ {label: 'All', value: -1}],
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/2.0.5/i18n/ka.json',
+        },
+
+        scrollX: true,
+        scrollY: 700,
+
+
+        layout: {
+
+            topStart: {
+                buttons: ['pageLength', 'colvis','excel',
+                    {
+                        text: ' დამატება',
+                        action: function (e, dt, node, config) {
+
+                            document.getElementById('addclient').click()
+                        }
+                    }
+                ],
+                // pageLength: {
+                //   menu: [ 10, 25, 50, 100,5000 ]
+                // }
+            },
+
+            topEnd: {
+                search: '',
+            }
+        },
+
+
+    });
+
+
+</script>
 {{--Users Datatable--}}
 <script>
 
@@ -782,7 +770,7 @@
         columnDefs: [
             {orderable: true, targets: [0, 1, 2]}
         ],
-
+        order: [[0, 'desc']],
 
         // lengthMenu: [ {label: 'All', value: -1}],
         language: {
@@ -811,13 +799,11 @@
                 search: '',
             }
         },
-
-
     });
 
 
 </script>
-{{--    add Company--}}
+{{--  add new Company in create/edit app--}}
 <script>
     let newcompany = document.getElementById('newcompany');
 
@@ -861,7 +847,7 @@
 
 </script>
 
-{{--add Comment--}}
+{{--add Comment   commented because same is in htmx--}}
 {{--@if(request()->routeIs('app.edit'))--}}
 <script>
     // let newcomment = document.getElementById('newcomment');
@@ -883,135 +869,221 @@
 </script>
 {{--@endif--}}
 
-{{--CarsJson--}}
-@if(request()->routeIs('main'))
-    <script>
+{{--Cars Tomselect--}}
 
-        {{--let carsData = {!! $carsJson !!};--}}
-
-        // CARS
-        let make = document.getElementById('carsselect');
-
-        let carselect = new TomSelect("#carsselect", {
-            create: true,
-            sortField: {
-                field: "text",
-                direction: "asc"
-            }
-        });
-
-
-        // htmx.on('htmx:afterRequest', (evt)=> {
-        //
-        //
-        //
-        // })
-
-
-    </script>
-
-    <script>
-        //reinitialize htmx
-        document.getElementById('example').addEventListener('mouseover', () => {
-            htmx.process(document.getElementById('example'))
-        })
-
-
-        // htmx request Details
-
-        // htmx.on('htmx:afterRequest', (evt)=> {
-        //     console.log("returns true if the request was successful", evt.detail.successful);
-        //     console.log("The element that dispatched the request: ", evt.detail.elt);
-        //     console.log("The XMLHttpRequest: ", evt.detail.xhr);
-        //     console.log("The target of the request: ", evt.detail.target);
-        //     console.log("The configuration of the AJAX request: ", evt.detail.requestConfig);
-        //     console.log("The event that triggered the request: ", evt.detail.requestConfig.triggeringEvent);
-        //     console.log("True if the response has a 20x status code or is marked detail.isError = false in the htmx:beforeSwap event, else false: ", evt.detail.successful);
-        //     console.log("true if the response does not have a 20x status code or is marked detail.isError = true in the htmx:beforeSwap event, else false: ", evt.detail.failed);
-        // });
-
-        // This event is triggered when a new node is loaded into the DOM by htmx.
-        // for example we return div from backend
-
-        //        htmx.on('htmx:load',(e)=>{
-        //
-        //            console.log(e)
-        //        })
-
-
-        // add the class 'myClass' to the element with the id 'demo' after 1 second
-        // htmx.addClass(htmx.find('#id'), 'myClass', 1000);
-
-
-    </script>
-@endif
-
-{{--Create new App Validation--}}
 <script>
 
-    const createmodal = document.getElementById('hs-large-modal');
-    createmodal.addEventListener('mouseover', () => {
-        let customerpid = document.getElementById('storepid');
-        let customername = document.getElementById('storename');
-        let customermobile = document.getElementById('storemobile');
-        let newappsubmit = document.getElementById('newappsubmit');
+    {{--let carsData = {!! $carsJson !!};--}}
 
-        // All three is a must parameter
-        if (customerpid.value == "") {
-            customerpid.style.border = "1px solid red";
-        } else {
-            customerpid.style.border = "1px solid green";
+    // CARS
+    let make = document.getElementById('carsselect');
+
+    let carselect = new TomSelect("#carsselect", {
+        create: true,
+        sortField: {
+            field: "text",
+            direction: "asc"
         }
-        if (customername.value == "") {
-            customername.style.border = "1px solid red";
-        } else {
-            customername.style.border = "1px solid green";
-        }
-        if (customermobile.value == "") {
-            customermobile.style.border = "1px solid red";
-        } else {
-            customermobile.style.border = "1px solid green";
-        }
-          // if all three are OK then show button
-        if (customerpid.value == "" || customername.value == "" || customermobile.value == "") {
-            newappsubmit.style.display = 'none';
-        } else {
-            newappsubmit.style.display = 'block';
-        }
-
-        const errorMessage = document.getElementById('errorMessage');
-        const errorMessage2 = document.getElementById('errorMessage2');
-
-        // PID must be numbers and 11 digits
-        customerpid.addEventListener('input', function () {
-            // Remove non-numeric characters
-            this.value = this.value.replace(/\D/g, '');
-
-            // Display error message if input length is not 11
-            if (this.value.length !== 11) {
-                errorMessage.style.display = 'block';
-            } else {
-                errorMessage.style.display = 'none';
-            }
-
-        })
-
-        // mobile must be numbers and 9 digits
-        customermobile.addEventListener('input', function () {
-            // Remove non-numeric characters
-            this.value = this.value.replace(/\D/g, '');
-
-            // Display error message if input length is not 11
-            if (this.value.length !== 9) {
-                errorMessage2.style.display = 'block';
-            } else {
-                errorMessage2.style.display = 'none';
-            }
-        })
+    });
 
 
-    })
+
+
 </script>
+
+<script>
+
+    // htmx request Details
+
+    // htmx.on('htmx:afterRequest', (evt)=> {
+    //     console.log("returns true if the request was successful", evt.detail.successful);
+    //     console.log("The element that dispatched the request: ", evt.detail.elt);
+    //     console.log("The XMLHttpRequest: ", evt.detail.xhr);
+    //     console.log("The target of the request: ", evt.detail.target);
+    //     console.log("The configuration of the AJAX request: ", evt.detail.requestConfig);
+    //     console.log("The event that triggered the request: ", evt.detail.requestConfig.triggeringEvent);
+    //     console.log("True if the response has a 20x status code or is marked detail.isError = false in the htmx:beforeSwap event, else false: ", evt.detail.successful);
+    //     console.log("true if the response does not have a 20x status code or is marked detail.isError = true in the htmx:beforeSwap event, else false: ", evt.detail.failed);
+    // });
+
+    // This event is triggered when a new node is loaded into the DOM by htmx.
+    // for example we return div from backend
+
+    //        htmx.on('htmx:load',(e)=>{
+    //
+    //            console.log(e)
+    //        })
+
+
+    // add the class 'myClass' to the element with the id 'demo' after 1 second
+    // htmx.addClass(htmx.find('#id'), 'myClass', 1000);
+
+
+</script>
+
+
+{{--  HTMX--}}
+<script>
+
+    //reinitialize htmx , because its not working on datatables pagination
+    document.getElementById('example').addEventListener('mouseover', () => {
+        htmx.process(document.getElementById('example'))
+    })
+
+
+    document.addEventListener('htmx:afterOnLoad', function (event) {
+        // Check errors if any
+        let response = event.detail.xhr.response;
+        // console.log(response)
+
+// check which button send the request
+        const initiator = event.target;
+
+
+        const xhr = event.detail.xhr;
+        // Check for a successful response
+        if (xhr.status === 200) {
+            //  after success clear form
+            const form = document.getElementById('htmxstore');
+            form.reset();
+            document.getElementById('errors').innerHTML = "";
+
+            // CREATING NEW APP
+            if (initiator.id === 'newappsubmit') {
+                document.getElementById('closecreatemodal').click();
+
+                // issue notification
+                document.getElementById('toggleButton').addEventListener('click', function () {
+                    let element = document.getElementById('successtoast');
+                    document.getElementById('successtoasttext').innerHTML='განაცხადი წარმატებით დაემატა';
+                    element.classList.remove('hiddensuccesstoast');
+                    element.classList.add('showtoast');
+
+                    setTimeout(function () {
+                        element.classList.remove('showtoast');
+                        element.classList.add('hiddensuccesstoast');
+
+                    }, 2700); // Small delay to ensure the transition is triggered
+                });
+                document.getElementById('toggleButton').click();
+
+            }
+            if (initiator.id === 'editappsubmit') {
+                document.getElementById('closeeditmodal').click();
+
+                document.getElementById('toggleButton').addEventListener('click', function () {
+                    let element = document.getElementById('successtoast');
+                    document.getElementById('successtoasttext').innerHTML='განაცხადი წარმატებით დარედაქტირდა';
+                    element.classList.remove('hiddensuccesstoast');
+                    element.classList.add('showtoast');
+
+                    setTimeout(function () {
+                        element.classList.remove('showtoast');
+                        element.classList.add('hiddensuccesstoast');
+
+                    }, 2700); // Small delay to ensure the transition is triggered
+                });
+                document.getElementById('toggleButton').click();
+
+            }
+        }
+    });
+
+
+</script>
+
+{{--SUCCESS TOAST--}}
+
+
+<script>
+
+    // notification , when admin changes password for user
+    document.querySelectorAll('.userpasschange').forEach((element) => {
+        element.addEventListener('click', () => {
+            let element = document.getElementById('successtoast');
+
+            document.getElementById('successtoasttext').innerHTML='პაროლი წარმატებით შეიცვალა';
+            element.classList.remove('hiddensuccesstoast');
+            element.classList.add('showtoast');
+
+            setTimeout(function () {
+                element.classList.remove('showtoast');
+                element.classList.add('hiddensuccesstoast');
+
+            }, 2700); // Small delay to ensure the transition is triggered
+        })
+    })
+
+
+    document.getElementById('userchangepassword').addEventListener('click', () => {
+        let element = document.getElementById('successtoast');
+
+        document.getElementById('successtoasttext').innerHTML='პაროლი წარმატებით შეიცვალა';
+        element.classList.remove('hiddensuccesstoast');
+        element.classList.add('showtoast');
+
+        setTimeout(function () {
+            element.classList.remove('showtoast');
+            element.classList.add('hiddensuccesstoast');
+
+        }, 2700); // Small delay to ensure the transition is triggered
+    })
+
+
+
+</script>
+
+{{--  SSE SCRIPT--}}
+<script>
+    if (!!window.EventSource) {
+        const source = new EventSource('/notifications/sse');
+
+        source.onmessage = function (event) {
+
+            if(event.data !== ""){
+                var notifications = JSON.parse(event.data)
+            }
+
+
+            const notificationcircles = document.getElementById('notificationcircles')
+            const notificationbadge = document.getElementById('notification-icon-badge')
+
+            if(event.data === ""){
+                // console.log("no notifications")
+                notificationbadge.style.display = "none"
+                notificationcircles.style.display = "none"
+
+            }else{
+                let count = notifications.length
+
+                notificationbadge.style.display = "block"
+                notificationcircles.style.display = "block"
+                notificationbadge.innerHTML = count
+
+            }
+
+        };
+
+
+
+    //     source.onerror = function (event) {
+    //         console.error("EventSource failed:", event);
+    //     };
+    // } else {
+    //     console.log("Your browser does not support SSE");
+    }
+
+</script>
+
+
+{{--Disable inputs--}}
+
+{{--<script>--}}
+{{--    document.querySelectorAll('[data-disabled-input]').forEach((input) => {--}}
+
+{{--        input.disabled = true--}}
+{{--    })--}}
+{{--</script>--}}
 
 </body>
 

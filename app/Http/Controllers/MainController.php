@@ -11,7 +11,6 @@ use App\Models\Product;
 use App\Models\Source;
 use App\Models\Status;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
 
 class MainController extends Controller
 {
@@ -31,7 +30,7 @@ class MainController extends Controller
             'car:id,make',
             'comments.user:id,name',
             'user:id,name',
-            'companies:id,name'
+//            'companies:id,name'
         ])  ->latest()
             ->limit(100)
             ->get();
@@ -102,7 +101,8 @@ class MainController extends Controller
             'comments.user:id,name',
             'user:id,name',
             'companies:id,name'
-        ])  ->latest()
+        ])  ->orderBy('created_at', 'desc')
+            ->latest()
             ->limit(300)
             ->get();
 

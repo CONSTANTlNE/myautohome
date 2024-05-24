@@ -89,48 +89,30 @@
                             </li>
                             @endrole
 
-                            <li>
-                                <a data-hs-overlay="#detailsmodal" href="javascript:void(0);"
-                                   hx-get="{{route('htmxdetails', $application->id)}}"
-                                   hx-target="#detailtarget"
-                                   hx-triger="click"
+{{--                            <li>--}}
+{{--                                <a data-hs-overlay="#detailsmodal" href="javascript:void(0);"--}}
+{{--                                   hx-get="{{route('htmxdetails', $application->id)}}"--}}
+{{--                                   hx-target="#detailtarget"--}}
+{{--                                   hx-trigger="click"--}}
 
-                                   class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
-                                >დეტალურად</a>
-                            </li>
-                            <li hx-get="{{route('edit.htmx', $application->id)}}"
-                                hx-target="#edittarget"
-                                hx-triger="click">
-                                <a data-hs-overlay="#editmodal" href="javascript:void(0);"
-                                   class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
+{{--                                   class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"--}}
+{{--                                >დეტალურად</a>--}}
+{{--                            </li>--}}
 
+{{--                            @if($application->user->id == auth()->user()->id || auth()->user()->hasRole('admin'))--}}
 
-                                >რედაქტირება</a>
-                            </li>
-                            @if($application->user->id == auth()->user()->id  && auth()->user()->hasRole('operator'))
-
-                                <li hx-get="{{route('edit.htmx', $application->id)}}"
+                                <li
+                                    hx-get="{{route('edit.htmx', $application->id)}}"
                                     hx-target="#edittarget"
-                                    hx-triger="click">
+                                   hx-indicator="#indicator"
+                                >
                                     <a data-hs-overlay="#editmodal" href="javascript:void(0);"
                                        class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
-
-
-                                    >რედაქტირება</a>
+                                    >დეტალურად</a>
                                 </li>
 
-                            @endif
                             {{--ADMIN ROUTES--}}
-                            @role('admin')
-                            <li hx-get="{{route('edit.htmx', $application->id)}}"
-                                hx-target="#edittarget"
-                                hx-triger="click">
-                                <a data-hs-overlay="#editmodal" href="javascript:void(0);"
-                                   class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
-                                >რედაქტირება</a>
-                            </li>
-
-                            @endrole
+                            @hasanyrole('admin|developer')
                             <li>
                                 <a href="javascript:void(0);"
                                    class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
@@ -139,6 +121,8 @@
 
                                 </a>
                             </li>
+                            @endhasanyrole
+
 
                         </ul>
 
@@ -169,5 +153,6 @@
         </tr>
         </tfoot>
     </table>
+
 
 @endsection

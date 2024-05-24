@@ -1,6 +1,4 @@
-@extends('layout')
 
-@section('other')
    <div class="grid grid-cols-12 gap-4">
       <div class="xl:col-span-3 col-span-12">
          <div class="box">
@@ -320,6 +318,7 @@
          </div>
       </div>
    </div>
+
    <div class="grid grid-cols-12  gap-6">
       <div class="xl:col-span-3 col-span-12">
          <div class="box custom-box">
@@ -773,5 +772,3 @@
 
       </div>
    </div>
-@endsection
-

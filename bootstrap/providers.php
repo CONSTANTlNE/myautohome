@@ -7,4 +7,5 @@ return [
     Maatwebsite\Excel\ExcelServiceProvider::class,
     Spatie\Permission\PermissionServiceProvider::class,
     Barryvdh\Debugbar\ServiceProvider::class,
+
 ];

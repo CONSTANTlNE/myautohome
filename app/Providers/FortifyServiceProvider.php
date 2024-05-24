@@ -17,6 +17,7 @@ use Laravel\Fortify\Contracts\LoginResponse;
 use Laravel\Fortify\Contracts\LogoutResponse;
 use Laravel\Fortify\Fortify;
 
+
 class FortifyServiceProvider extends ServiceProvider
 {
     /**
@@ -36,9 +37,7 @@ class FortifyServiceProvider extends ServiceProvider
         $this->app->instance(LogoutResponse::class, new class implements LogoutResponse {
             public function toResponse($request)
             {
-                $now = Carbon::now('Asia/Tbilisi');
-
-                Log::channel('login_logout')->info('მომხმარებელი : ' . auth()->user()->name . ' გავიდა სისტემიდან  '  . $now->format('Y-m-d H:i:s'));                return redirect(route('login'));
+                return redirect(route('login'));
             }
         });
 
