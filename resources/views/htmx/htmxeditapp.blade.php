@@ -15,18 +15,18 @@
         <button style="max-width:250px!important;" class="form-control text-center " disabled type="text"
                value="">{{$application->created_at}}</button>
     </div>
-    @if($application->created_at !== $application->updated_at)
+    @if($application->created_at->format('Y-m-d H:i:s') !== $application->updated_at->format('Y-m-d H:i:s'))
     <div class="text-center">
         <p>ბოლო განახლება</p>
-        <button style="max-width:250px!important;z-index: -5;" class="form-control text-center " disabled type="text"
-                value="">  <a style="z-index: 200" target="_blank" href="{{route('customlogviewer',['query'=>$application->number])}}">{{$application->updated_at}} </a>
+        <button style="max-width:250px!important;z-index: -5;color: red!important" class="form-control text-center " disabled type="text"
+                value="">  <a style="z-index: 200;color: red!important;" target="_blank" href="{{route('customlogviewer',['query'=>$application->number])}}">{{$application->updated_at}} </a>
         </button>
     </div>
     @endif
 </div>
 <div class="flex justify-center w-full">
     <form style="max-width: 650px!important;background-color: rgb(var(--body-bg));padding: 20px"
-          @if($userid==$application->user->id)
+          @if($userid==$application->user->id || auth()->user()->hasanyrole('admin|developer'))
               action="{{route('app.update')}}"
           @else
               action="{{route('update2.htmx')}}"
@@ -254,7 +254,7 @@
             </div>
         </div>
         <button
-                @if($userid===$application->user_id)
+                @if($userid==$application->user->id || auth()->user()->hasanyrole('admin|developer'))
                     hx-post="{{route('update.htmx')}}"
                 @else
                     hx-post="{{route('update2.htmx')}}"
@@ -271,7 +271,7 @@
 
 
 {{--If app was not created by user, disable inputs--}}
-@if(auth()->user()->id!==$application->user_id)
+@if($userid!==$application->user->id && auth()->user()->hasanyrole('operator'))
     <script>
         document.querySelectorAll('[data-disabled-input]').forEach((input) => {
 

@@ -300,6 +300,7 @@ class ApplicationController extends Controller
 
     }
 
+
     public function details($id)
     {
 
@@ -447,10 +448,10 @@ class ApplicationController extends Controller
             'source:id,name',
             'status:id,name',
             'product:id,name',
-            'car:id,make',
+//            'car:id,make',
             'comments.user:id,name',
             'user:id,name',
-            'companies:id,name'
+//            'companies:id,name'
         ])->orderBy('created_at', 'desc')
             ->latest()
             ->limit(300)
@@ -508,10 +509,10 @@ public function htmxupdate(Request $request){
         'source:id,name',
         'status',
         'product:id,name',
-        'car:id,make',
+//        'car:id,make',
         'comments.user:id,name',
         'user:id,name',
-        'companies:id,name'
+
     ])  ->orderBy('created_at', 'desc')
         ->latest()
         ->limit(300)
@@ -827,7 +828,9 @@ public function htmxupdate(Request $request){
 
 
     //  Attach new or change company
-    foreach ($validated['company'] as $company) {
+    $counter = 0;
+    $totalApplications = count($validated['company']);
+    foreach ($validated['company'] as $indexcompany => $company) {
 
         if (!in_array($company, $app->companies->pluck('id')->toArray())) {
             foreach ($users as $user) {
@@ -844,7 +847,17 @@ public function htmxupdate(Request $request){
             Log::channel('changes')->info('განაცხადში No: '.$app->number.'  დაემატა კომპანია: '.$companies->where('id',
                     $company)->first()->name.'-- ოპერატორი '.auth()->user()->name);
             $app->companies()->attach($company);
+
         }
+
+        $counter++;
+
+        // Check if this is the last iteration
+        if ($indexcompany === $totalApplications - 1) {
+            return view('htmx.htmx' ,compact('companies','statuses','products','sources','applications','cars','counter'));
+
+        }
+
     }
 
     //  Detach company if removed
@@ -864,7 +877,11 @@ public function htmxupdate(Request $request){
             Log::channel('changes')->info('განაცხადში No: '.$app->number.'  წაიშალა კომპანია: '.$companies->where('id',
                     $company->id)->first()->name.'-- ოპერატორი '.auth()->user()->name);
             $app->companies()->detach($company->id);
+
+
         }
+
+
     }
 
      if($request->has('commentids')){
@@ -907,11 +924,17 @@ public function htmxupdate(Request $request){
              $comment->save();
 
          }
+
+
+
+
+
+         return view('htmx.htmx' ,compact('companies','statuses','products','sources','applications','cars','counter'));
+
      }
 
 
 
-    return view('htmx.htmx' ,compact('companies','statuses','products','sources','applications','cars','counter'));
 
 
 }
@@ -940,10 +963,20 @@ public function htmxupdate(Request $request){
                     $request->status)->first()->name.
                 '-- ცვლილება განახორციელა '.auth()->user()->name);
 
+
+            foreach ($users as $user) {
+                if($user->id!=$app->user_id){
+                    $notification = new Notification();
+                    $notification->application_id = $app->id;
+                    $notification->user_id        = $user->id;
+                    $notification->type           = 'შეიცვალა სტატუსი';
+                    $notification->save();
+                }
+            }
+
             $app->status_id = $request->status;
             $app->save();
 
-            echo 'status changed';
 
         }
 
@@ -1009,10 +1042,10 @@ public function htmxupdate(Request $request){
             'source:id,name',
             'status',
             'product:id,name',
-            'car:id,make',
+//            'car:id,make',
             'comments.user:id,name',
             'user:id,name',
-            'companies:id,name'
+
         ])  ->orderBy('created_at', 'desc')
             ->latest()
             ->limit(300)

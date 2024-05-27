@@ -2,7 +2,14 @@
 
     <!-- Start::main-sidebar-header -->
     <div style="padding:0!important" class="main-sidebar-header">
-        <a href="{{route('main')}}" class="header-logo">
+        <a
+                {{--                href="{{route('main')}}" --}}
+                href="javascript:void(0);"
+                hx-get="{{route('main2')}}"
+                hx-target="#main-content"
+                hx-indicator="#indicator"
+                class="header-logo"
+        >
             <img src="{{asset('assets/images/site-logo.svg')}}" alt="logo" class="desktop-logo">
             <img src="{{asset('assets/images/site-logo.svg')}}" alt="logo" class="toggle-logo">
             <img src="{{asset('assets/images/site-logo.svg')}}" alt="logo" class="desktop-dark">
@@ -47,17 +54,26 @@
                             <a href="{{route('users')}}" class="side-menu__item htmxlink">მომხმარებლების მართვა</a>
                         </li>
                         <li class="slide ">
-                            <a hx-get="{{route('htmx.other')}}" hx-push-url="true" hx-trigger="click "
-                               hx-target="#main-content" hx-indicator="#indicator" class="side-menu__item htmxlink">მართვის
+                            <a
+                                    href="{{route('other')}}"
+{{--                                    hx-get="{{route('htmx.other')}}" hx-trigger="click "--}}
+{{--                               hx-target="#main-content" hx-indicator="#indicator"--}}
+                               class="side-menu__item htmxlink">მართვის
                                 პანელი</a>
                         </li>
                         <li class="slide ">
                             <a href="{{route('upload.index')}}" class="side-menu__item htmxlink">ატვირთვა</a>
                         </li>
+{{--                        <li class="slide ">--}}
+{{--                            <button hx-indicator="#indicator" hx-trigger="click throttle:2s" hx-get="{{route('main2')}}"--}}
+{{--                                    hx-target="#main-content" class="side-menu__item htmxlink">მთავარი--}}
+{{--                            </button>--}}
+{{--                        </li>--}}
                         <li class="slide ">
-                            <button hx-indicator="#indicator" hx-trigger="click throttle:2s" hx-get="{{route('main2')}}"
-                                    hx-target="#main-content" class="side-menu__item htmxlink">მთავარი
-                            </button>
+                            <a href="javascript:void(0);" data-hs-overlay="#cars"
+                               class="side-menu__item hs-dropdown-toggle">
+                                <span class="side-menu__label">ავტომობილის დამატება</span>
+                            </a>
                         </li>
                     </ul>
                 </li>
@@ -71,7 +87,13 @@
                     </a>
                 </li>
                 <li class="slide ">
-                    <a href="{{route('potential.clients')}}" class="side-menu__item">
+                    <a
+                            {{--                            href="{{route('potential.clients')}}" --}}
+                            href="javascript:void(0);"
+                            hx-get="{{route('htmx.potential.clients')}}"
+                            hx-indicator="#indicator"
+                            hx-target="#main-content"
+                            class="side-menu__item">
                         <span style="color:orange;margin-right: 5px" class="material-symbols-outlined">group</span>
                         <span class="side-menu__label">პოტენციური კლიენტები</span>
                     </a>
@@ -131,5 +153,68 @@
             </form>
         </div>
         <iframe name="hidden_iframe" style="display:none;"></iframe>
+    </div>
+</div>
+{{--    ADD new Car Modal--}}
+<div id="cars" class="hs-overlay hidden ti-modal">
+    <div class="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out">
+        <div class="ti-modal-content">
+            <form action="{{route('cars.add')}}" method="post"
+                  target="hidden_iframe2"
+            >
+                @csrf
+                <div class="ti-modal-header">
+                    <h6 class="modal-title text-[1rem] font-semibold">
+                        ახალი მწარმოებლის და მოდელის დამატება
+                    </h6>
+                    <button type="button" class="hs-dropdown-toggle !text-[1rem] !font-semibold !text-defaulttextcolor"
+                            data-hs-overlay="#cars">
+                        <span class="sr-only">Close</span>
+                        <i class="ri-close-line"></i>
+                    </button>
+                </div>
+                <div class="ti-modal-body px-4">
+                    <div class="md:col-span-3  col-start-2 col-span-12 mb-4">
+                        <label class="form-label">ახალი მწარმოებელი</label>
+                        <input name="newcar" type="text" class="form-control" aria-label="newcar">
+                    </div>
+                    <div class="md:col-span-3  col-start-2 col-span-12 mb-4">
+                        <label class="form-label">მოდელი</label>
+                        <input name="newmodel" type="text" class="form-control" aria-label="newmodel">
+                    </div>
+                </div>
+                <div class="ti-modal-header">
+                    <h6 class="modal-title text-[1rem] font-semibold">
+                        არსებულ მწარმოებელზე ახალი მოდელის დამატება
+                    </h6>
+                </div>
+                <div class="ti-modal-body px-4">
+                    <div class="md:col-span-3  col-start-2 col-span-12 mb-4">
+                        <label class="form-label">არსებული მწარმოებელი</label>
+
+                        <select
+                                aria-label="car" name="existingcar" class="ti-form-select rounded-sm !p-0"
+                                id="carsselect2"
+                                autocomplete="off">
+                            <option></option>
+                            @foreach($cars as $car)
+                                <option value="{{$car->id}}">{{$car->make}}</option>
+                            @endforeach
+
+                        </select>
+                    </div>
+                    <div class="md:col-span-3  col-start-2 col-span-12 mb-4">
+                        <label class="form-label">ახალი მოდელი</label>
+                        <input name="newmodel2" type="text" class="form-control" aria-label="newmodel2">
+                    </div>
+                </div>
+                <div class="ti-modal-footer">
+                    <button id="" type="submit" data-hs-overlay="#cars"
+                            class="ti-btn bg-primary text-white !font-medium">დამატება
+                    </button>
+                </div>
+            </form>
+        </div>
+        <iframe name="hidden_iframe2" style="display:none;"></iframe>
     </div>
 </div>

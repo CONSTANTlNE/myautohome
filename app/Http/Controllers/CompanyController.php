@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\Product;
+use App\Models\Source;
+use App\Models\Status;
 use Illuminate\Http\Request;
 
 class CompanyController extends Controller
@@ -12,7 +15,9 @@ class CompanyController extends Controller
         $company = new Company();
         $company -> name = $request -> name;
         $company -> save();
-        return back();
+
+//        return view('htmx.other', compact('companies', 'statuses', 'products', 'sources'));
+        return back()   ;
 
     }
 
@@ -23,7 +28,10 @@ class CompanyController extends Controller
         $company = Company::find($request->id);
         $company -> name = $request -> name;
         $company -> save();
-        return back();
+
+
+//        return view('htmx.other', compact('companies', 'statuses', 'products', 'sources'));
+        return back()   ;
 
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Models\Car;
 use App\Models\Source;
 use App\Models\Status;
 use App\Models\User;
@@ -17,8 +18,9 @@ class UserController extends Controller
     {
 //        $users = User::withCount('applications')->get();
         $users = User::with('roles')->withCount('applications')->get();
+        $cars = Car::all();
 
-        return view('pages.users', compact('users', ));
+        return view('pages.users', compact('users','cars' ));
     }
 
 

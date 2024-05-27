@@ -24,6 +24,10 @@ use Illuminate\Support\Facades\Session;
 //    return view('login');
 //});
 
+Route::fallback(function () {
+    return redirect()->route('main');
+});
+
 
 Route::group(['middleware' => 'auth'], function () {
     Route::get('/',[MainController::class, 'index'])->name('main');
@@ -47,7 +51,9 @@ Route::group(['middleware' => 'auth'], function () {
     //  Admin
     Route::get('/admin/users',[UserController::class, 'index'])->name('users');
 //    Route::get('/admin/manage',[PanelController::class, 'manage'])->name('other');
-    Route::get('/admin/manage',[PanelController::class, 'index'])->name('htmx.other');
+    Route::get('/admin/manage',[PanelController::class, 'index'])->name('other');
+    Route::get('/admin/htmx/manage',[PanelController::class, 'htmxindex'])->name('htmx.other');
+    Route::post('/admin/cars/add',[PanelController::class, 'addCar'])->name('cars.add');
     Route::post('/admin/company/create',[CompanyController::class, 'store'])->name('company.create');
     Route::post('/admin/company/update',[CompanyController::class, 'update'])->name('company.update');
     Route::post('/admin/product/create',[ProductController::class, 'store'])->name('product.create');
@@ -74,6 +80,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('app/clients/potential',[ClientController::class, 'potentialIndex'])->name('potential.clients');
     Route::post('app/clients/potential/create',[ClientController::class, 'createPotential'])->name('potential.clients.create');
     Route::post('app/clients/potential/update',[ClientController::class, 'updatePotential'])->name('potential.clients.update');
+    Route::get('app/clients/potential/htmx',[ClientController::class, 'htmxpotentialIndex'])->name('htmx.potential.clients');
+    Route::post('app/clients/potential/htmx/create',[ClientController::class, 'htmxcreatePotential'])->name('htmx.potential.clients.create');
+    Route::post('app/clients/potential/htmx/update',[ClientController::class, 'htmxupdatePotential'])->name('htmx.potential.clients.update');
 
     // changepassword
     Route::post('password/change',[UserController::class, 'changePassword'])->name('password.change');
@@ -93,26 +102,25 @@ Route::get('/uploads',[UploadController::class, 'index'])->name('upload.index');
 Route::post('/uploads/cars',[UploadController::class, 'carUpload'])->name('upload.cars');
 Route::get('randuser',function(){
     return User::inRandomOrder()->first()->id;
-
-});
-
-Route::get('session',function(){
-
-    Session::forget(['request_counter2']);
-
 });
 
 
 
-Route::get('notifications',function(){
 
-    $notification = new Notification();
-    $notification->application_id =25;
-    $notification->user_id        = auth()->user()->id;
-    $notification->type           = 'დაემატა ახალი კომენტარი';
-    $notification->save();
+// for different testing
 
-//    return view('htmx.htmxnotifications');
+
+Route::get('memory',function(){
+
+    $memoryUsage = memory_get_usage();
+    $memoryUsageMB = $memoryUsage / 1048576;
+    echo 'Current memory usage: ' . $memoryUsageMB . ' MB';
+});
+
+Route::get('memory2',function(){
+
+    $output = shell_exec('free -m');
+    echo "<p>$output</p>";
 
 });
 

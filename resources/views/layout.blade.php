@@ -572,7 +572,7 @@
         lengthMenu: [10, 100, 150, {label: 'All', value: -1}],
 
         columnDefs: [
-            {orderable: false, targets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]}
+            {orderable: false, targets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
         ],
         order: [[0, 'desc']],
 
@@ -651,12 +651,12 @@
             .search(this.value)
             .draw();
     });
-    $('#col9').on('keyup', function () {
-        table
-            .columns(8)
-            .search(this.value)
-            .draw();
-    });
+    // $('#col9').on('keyup', function () {
+    //     table
+    //         .columns(8)
+    //         .search(this.value)
+    //         .draw();
+    // });
     $('#col10').on('keyup', function () {
         table
             .columns(9)
@@ -886,6 +886,16 @@
         }
     });
 
+    // for new cars modal
+    let make2 = document.getElementById('carsselect2');
+
+    let carselect2 = new TomSelect("#carsselect2", {
+        create: true,
+        sortField: {
+            field: "text",
+            direction: "asc"
+        }
+    });
 
 
 
@@ -936,9 +946,10 @@
         let response = event.detail.xhr.response;
         // console.log(response)
 
+
 // check which button send the request
         const initiator = event.target;
-
+        // console.log(initiator)
 
         const xhr = event.detail.xhr;
         // Check for a successful response
@@ -1043,7 +1054,6 @@
             if(event.data !== ""){
                 var notifications = JSON.parse(event.data)
             }
-
 
             const notificationcircles = document.getElementById('notificationcircles')
             const notificationbadge = document.getElementById('notification-icon-badge')

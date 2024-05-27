@@ -16,7 +16,7 @@
             <td><input type="text" id="col6" class="form-control searchinput"></td>
             <td><input type="text" id="col7" class="form-control searchinput"></td>
             <td><input type="text" id="col8" class="form-control searchinput"></td>
-            <td><input type="text" id="col9" class="form-control searchinput"></td>
+{{--            <td><input type="text" id="col9" class="form-control searchinput"></td>--}}
             <td><input type="text" id="col10" class="form-control searchinput"></td>
             <td><input type="text" id="col11" class="form-control searchinput"></td>
             <td></td>
@@ -32,7 +32,7 @@
             <th style="text-align: center">წყარო</th>
             <th style="text-align: center;width: 100px!important">სტატუსი</th>
             <th style="text-align: center">პროდუქტი</th>
-            <th style="text-align: center">კომპანია</th>
+{{--            <th style="text-align: center">კომპანია</th>--}}
             <th style="text-align: center">ბოლო კომენტარი</th>
             <th style="text-align: center">მოქმედება</th>
         </tr>
@@ -53,14 +53,13 @@
                 <td>{{$application->source->name}}</td>
                 <td style="text-align: center!important;width: 100px;!important;white-space: normal !important">
                     <span  style="font-size: 15px;text-align: center!important" class="{{$application->status->color}}">{{$application->status->name}}</span>
-
                 </td>
                 <td>{{$application->product->name}}</td>
-                <td>
-                    @foreach($application->companies as $index2c=> $company)
-                        {{$company->name}}<br>
-                    @endforeach
-                </td>
+{{--                <td>--}}
+{{--                    @foreach($application->companies as $index2c=> $company)--}}
+{{--                        {{$company->name}}<br>--}}
+{{--                    @endforeach--}}
+{{--                </td>--}}
                 <td>{{$application->comments->last()?->comment}}</td>
 
                 <td>
@@ -145,7 +144,7 @@
             <th>წყარო</th>
             <th>სტატუსი</th>
             <th>პროდუქტი</th>
-            <th>კომპანია</th>
+{{--            <th>კომპანია</th>--}}
             <th>ბოლო კომენტარი</th>
             <th>მოქმედება</th>
 

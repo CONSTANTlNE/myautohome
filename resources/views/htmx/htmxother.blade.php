@@ -8,7 +8,7 @@
                </div>
 
             </div>
-            <form action="{{route('company.create')}}" method="post">
+            <form action="{{route('company.create')}}" method="post" target="hidden_iframe">
                @csrf
                <div class="box-body">
 
@@ -36,7 +36,7 @@
                </div>
 
             </div>
-            <form action="{{route('product.create')}}" method="post">
+            <form action="{{route('product.create')}}" method="post" target="hidden_iframe">
                @csrf
                <div class="box-body">
 
@@ -64,7 +64,7 @@
                </div>
 
             </div>
-            <form action="{{route('status.create')}}" method="post">
+            <form action="{{route('status.create')}}" method="post" target="hidden_iframe">
                @csrf
                <div class="box-body">
 
@@ -195,7 +195,7 @@
                </div>
 
             </div>
-            <form action="{{route('source.create')}}" method="post">
+            <form action="{{route('source.create')}}" method="post" target="hidden_iframe">
                @csrf
                <div class="box-body">
 
@@ -355,13 +355,11 @@
                                              <i class="ri-close-line"></i>
                                           </button>
                                        </div>
-                                       <form action="{{route('company.update')}}" method="post">
+                                       <form action="{{route('company.update')}}" method="post" >
                                           <input type="hidden"  name="id" value="{{$company->id}}">
                                        <div class="ti-modal-body px-4">
-
                                                 @csrf
                                                 <div class="box-body">
-
                                                    <div class="mb-4">
                                                       <label for="form-password" class="form-label text-[.875rem] text-black">
                                                          დასახელება</label> <br>
@@ -377,7 +375,11 @@
                                                   data-hs-overlay="#todo-compose{{$index}}">
                                              გაუქმება
                                           </button>
-                                          <button type="submit" class="ti-btn bg-primary text-white !font-medium">განახლება</button>
+                                          <button
+                                                  data-hs-overlay="#todo-compose{{$index}}"
+                                                  hx-post="{{route('company.update')}}" hx-trigger="click "
+                                                  hx-target="#main-content" hx-indicator="#indicator"
+                                                  type="submit" class="ti-btn bg-primary text-white !font-medium">განახლება</button>
                                        </div>
 
                                        </form>
@@ -436,7 +438,7 @@
                                                 <i class="ri-close-line"></i>
                                              </button>
                                           </div>
-                                          <form action="{{route('product.update')}}" method="post">
+                                          <form action="{{route('product.update')}}" method="post" >
                                              <input type="hidden"  name="id" value="{{$product->id}}">
                                              <div class="ti-modal-body px-4">
 
@@ -458,7 +460,10 @@
                                                         data-hs-overlay="#product{{$index}}">
                                                    გაუქმება
                                                 </button>
-                                                <button type="submit" class="ti-btn bg-primary text-white !font-medium">განახლება</button>
+                                                <button
+                                                        hx-get="{{route('htmx.other')}}" hx-trigger="click "
+                                                        hx-target="#main-content" hx-indicator="#indicator"
+                                                        type="submit" class="ti-btn bg-primary text-white !font-medium">განახლება</button>
                                              </div>
 
                                           </form>
@@ -566,7 +571,7 @@
                               <a href="javascript:void(0);" class="hs-dropdown-toggle ti-btn ti-btn-sm ti-btn-info !rounded-full" data-hs-overlay="#colorupdate{{$index}}">
                                  <i class="ri-edit-line"></i>
                               </a>
-                                 <form action="{{route('status.update')}}" method="post">
+                                 <form action="{{route('status.update')}}" method="post" target="hidden_iframe">
                                     @csrf
                                     <input type="hidden"  name="id" value="{{$status->id}}">
                               <div id="colorupdate{{$index}}" class="hs-overlay hidden ti-modal">
@@ -765,7 +770,7 @@
             </div>
             <div class="box-footer border-t-0">
                <!-- Prism Code -->
-
+               <iframe src=""  frameborder="0"></iframe>
                <!-- Prism Code -->
             </div>
          </div>

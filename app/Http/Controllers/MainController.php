@@ -25,9 +25,9 @@ class MainController extends Controller
         $applications = Application::with([
             'client:id,name,mobile1,pid',
             'source:id,name',
-            'status',
+            'status:id,name,color',
             'product:id,name',
-            'car:id,make',
+//            'car:id,make',
             'comments.user:id,name',
             'user:id,name',
 //            'companies:id,name'
@@ -55,7 +55,7 @@ class MainController extends Controller
             ->orWhere('pid', $request->search)
             ->orWhere('name', 'like', "%{$request->search}%")
             ->with('applications.status', 'applications.user')
-            ->limit(30)
+
             ->first();
         $searchTerm = $request->search;
 //
@@ -97,13 +97,13 @@ class MainController extends Controller
             'source:id,name',
             'status',
             'product:id,name',
-            'car:id,make',
+//            'car:id,make',
             'comments.user:id,name',
             'user:id,name',
-            'companies:id,name'
+
         ])  ->orderBy('created_at', 'desc')
             ->latest()
-            ->limit(300)
+            ->limit(100)
             ->get();
 
         $companies=Company::all();
@@ -123,10 +123,8 @@ class MainController extends Controller
             ->orWhere('pid', 'like', "%{$request->search}%")
             ->orWhere('name', 'like', "%{$request->search}%")
             ->with('applications.status', 'applications.user')
-            ->limit(30)
             ->first();
         return view('htmx.htmxsearch', compact('applications'));
-
     }
 
 
@@ -147,7 +145,9 @@ class MainController extends Controller
             $request->session()->put('request_counter2', $counter2);
         }
 
-        $models=CarModel::where('car_id',$request->car)->get();
+        $models=CarModel::where('car_id',$request->car)
+            ->orderBy('name', 'asc')
+            ->get();
 
         return view('htmx.carmodels',compact('models','counter2'));
     }
