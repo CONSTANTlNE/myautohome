@@ -6,11 +6,11 @@
                value="{{$application->id}}">
     </div>
     @if($potentialclient)
-    <div class="text-center">
-        <p>პირველადი</p>
-        <input style="max-width:100px!important;" class="form-control text-center " disabled type="text"
-               value="{{$potentialclient->user->name}}">
-    </div>
+        <div class="text-center">
+            <p>პირველადი</p>
+            <input style="max-width:100px!important;" class="form-control text-center " disabled type="text"
+                   value="{{$potentialclient->user->name}}">
+        </div>
     @endif
     <div class="text-center">
         <p>ოპერატორი</p>
@@ -21,15 +21,19 @@
     <div class="text-center">
         <p>შეიქმნა</p>
         <button style="max-width:250px!important;" class="form-control text-center " disabled type="text"
-               value="">{{$application->created_at}}</button>
+                value="">{{$application->created_at}}</button>
     </div>
-    @if($application->created_at->format('Y-m-d H:i:s') !== $application->updated_at->format('Y-m-d H:i:s'))
-    <div class="text-center">
-        <p>ბოლო განახლება</p>
-        <button style="max-width:250px!important;z-index: -5;color: red!important" class="form-control text-center " disabled type="text"
-                value="">  <a style="z-index: 200;color: red!important;" target="_blank" href="{{route('customlogviewer',['query'=>'განაცხადში No: '.$application->id])}}">{{$application->updated_at}} </a>
-        </button>
-    </div>
+    @if( $application->updated_at!==null)
+        @if($application->created_at->format('Y-m-d H:i:s') !== $application->updated_at->format('Y-m-d H:i:s'))
+            <div class="text-center">
+                <p>ბოლო განახლება</p>
+                <button style="max-width:250px!important;z-index: -5;color: red!important"
+                        class="form-control text-center " disabled type="text"
+                        value=""><a style="z-index: 200;color: red!important;" target="_blank"
+                                    href="{{route('customlogviewer',['query'=>'განაცხადში No: '.$application->id])}}">{{$application->updated_at}} </a>
+                </button>
+            </div>
+        @endif
     @endif
 </div>
 <div class="flex justify-center w-full">
@@ -137,7 +141,8 @@
                             <button type="button" class="ti-btn ti-btn-danger ti-btn-wave removecompany2">წაშლა
                             </button>
                         @endif
-                        <select style="pointer-events: none;max-width: 200px" data-disabled-input style="max-width: 200px" name="company[]"
+                        <select style="pointer-events: none;max-width: 200px" data-disabled-input
+                                style="max-width: 200px" name="company[]"
                                 class=" sm:mb-0 form-select !py-3"
                                 id="inlineFormSelectPref">
 
@@ -335,7 +340,7 @@
 
 <script>
 
-    if(typeof carselectt !== 'undefined'){
+    if (typeof carselectt !== 'undefined') {
         carselectt.destroy();
 
     }

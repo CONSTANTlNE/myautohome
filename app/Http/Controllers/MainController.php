@@ -111,14 +111,6 @@ class MainController extends Controller
     public function htmxdateRange(Request $request)
     {
 
-        if($request->session()->has('request_counter')) {
-            $counter = $request->session()->get('request_counter')+1;
-            $request->session()->put('request_counter', $counter);
-        } else {
-            $counter = 1;
-            $request->session()->put('request_counter', $counter);
-        }
-
         $range = $request->input('range');
 
 
@@ -131,14 +123,14 @@ class MainController extends Controller
             ->whereBetween('created_at', [$startDate,  $endDate])
             ->latest()
             ->get();
-        $companies=Company::all();
-        $statuses=Status::all();
-        $products=Product::all();
-        $sources=Source::all();
-        $cars=Car::all();
+//        $companies=Company::all();
+//        $statuses=Status::all();
+//        $products=Product::all();
+//        $sources=Source::all();
+//        $cars=Car::all();
         $ips=Allowedip::all();
 
-        return view('htmx.htmx',compact('companies','statuses','products','sources','applications','cars','ips','counter'));
+        return view('htmx.htmx' ,compact('applications',));
 
     }
 
@@ -158,7 +150,7 @@ class MainController extends Controller
 
         ])  ->orderBy('created_at', 'desc')
             ->latest()
-            ->limit(100)
+            ->limit(1000)
             ->get();
 
 //        $companies=Company::all();

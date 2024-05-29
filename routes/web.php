@@ -33,7 +33,7 @@ Route::fallback(function () {
 
 
 
-Route::group(['middleware' => ['auth','checkip']], function () {
+Route::group(['middleware' => ['auth']], function () {
     Route::get('/',[MainController::class, 'index'])->name('main');
     Route::get('/search',[MainController::class, 'appsearch'])->name('search.app');
     Route::get('/clear',[MainController::class, 'clearSearch'])->name('search.clear');
@@ -118,6 +118,7 @@ Route::get('/uploads',[UploadController::class, 'index'])->name('upload.index');
 
 Route::post('/uploads/cars',[UploadController::class, 'carUpload'])->name('upload.cars');
 Route::post('/uploads/data',[UploadController::class, 'dataUpload'])->name('upload.data');
+Route::post('/uploads/potential',[UploadController::class, 'potentialUpload'])->name('upload.potential');
 Route::get('randuser',function(){
     return User::inRandomOrder()->first()->id;
 });

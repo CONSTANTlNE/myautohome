@@ -61,7 +61,7 @@
 {{--                        {{$company->name}}<br>--}}
 {{--                    @endforeach--}}
 {{--                </td>--}}
-                <td>{{$application->comments->last()?->comment}}</td>
+                <td style="white-space: normal !important;max-width: 250px!important;">{{$application->comments->last()?->comment}}</td>
 
                 <td>
                     <div class="hs-dropdown ti-dropdown">

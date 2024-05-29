@@ -23,20 +23,26 @@ class GeneralSeeder extends Seeder
 
         Company::create(['name' => 'ნაღდი ანგარიშსწორება']);
         Company::create(['name' => 'მოგო']);
-        Company::create(['name' => 'დიზი']);
-        Company::create(['name' => 'ტერა ბანკი']);
-        Company::create(['name' => 'თბს ლიზინგი']);
-        Company::create(['name' => 'სილქ როუდ ბანკი']);
         Company::create(['name' => 'მოგო/დიზი']);
-        Company::create(['name' => 'მოგო/ტერა']);
-        Company::create(['name' => 'მოგო/თბს']);
-        Company::create(['name' => 'მოგო/სილქ როუდი']);
-        Company::create(['name' => 'მოგო/დიზი/ტერა']);
+        Company::create(['name' => 'დიზი']);
+        Company::create(['name' => 'თიბისი/ტერა']);
         Company::create(['name' => 'მოგო/დიზი/თბს']);
-        Company::create(['name' => 'მოგო/დიზი/ტერა/თბს ']);
-        Company::create(['name' => 'მოგო/დიზი/ტერა/თბს/სილქ როუდი']);
-        Company::create(['name' => 'ტერა/თბს']);
-        Company::create(['name' => 'ტერა/თბს/სილქ როუდი']);
+        Company::create(['name' => 'თიბისი ლიზინგი']);
+        Company::create(['name' => 'სილქ როუდ ბანკი']);
+        Company::create(['name' => 'ტერა']);
+        Company::create(['name' => 'მოგო/დიზი/თიბისი']);
+        Company::create(['name' => 'მოგო/დიზი/ტერა/თიბისი']);
+        Company::create(['name' => 'მოგო/დიზი/ტერა/თიბისი/სილქი']);
+        Company::create(['name' => 'ტერა/სილქი']);
+        Company::create(['name' => 'მოგო/თბს']);
+        Company::create(['name' => 'მოგო/დიზი/ტერა/თბს']);
+        Company::create(['name' => 'მოგო/ტერა/სილქი']);
+        Company::create(['name' => 'სილქი']);
+        Company::create(['name' => 'მოგო/დიზი/ტერა']);
+        Company::create(['name' => 'თიბისი/მოგო/ტერა']);
+        Company::create(['name' => 'მოგო/ტერა']);
+
+
 
         Status::create(['name' => 'ონლაინი', 'color' => 'badge bg-outline-warning2']);
         Status::create(['name' => 'ოპერატორის შექმნილი','color' => 'badge bg-outline-warning2']);
@@ -48,7 +54,7 @@ class GeneralSeeder extends Seeder
         Status::create(['name' => 'კომპანიის უარი','color' => 'badge bg-outline-danger']);
         Status::create(['name' => 'დუბლიკატი','color' => 'badge bg-outline-danger']);
         Status::create(['name' => 'დასრულებული','color' => 'badge bg-outline-success']);
-
+        Status::create(['name' => 'არ არის დაინტერესებული','color' => 'badge bg-outline-danger']);
 
         Source::create(['name' => 'საიტი']);
         Source::create(['name' => 'ოპერატორი']);
