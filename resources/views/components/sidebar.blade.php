@@ -35,7 +35,7 @@
 
                 {{--                Admin Menu--}}
 
-                @role('admin')
+                @role('admin|developer')
                 <li class="slide has-sub">
                     <a href="javascript:void(0);" class="side-menu__item">
                         <span style="margin-right: 5px" class="material-symbols-outlined text-primary">settings</span>
@@ -51,28 +51,44 @@
                                 ნახვა</a>
                         </li>
                         <li class="slide htmxlink">
-                            <a href="{{route('users')}}" class="side-menu__item htmxlink">მომხმარებლების მართვა</a>
+                            <a
+                               hx-get="{{route('htmx.users')}}" hx-trigger="click throttle:2s"
+                               hx-indicator="#indicator"
+                               hx-target="#main-content"
+                               class="side-menu__item htmxlink">მომხმარებლების მართვა</a>
                         </li>
                         <li class="slide ">
                             <a
-                                    href="{{route('other')}}"
-{{--                                    hx-get="{{route('htmx.other')}}" hx-trigger="click "--}}
-{{--                               hx-target="#main-content" hx-indicator="#indicator"--}}
-                               class="side-menu__item htmxlink">მართვის
+{{--                                    href="{{route('other')}}"--}}
+                                    href="javascript:void(0);"
+                                    hx-get="{{route('htmx.other')}}" hx-trigger="click "
+                                    hx-target="#main-content" hx-indicator="#indicator"
+                                    class="side-menu__item htmxlink">მართვის
                                 პანელი</a>
                         </li>
+                        @role('developer')
                         <li class="slide ">
                             <a href="{{route('upload.index')}}" class="side-menu__item htmxlink">ატვირთვა</a>
                         </li>
-{{--                        <li class="slide ">--}}
-{{--                            <button hx-indicator="#indicator" hx-trigger="click throttle:2s" hx-get="{{route('main2')}}"--}}
-{{--                                    hx-target="#main-content" class="side-menu__item htmxlink">მთავარი--}}
-{{--                            </button>--}}
-{{--                        </li>--}}
+                        @endrole
+                        {{--                        <li class="slide ">--}}
+                        {{--                            <button hx-indicator="#indicator" hx-trigger="click throttle:2s" hx-get="{{route('main2')}}"--}}
+                        {{--                                    hx-target="#main-content" class="side-menu__item htmxlink">მთავარი--}}
+                        {{--                            </button>--}}
+                        {{--                        </li>--}}
                         <li class="slide ">
                             <a href="javascript:void(0);" data-hs-overlay="#cars"
                                class="side-menu__item hs-dropdown-toggle">
                                 <span class="side-menu__label">ავტომობილის დამატება</span>
+                            </a>
+                        </li>
+                        <li class="slide">
+                            <a href="javascript:void(0);" data-hs-overlay="#ips"
+                               hx-get="{{route('htmx.create')}}"
+                               hx-target="#iptarget"
+                               hx-indicator="#indicator"
+                               class="side-menu__item hs-dropdown-toggle">
+                                <span class="side-menu__label">IP დაშვება</span>
                             </a>
                         </li>
                     </ul>
@@ -80,12 +96,12 @@
                 @endrole
 
                 {{--                General Menu--}}
-                <li class="slide ">
-                    <a href="{{route('existing.clients')}}" class="side-menu__item">
-                        <span style="color:green;margin-right: 5px" class="material-symbols-outlined">group</span>
-                        <span class="side-menu__label">არსებული კლიენტები</span>
-                    </a>
-                </li>
+{{--                <li class="slide ">--}}
+{{--                    <a href="{{route('existing.clients')}}" class="side-menu__item">--}}
+{{--                        <span style="color:green;margin-right: 5px" class="material-symbols-outlined">group</span>--}}
+{{--                        <span class="side-menu__label">არსებული კლიენტები</span>--}}
+{{--                    </a>--}}
+{{--                </li>--}}
                 <li class="slide ">
                     <a
                             {{--                            href="{{route('potential.clients')}}" --}}
@@ -122,7 +138,7 @@
 </aside>
 
 {{--password reset modal--}}
-<div id="newpassword" class="hs-overlay hidden ti-modal">
+<div id="newpassword" class="hs-overlay hidden ti-modal [--overlay-backdrop:static]">
     <div class="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out">
         <div class="ti-modal-content">
             <form action="{{route('password.change')}}" method="post" target="hidden_iframe">
@@ -156,7 +172,7 @@
     </div>
 </div>
 {{--    ADD new Car Modal--}}
-<div id="cars" class="hs-overlay hidden ti-modal">
+<div id="cars" class="hs-overlay hidden ti-modal [--overlay-backdrop:static]">
     <div class="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out">
         <div class="ti-modal-content">
             <form action="{{route('cars.add')}}" method="post"
@@ -191,16 +207,14 @@
                 <div class="ti-modal-body px-4">
                     <div class="md:col-span-3  col-start-2 col-span-12 mb-4">
                         <label class="form-label">არსებული მწარმოებელი</label>
-
                         <select
                                 aria-label="car" name="existingcar" class="ti-form-select rounded-sm !p-0"
-                                id="carsselect2"
+                                id="carsselect3"
                                 autocomplete="off">
                             <option></option>
                             @foreach($cars as $car)
                                 <option value="{{$car->id}}">{{$car->make}}</option>
                             @endforeach
-
                         </select>
                     </div>
                     <div class="md:col-span-3  col-start-2 col-span-12 mb-4">
@@ -218,3 +232,12 @@
         <iframe name="hidden_iframe2" style="display:none;"></iframe>
     </div>
 </div>
+
+{{--    ADD new Ip Modal--}}
+<div id="ips" class="hs-overlay hidden ti-modal [--overlay-backdrop:static]">
+    <div class="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out" id="iptarget">
+
+
+    </div>
+</div>
+<iframe name="hidden_iframe3" style="display:none;"></iframe>

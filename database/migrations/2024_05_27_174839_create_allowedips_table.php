@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('potential_clients', function (Blueprint $table) {
+        Schema::create('allowedips', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('pid')->nullable();
+            $table->string('ip');
             $table->string('name')->nullable();
-            $table->string('mobile');
-            $table->text('comment')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('potential_clients');
+        Schema::dropIfExists('allowedips');
     }
 };

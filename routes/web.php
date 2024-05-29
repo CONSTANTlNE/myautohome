@@ -1,6 +1,7 @@
 <?php
 
 use App\CustomAuthenticatedSessionController;
+use App\Http\Controllers\AllowedipController;
 use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\CompanyController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserController;
 use App\Models\Notification;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
@@ -29,7 +31,9 @@ Route::fallback(function () {
 });
 
 
-Route::group(['middleware' => 'auth'], function () {
+
+
+Route::group(['middleware' => ['auth','checkip']], function () {
     Route::get('/',[MainController::class, 'index'])->name('main');
     Route::get('/search',[MainController::class, 'appsearch'])->name('search.app');
     Route::get('/clear',[MainController::class, 'clearSearch'])->name('search.clear');
@@ -46,25 +50,31 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('htmx/carsearch',[MainController::class, 'carsearch'])->name('carsearch');
     Route::post('htmx/app/create',[ApplicationController::class, 'htmxstore'])->name('htmxstore');
     Route::get('htmx/details/{id}',[ApplicationController::class, 'htmxdetails'])->name('htmxdetails');
+    Route::get('/htmx/admin/users',[UserController::class, 'htmxindex'])->name('htmx.users');
+    Route::post('/admin/htmx/user/create',[UserController::class, 'htmxstore'])->name('user.htmxcreate');
+    Route::get('/admin/htmx/manage',[PanelController::class, 'htmxindex'])->name('htmx.other');
+    Route::post('/admin/source/create',[SourceController::class, 'store'])->name('source.create');
+    Route::post('/admin/source/update',[SourceController::class, 'update'])->name('source.update');
+    Route::post('/admin/status/create',[StatusController::class, 'store'])->name('status.create');
+    Route::post('/admin/status/update',[StatusController::class, 'update'])->name('status.update');
+    Route::post('/admin/product/create',[ProductController::class, 'store'])->name('product.create');
+    Route::post('/admin/product/update',[ProductController::class, 'update'])->name('product.update');
 
 
     //  Admin
     Route::get('/admin/users',[UserController::class, 'index'])->name('users');
 //    Route::get('/admin/manage',[PanelController::class, 'manage'])->name('other');
     Route::get('/admin/manage',[PanelController::class, 'index'])->name('other');
-    Route::get('/admin/htmx/manage',[PanelController::class, 'htmxindex'])->name('htmx.other');
     Route::post('/admin/cars/add',[PanelController::class, 'addCar'])->name('cars.add');
     Route::post('/admin/company/create',[CompanyController::class, 'store'])->name('company.create');
     Route::post('/admin/company/update',[CompanyController::class, 'update'])->name('company.update');
-    Route::post('/admin/product/create',[ProductController::class, 'store'])->name('product.create');
-    Route::post('/admin/product/update',[ProductController::class, 'update'])->name('product.update');
-    Route::post('/admin/status/create',[StatusController::class, 'store'])->name('status.create');
-    Route::post('/admin/status/update',[StatusController::class, 'update'])->name('status.update');
-    Route::post('/admin/source/create',[SourceController::class, 'store'])->name('source.create');
-    Route::post('/admin/source/update',[SourceController::class, 'update'])->name('source.update');
+
+
     Route::post('/admin/user/create',[UserController::class, 'store'])->name('user.create');
     Route::get('/admin/user/applications/{id}',[UserController::class, 'userapps'])->name('user.apps');
     Route::post('/admin/user/password/change',[UserController::class, 'changeUserPassword'])->name('user.password.change');
+    Route::post('/daterange',[MainController::class, 'dateRange'])->name('date.range');
+    Route::post('/htmx/daterange',[MainController::class, 'htmxdateRange'])->name('htmx.date.range');
 
 
 
@@ -95,11 +105,19 @@ Route::group(['middleware' => 'auth'], function () {
     // log viewer
     Route::get('/log-viewer?file=7d22837e-changes.log&query=+{query}', [LogViewerController::class, 'show'])->name('customlogviewer');
 
+    // IPS
+    Route::get('/htmx/ips', [AllowedipController::class, 'index'])->name('ips');
+    Route::get('/htmx/ips/create', [AllowedipController::class, 'create'])->name('htmx.create');
+    Route::post('/htmx/ips/store', [AllowedipController::class, 'store'])->name('ips.store');
+    Route::post('/htmx/ips/delete', [AllowedipController::class, 'destroy'])->name('ips.destroy');
+
 });
 
 // Uploads
 Route::get('/uploads',[UploadController::class, 'index'])->name('upload.index');
+
 Route::post('/uploads/cars',[UploadController::class, 'carUpload'])->name('upload.cars');
+Route::post('/uploads/data',[UploadController::class, 'dataUpload'])->name('upload.data');
 Route::get('randuser',function(){
     return User::inRandomOrder()->first()->id;
 });
@@ -117,13 +135,13 @@ Route::get('memory',function(){
     echo 'Current memory usage: ' . $memoryUsageMB . ' MB';
 });
 
-Route::get('memory2',function(){
+Route::get('test',function(Request $request){
 
-    $output = shell_exec('free -m');
-    echo "<p>$output</p>";
+dd(\App\Models\PotentialClient::with('user')->get());
 
 });
 
+Route::get('/ip',[AllowedipController::class, 'index'])->name('iperror');
 
 // ============== Fortify===============
 

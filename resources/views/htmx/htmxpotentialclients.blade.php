@@ -2,7 +2,7 @@
 {{--    click is triggered by datatables button--}}
 <a style="display: none" id="addclient" href="javascript:void(0);" class="hs-dropdown-toggle ti-btn ti-btn-primary-full" data-hs-overlay="#createpotentialclient">Launch demo modal
 </a>
-<div id="createpotentialclient" class="hs-overlay hidden ti-modal">
+<div id="createpotentialclient" class="hs-overlay hidden ti-modal  [--overlay-backdrop:static]">
     <div class="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out">
         <div class="ti-modal-content">
             <div class="ti-modal-header">
@@ -35,7 +35,14 @@
                     </div>
                 </div>
                 <div class="ti-modal-footer">
-                    <button class="ti-btn bg-primary text-white !font-medium">დამატება</button>
+                    <button
+                            hx-post="{{route('potential.clients.create')}}"
+                            hx-target="#main-content"
+                            hx-indicator="#indicator"
+                            type="button"
+                            data-hs-overlay="#createpotentialclient"
+                            class="ti-btn bg-primary text-white !font-medium">დამატება
+                    </button>
                 </div>
             </form>
         </div>
@@ -48,12 +55,12 @@
     <thead>
     <tr style="text-align: center!important;">
         <td style="text-align: center!important;">შექმნის თარიღი</td>
+        <td style="text-align: center!important;">ოპერატორი</td>
         <td style="text-align: center!important;">პირადი ნომერი</td>
         <td style="text-align: center!important;">სახელი გვარი</td>
         <td style="text-align: center!important;">მობილური</td>
         <td style="text-align: center!important;">კომენტარი</td>
         <td style="text-align: center!important;">მოქმედება</td>
-
 
     </tr>
     </thead>
@@ -61,6 +68,7 @@
     @foreach($potentialclients as $index => $client)
         <tr style="text-align: center!important;" >
             <td style="text-align: center!important;">{{$client->created_at}}</td>
+            <td style="text-align: center!important;">{{$client->user->name}}</td>
             <td style="text-align: center!important;">{{$client->pid}}</td>
             <td style="text-align: center!important;">{{$client->name}}</td>
             <td style="text-align: center!important;">{{$client->mobile}}</td>
@@ -68,17 +76,18 @@
 
             <td style="text-align: center!important;">
                 @hasanyrole('admin|developer')
+
                 წაშლა
                 @endhasanyrole
 
                 <a   href="javascript:void(0);" class="hs-dropdown-toggle ti-btn ti-btn-primary-full" data-hs-overlay="#editpotentialclient{{$index}}">რედაქტირება
                 </a>
-                <div id="editpotentialclient{{$index}}" class="hs-overlay hidden ti-modal">
+                <div id="editpotentialclient{{$index}}" class="hs-overlay hidden ti-modal [--overlay-backdrop:static]">
                     <div class="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out">
                         <div class="ti-modal-content">
                             <div class="ti-modal-header">
                                 <h6 class="modal-title text-[1rem] font-semibold" id="mail-ComposeLabel">რედაქტირება {{$index}}</h6>
-                                <button type="button" class="hs-dropdown-toggle !text-[1rem] !font-semibold !text-defaulttextcolor" data-hs-overlay="#createpotentialclient">
+                                <button type="button" class="hs-dropdown-toggle !text-[1rem] !font-semibold !text-defaulttextcolor" data-hs-overlay="#editpotentialclient{{$index}}">
                                     <span class="sr-only">Close</span>
                                     <i class="ri-close-line"></i>
                                 </button>
@@ -129,11 +138,11 @@
     <tfoot>
     <tr>
         <td style="text-align: center!important;">შექმნის თარიღი</td>
+        <td style="text-align: center!important;">ოპერატორი</td>
         <td style="text-align: center!important;">პირადი ნომერი</td>
         <td style="text-align: center!important;">სახელი გვარი</td>
         <td style="text-align: center!important;">მობილური</td>
         <td style="text-align: center!important;">კომენტარი</td>
-
         <td style="text-align: center!important;">მოქმედება</td>
 
     </tr>

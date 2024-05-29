@@ -41,7 +41,7 @@ class PanelController extends Controller
         $products  = Product::all();
         $sources   = Source::all();
 
-        return view('htmx.other', compact('companies', 'statuses', 'products', 'sources'));
+        return view('htmx.htmxother', compact('companies', 'statuses', 'products', 'sources'));
     }
 
     public function index2()

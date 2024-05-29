@@ -7,17 +7,33 @@ use App\Models\Product;
 use App\Models\Source;
 use App\Models\Status;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class CompanyController extends Controller
 {
     public function store(Request $request){
 
+        $validate=Validator::make($request->all(), [
+            'name' => 'required|string',]);
+
+
+        if ($validate->fails()) {
+            $errors = $validate->errors();
+            return view('htmx.errors')->with('errors', $errors);
+        }
+
+        $validated = $validate->validated();
         $company = new Company();
-        $company -> name = $request -> name;
+        $company -> name = $validated['name'];
         $company -> save();
 
-//        return view('htmx.other', compact('companies', 'statuses', 'products', 'sources'));
-        return back()   ;
+        $companies = Company::all();
+        $statuses  = Status::all();
+        $products  = Product::all();
+        $sources   = Source::all();
+
+        return view('htmx.htmxother', compact('companies', 'statuses', 'products', 'sources'));
+
 
     }
 
@@ -25,13 +41,28 @@ class CompanyController extends Controller
 
     public function update(Request $request){
 
+        $validate=Validator::make($request->all(), [
+            'name' => 'required|string',]);
+
+
+        if ($validate->fails()) {
+            $errors = $validate->errors();
+            return view('htmx.errors')->with('errors', $errors);
+        }
+
+
+        $validated = $validate->validated();
         $company = Company::find($request->id);
-        $company -> name = $request -> name;
+        $company -> name = $validated['name'];
         $company -> save();
 
 
-//        return view('htmx.other', compact('companies', 'statuses', 'products', 'sources'));
-        return back()   ;
+        $companies = Company::all();
+        $statuses  = Status::all();
+        $products  = Product::all();
+        $sources   = Source::all();
+
+        return view('htmx.htmxother', compact('companies', 'statuses', 'products', 'sources'));
 
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Allowedip;
 use App\Models\Application;
 use App\Models\Car;
 use App\Models\CarModel;
@@ -11,6 +12,7 @@ use App\Models\Product;
 use App\Models\Source;
 use App\Models\Status;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class MainController extends Controller
 {
@@ -31,8 +33,9 @@ class MainController extends Controller
             'comments.user:id,name',
             'user:id,name',
 //            'companies:id,name'
-        ])  ->latest()
-            ->limit(100)
+        ])  ->orderBy('created_at', 'desc')
+            ->latest()
+            ->limit(1000)
             ->get();
 
         $companies=Company::all();
@@ -41,9 +44,9 @@ class MainController extends Controller
         $sources=Source::all();
 //        $cars=Car::with('models')->get();
         $cars=Car::all();
-
+        $ips=Allowedip::all();
 //        $carsJson =$cars->toJson();
-        return view('pages.main' ,compact('companies','statuses','products','sources','applications','cars'));
+        return view('pages.main' ,compact('companies','statuses','products','sources','applications','cars','ips'));
 
     }
 
@@ -57,7 +60,7 @@ class MainController extends Controller
             ->with('applications.status', 'applications.user')
 
             ->first();
-        $searchTerm = $request->search;
+//        $searchTerm = $request->search;
 //
 //        $applications = Client::where(function ($query) use ($searchTerm) {
 //            $query->where('mobile1', $searchTerm)
@@ -73,24 +76,76 @@ class MainController extends Controller
         return view('pages.appsearch', compact('applications'));
     }
 
+    public function dateRange(Request $request)
+    {
+
+        $range = $request->input('range');
+
+
+        list($startDateString, $endDateString) = explode(' to ', $range);
+
+        $startDate = Carbon::createFromFormat('Y-m-d', $startDateString);
+        $endDate   = Carbon::createFromFormat('Y-m-d', $endDateString);
+
+        $applications = Application::with('client', 'source', 'status', 'product', 'car.models', 'comments.user', 'user', 'companies')
+            ->whereBetween('created_at', [$startDate,  $endDate])
+            ->latest()
+            ->limit(500)
+            ->get();
+        $companies=Company::all();
+        $statuses=Status::all();
+        $products=Product::all();
+        $sources=Source::all();
+        $cars=Car::all();
+        $ips=Allowedip::all();
+
+        return view('pages.main',compact('companies','statuses','products','sources','applications','cars','ips'));
+
+    }
+
 
 
 //  =================  HTMX  =======================
 
 
-
-
-    public function index2(Request $request)
+    public function htmxdateRange(Request $request)
     {
 
         if($request->session()->has('request_counter')) {
             $counter = $request->session()->get('request_counter')+1;
             $request->session()->put('request_counter', $counter);
-
         } else {
             $counter = 1;
             $request->session()->put('request_counter', $counter);
         }
+
+        $range = $request->input('range');
+
+
+        list($startDateString, $endDateString) = explode(' to ', $range);
+
+        $startDate = Carbon::createFromFormat('Y-m-d', $startDateString);
+        $endDate   = Carbon::createFromFormat('Y-m-d', $endDateString);
+
+        $applications = Application::with('client', 'source', 'status', 'product', 'car.models', 'comments.user', 'user', 'companies')
+            ->whereBetween('created_at', [$startDate,  $endDate])
+            ->latest()
+            ->get();
+        $companies=Company::all();
+        $statuses=Status::all();
+        $products=Product::all();
+        $sources=Source::all();
+        $cars=Car::all();
+        $ips=Allowedip::all();
+
+        return view('htmx.htmx',compact('companies','statuses','products','sources','applications','cars','ips','counter'));
+
+    }
+
+
+
+    public function index2(Request $request)
+    {
 
         $applications = Application::with([
             'client:id,name,mobile1,pid',
@@ -106,15 +161,17 @@ class MainController extends Controller
             ->limit(100)
             ->get();
 
-        $companies=Company::all();
-        $statuses=Status::all();
-        $products=Product::all();
-        $sources=Source::all();
-//        $cars=Car::with('models')->get();
-        $cars=Car::all();
+//        $companies=Company::all();
+//        $statuses=Status::all();
+//        $products=Product::all();
+//        $sources=Source::all();
+//
+//        $cars=Car::all();
+
 
 //        $carsJson =$cars->toJson();
-        return view('htmx.htmx' ,compact('companies','statuses','products','sources','applications','cars','counter'));
+//        return view('htmx.htmx' ,compact('companies','statuses','products','sources','applications','cars','counter'));
+        return view('htmx.htmx' ,compact('applications',));
     }
 
 
@@ -136,23 +193,11 @@ class MainController extends Controller
 
     public function carsearch(Request $request){
 
-        if($request->session()->has('request_counter2')) {
-            $counter2 = $request->session()->get('request_counter2')+1;
-            $request->session()->put('request_counter2', $counter2);
-
-        } else {
-            $counter2 = 1;
-            $request->session()->put('request_counter2', $counter2);
-        }
-
         $models=CarModel::where('car_id',$request->car)
             ->orderBy('name', 'asc')
             ->get();
 
-        return view('htmx.carmodels',compact('models','counter2'));
+        return view('htmx.carmodels',compact('models',));
     }
-
-
-
 
 }

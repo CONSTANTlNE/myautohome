@@ -8,9 +8,9 @@
     <table id="example" class="display nowrap" style="width:100%">
         <thead>
         <tr>
+            <td><input type="text"  class="form-control searchinput"></td>
             <td><input type="text" id="col1" class="form-control searchinput"></td>
             <td><input type="text" id="col2" class="form-control searchinput"></td>
-            <td><input type="text" id="col3" class="form-control searchinput"></td>
             <td><input type="text" id="col4" class="form-control searchinput"></td>
             <td><input type="text" id="col5" class="form-control searchinput"></td>
             <td><input type="text" id="col6" class="form-control searchinput"></td>
@@ -23,9 +23,10 @@
 
         </tr>
         <tr style="text-align: center">
+            <th style="text-align: center">ნომერი</th>
             <th style="text-align: center">შექმნის დრო</th>
             <th style="text-align: center">განახლების დრო</th>
-            <th style="text-align: center">ნომერი</th>
+
             <th style="text-align: center">ოპერაოტრი</th>
             <th style="text-align: center">კლიენტი</th>
             <th style="text-align: center">მობილური</th>
@@ -40,10 +41,10 @@
         <tbody>
         @foreach($applications as $index=> $application)
             <tr style="text-align: center!important">
-
+                <td style="white-space: normal !important;text-align: center!important">{{$application->id}}</td>
                 <td style="white-space: normal !important;text-align: center!important">{{$application->created_at}}</td>
                 <td style="white-space: normal !important;text-align: center!important">{{$application->updated_at}}</td>
-                <td>{{$application->number}}</td>
+
                 <td>{{$application->user->name}}</td>
                 <td style="white-space: normal !important;">
                     {{$application->client->name}}
@@ -135,12 +136,13 @@
         </tbody>
         <tfoot>
         <tr>
+            <th>ნომერი</th>
             <th>შექმნის დრო</th>
             <th>განახლების დრო</th>
             <th>ნომერი</th>
             <th>ოპერაოტრი</th>
             <th>კლიენტი</th>
-            <th>ნომერი</th>
+
             <th>წყარო</th>
             <th>სტატუსი</th>
             <th>პროდუქტი</th>

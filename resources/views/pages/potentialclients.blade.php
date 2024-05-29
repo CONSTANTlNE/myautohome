@@ -21,8 +21,11 @@
                         <i class="ri-close-line"></i>
                     </button>
                 </div>
-                <form action="{{route('potential.clients.create')}}" method="post">
+                <form action="{{route('potential.clients.create')}}" method="post"
+
+                >
                     @csrf
+
                     <div class="ti-modal-body px-4">
                         <div class="xl:col-span-4 lg:col-span-6 md:col-span-6 sm:col-span-12 col-span-12 mb-4">
                             <p class="mb-2 text-muted">პირადი ნომერი</p>
@@ -44,7 +47,11 @@
                         </div>
                     </div>
                     <div class="ti-modal-footer">
-                        <button class="ti-btn bg-primary text-white !font-medium">დამატება</button>
+                        <button type="button"
+                                hx-post="{{route('potential.clients.create')}}"
+                                hx-target="#main-content"
+                                hx-indicator="#indicator"
+                                class="ti-btn bg-primary text-white !font-medium">დამატება</button>
                     </div>
                 </form>
             </div>
@@ -57,19 +64,19 @@
         <thead>
         <tr style="text-align: center!important;">
             <td style="text-align: center!important;">შექმნის თარიღი</td>
+            <td style="text-align: center!important;">ოპერატორი</td>
             <td style="text-align: center!important;">პირადი ნომერი</td>
             <td style="text-align: center!important;">სახელი გვარი</td>
             <td style="text-align: center!important;">მობილური</td>
             <td style="text-align: center!important;">კომენტარი</td>
             <td style="text-align: center!important;">მოქმედება</td>
-
-
         </tr>
         </thead>
         <tbody>
         @foreach($potentialclients as $index => $client)
             <tr style="text-align: center!important;" >
                 <td style="text-align: center!important;">{{$client->created_at}}</td>
+                <td style="text-align: center!important;">{{$client->user->name}}</td>
                 <td style="text-align: center!important;">{{$client->pid}}</td>
                 <td style="text-align: center!important;">{{$client->name}}</td>
                 <td style="text-align: center!important;">{{$client->mobile}}</td>
@@ -138,13 +145,12 @@
         <tfoot>
         <tr>
             <td style="text-align: center!important;">შექმნის თარიღი</td>
+            <td style="text-align: center!important;">ოპერატორი</td>
             <td style="text-align: center!important;">პირადი ნომერი</td>
             <td style="text-align: center!important;">სახელი გვარი</td>
             <td style="text-align: center!important;">მობილური</td>
             <td style="text-align: center!important;">კომენტარი</td>
-
             <td style="text-align: center!important;">მოქმედება</td>
-
         </tr>
         </tfoot>
     </table>

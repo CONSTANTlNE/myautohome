@@ -1,14 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" data-nav-layout="vertical" class="light" data-header-styles="light" data-menu-styles="dark">
+<html lang="en" dir="ltr" data-nav-layout="vertical" class="dark" data-header-styles="dark" data-menu-styles="dark"  data-toggled="icon-overlay-close">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title> MyAutoHome </title>
-    <meta name="description"
-          content="A Tailwind CSS admin template is a pre-designed web page for an admin dashboard. Optimizing it for SEO includes using meta descriptions and ensuring it's responsive and fast-loading.">
-    <meta name="keywords"
-          content="html dashboard,tailwind css,tailwind admin dashboard,template dashboard,html and css template,tailwind dashboard,tailwind css templates,admin dashboard html template,tailwind admin,html panel,template tailwind,html admin template,admin panel html">
 
     <!-- Favicon -->
     <link rel="shortcut icon" href="{{asset('assets/images/site-logo.svg')}}">
@@ -37,6 +33,9 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.dataTables.css"/>
     <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.2/css/responsive.dataTables.css">
 
+
+
+        <link rel="stylesheet" href="{{asset('assets/libs/flatpickr/flatpickr.min.css')}}">
     {{--    HTMX--}}
     {{--    <script src="https://unpkg.com/htmx.org@1.9.12" integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2" crossorigin="anonymous"></script>--}}
     <script src="https://unpkg.com/htmx.org@1.9.12/dist/htmx.js"
@@ -154,7 +153,7 @@
 
 @if(request()->routeIs('main'))
         {{--    create app modal/ button in header--}}
-        <div id="hs-large-modal" class="hs-overlay hidden ti-modal">
+        <div id="hs-large-modal" class="hs-overlay hidden ti-modal [--overlay-backdrop:static]">
             <div class="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out md:!max-w-2xl md:w-full m-3 md:mx-auto">
                 {{--                app.create--}}
                 <form id="htmxstore" action="{{route('htmxstore')}}" method="post">
@@ -165,7 +164,7 @@
                                 განაცხადის შექმნა
                             </h6>
 
-                            <button id="closecreatemodal" type="button" class="hs-dropdown-toggle ti-modal-close-btn"
+                            <button id="closecreatemodal" type="button" class="hs-dropdown-toggle ti-modal-close-btn  "
                                     data-hs-overlay="#hs-large-modal">
                                 <span class="sr-only">Close</span>
                                 <svg class="w-3.5 h-3.5" width="8" height="8" viewBox="0 0 8 8" fill="none"
@@ -341,8 +340,8 @@
 
         </div>
     @endif
-        {{-- Search Modal / button in header--}}
-        <div id="searchmodal" class="hs-overlay hidden ti-modal">
+{{--         Search Modal / button in header--}}
+        <div id="searchmodal" class="hs-overlay hidden ti-modal [--overlay-backdrop:static]">
             <div class="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out md:!max-w-2xl md:w-full m-3 md:mx-auto">
                 {{--                <form action="{{route('search.app')}}" method="get">--}}
                 {{--                    @csrf--}}
@@ -406,7 +405,7 @@
         </div>
 
         {{--Edit Modal buttons in Table Action--}}
-        <div id="editmodal" class="hs-overlay hidden ti-modal">
+        <div id="editmodal" class="hs-overlay hidden ti-modal [--overlay-backdrop:static]">
             <div class="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out md:!max-w-2xl md:w-full m-3 md:mx-auto">
 
                 <div class="ti-modal-content">
@@ -439,7 +438,7 @@
         </div>
         {{--details Modal buttons in Table Action--}}
 
-        <div id="detailsmodal" class="hs-overlay hidden ti-modal">
+        <div id="detailsmodal" class="hs-overlay hidden ti-modal [--overlay-backdrop:static]">
             <div class="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out md:!max-w-2xl md:w-full m-3 md:mx-auto">
 
                 <div class="ti-modal-content">
@@ -501,7 +500,7 @@
 
 
 
-<div id="successtoast" class="hiddensuccesstoast" style="position: absolute;z-index: 5000;top:0;left:15%">
+<div id="successtoast" class="hiddensuccesstoast" style="position: absolute;z-index: 5000;top:0.2%;left:14.7%">
     <div class="ti-toast bg-success/10 text-sm text-success" role="alert">
         <div id="successtoasttext" class="flex p-4">
             Hello, world! This is a toast message.
@@ -509,6 +508,7 @@
         </div>
     </div>
 </div>
+<button id="toggleButton"></button>
 
 <!-- Back To Top -->
 <div class="scrollToTop">
@@ -549,6 +549,9 @@
 <!-- Custom JS -->
 <script src="{{asset('assets/js/custom.js')}}"></script>
 <script src="{{asset('assets/js/createappvalidation.js')}}"></script>
+<!-- Date & Time Picker JS -->
+<script src="{{asset('assets/libs/flatpickr/flatpickr.min.js')}}"></script>
+<script src="{{asset('assets/js/date-time_pickers.js')}}"></script>
 
 
 {{--    Datatables--}}
@@ -572,7 +575,7 @@
         lengthMenu: [10, 100, 150, {label: 'All', value: -1}],
 
         columnDefs: [
-            {orderable: false, targets: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]}
+            {orderable: false, targets: [ 2, 3, 4, 5, 6, 7, 8, 9, 10]}
         ],
         order: [[0, 'desc']],
 
@@ -605,22 +608,17 @@
 
     $('#col1').on('keyup', function () {
         table
-            .columns(0)
+            .columns(1)
             .search(this.value)
             .draw();
     });
     $('#col2').on('keyup', function () {
         table
-            .columns(1)
-            .search(this.value)
-            .draw();
-    });
-    $('#col3').on('keyup', function () {
-        table
             .columns(2)
             .search(this.value)
             .draw();
     });
+
     $('#col4').on('keyup', function () {
         table
             .columns(3)
@@ -887,9 +885,9 @@
     });
 
     // for new cars modal
-    let make2 = document.getElementById('carsselect2');
+    let make2 = document.getElementById('carsselect3');
 
-    let carselect2 = new TomSelect("#carsselect2", {
+    let carselect3 = new TomSelect("#carsselect3", {
         create: true,
         sortField: {
             field: "text",
@@ -940,14 +938,12 @@
         htmx.process(document.getElementById('example'))
     })
 
-
     document.addEventListener('htmx:afterOnLoad', function (event) {
         // Check errors if any
         let response = event.detail.xhr.response;
-        // console.log(response)
+        console.log(response)
 
-
-// check which button send the request
+        // check which button send the request
         const initiator = event.target;
         // console.log(initiator)
 
@@ -992,13 +988,20 @@
                         element.classList.remove('showtoast');
                         element.classList.add('hiddensuccesstoast');
 
-                    }, 2700); // Small delay to ensure the transition is triggered
+                    }, 3000); // Small delay to ensure the transition is triggered
                 });
                 document.getElementById('toggleButton').click();
 
             }
         }
+
+
+        if(initiator.id !== 'daterangebtn'){
+            document.getElementById('daterange').value = '';
+        }
+
     });
+
 
 
 </script>
@@ -1074,13 +1077,6 @@
 
         };
 
-
-
-    //     source.onerror = function (event) {
-    //         console.error("EventSource failed:", event);
-    //     };
-    // } else {
-    //     console.log("Your browser does not support SSE");
     }
 
 </script>
@@ -1094,6 +1090,7 @@
 {{--        input.disabled = true--}}
 {{--    })--}}
 {{--</script>--}}
+
 
 </body>
 

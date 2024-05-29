@@ -34,8 +34,35 @@
             </div>
 
 
-            <div class="flex justify-center items-center gap-4 ">
+            <div  class="flex justify-center items-center gap-4  ">
+                <form
+{{--                        action="{{route('date.range')}}"--}}
+                       style=" margin-right: 50px"
+                       method="post"
+                       class="mt-2">
+                    <div style="padding-bottom: 10px" class="input-group flex flex-row justify-center gap-4 ">
 
+                        @csrf
+{{--                        <select name="invoice" class=" form-control ti-form-select rounded-sm !py-2 !px-3">--}}
+{{--                            <option  value="purchase">Only Purchase</option>--}}
+{{--                            <option value="sales">Only Sales</option>--}}
+{{--                        </select>--}}
+                        <div class="input-group-text text-[#8c9097] dark:text-white/50"><i class="ri-calendar-line"></i></div>
+                        <input  name="range" type="text" class="form-control flatpickr-input active" id="daterange"
+                                placeholder="თარიღებს შორის" readonly="readonly">
+                        <button
+                                id="daterangebtn"
+                                type="button"
+                                hx-post="{{route('htmx.date.range')}}"  hx-target="#main-content" hx-indicator="#indicator"
+                                 class=" ti-btn ti-btn-light ti-btn-wave">
+                            გაფილტრე
+                        </button>
+{{--                        <a href="{{route('main')}}" style="margin-bottom: 0!important;margin-left:5px!important;"--}}
+{{--                           class="w ti-btn ti-btn-outline-secondary  ti-btn-wave ">--}}
+{{--                            ბოლო 1000--}}
+{{--                        </a>--}}
+                    </div>
+                </form>
 
                 <button type="button" class="hs-dropdown-toggle ti-btn ti-btn-light ti-btn-wave"
                         data-hs-overlay="#hs-large-modal">
@@ -75,7 +102,7 @@
                 {{--                                    <div class="flex items-center space-x-2 rtl:space-x-reverse w-full">--}}
                 {{--                                        <div class="h-[1.375rem] flex items-center w-[1.375rem] rounded-full">--}}
                 {{--                                            <img src="{{asset('')}}../assets/images/flags/us_flag.jpg" alt="flag-img"--}}
-                {{--                                                 class="h-[1rem] w-[1rem] rounded-full">--}}
+                {{--                                                 class="h-[     1rem] w-[1rem] rounded-full">--}}
                 {{--                                        </div>--}}
                 {{--                                        <div>--}}
                 {{--                                            <p class="!text-[0.8125rem] font-medium">--}}

@@ -55,16 +55,6 @@ class UserController extends Controller
     }
 
 
-    public function userapps($id){
-
-        $user = User::where('id', $id)
-           -> with('applications.status', 'applications.status')
-            ->first();
-
-
-
-        return view('pages.userapps', compact('user', ));
-    }
 
 
     public function changePassword(Request $request)
@@ -85,4 +75,60 @@ class UserController extends Controller
         return json_decode('password changed');
 
 }
+
+//HTMX
+
+    public function htmxindex()
+    {
+//        $users = User::withCount('applications')->get();
+        $users = User::with('roles')->withCount('applications')->get();
+
+        return view('htmx.htmxusers', compact('users',));
+    }
+
+    public function htmxstore(Request $request){
+
+        $validate=Validator::make($request->all(), [
+            'email' => 'required|string|email|max:255|unique:users',
+            'name' => 'required|string',
+            'mobile' => 'nullable|string',
+            'password' => 'required|string|min:8',
+
+        ]);
+
+        if ($validate->fails()) {
+            $errors = $validate->errors();
+            return view('htmx.errors')->with('errors', $errors);
+        }
+
+
+        $validated = $validate->validated();
+
+
+        $user = new User();
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        $user->password = bcrypt($validated['password']);
+        $user->mobile = $validated['mobile'];
+        $user->save();
+
+
+        $users = User::with('roles')->withCount('applications')->get();
+
+        return view('htmx.htmxusers', compact('users',));
+
+    }
+
+
+    public function userapps($id){
+
+        $user = User::where('id', $id)
+            -> with('applications.status', 'applications.status')
+            ->first();
+
+        return view('htmx.htmxuserapps', compact('user', ));
+    }
+
+
+
 }

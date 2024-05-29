@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('applications', function (Blueprint $table) {
             $table->id();
-            $table->string('number')->index();
             $table->string('link')->nullable();
             $table->string('engine')->nullable();
             $table->string('year')->nullable();

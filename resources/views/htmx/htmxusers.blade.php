@@ -1,14 +1,9 @@
-@extends('layout')
-@php
-//dd($users);
- @endphp
-@section('users')
 
 {{--    User Applications Modal--}}
 {{--    <button type="button" class="m-1 ms-0 ti-btn ti-btn-primary-full" data-hs-overlay="#hs-full-screen-modal">--}}
 {{--        Full screen--}}
 {{--    </button>--}}
-    <div id="hs-full-screen-modal" class="hs-overlay hidden ti-modal">
+    <div id="hs-full-screen-modal" class="hs-overlay hidden ti-modal [--overlay-backdrop:static]">
         <div class="hs-overlay-open:mt-0 ti-modal-box mt-10 !m-0 !max-w-full !w-full">
             <div class="ti-modal-content !rounded-none">
                 <div class="ti-modal-header">
@@ -36,7 +31,8 @@
 {{--    click is triggered by datatables button--}}
     <a style="display: none" id="click" href="javascript:void(0);" class="hs-dropdown-toggle ti-btn ti-btn-primary-full" data-hs-overlay="#createuser">Launch demo modal
     </a>
-    <div id="createuser" class="hs-overlay hidden ti-modal">
+
+    <div id="createuser" class="hs-overlay hidden ti-modal [--overlay-backdrop:static]">
         <div class="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out">
             <div class="ti-modal-content">
                 <div class="ti-modal-header">
@@ -46,7 +42,13 @@
                         <i class="ri-close-line"></i>
                     </button>
                 </div>
-                <form action="{{route('user.create')}}" method="post">
+                <form
+{{--                      action="{{route('user.create')}}"--}}
+                      hx-target="#main-content"
+                      hx-indicator="#indicator"
+                      hx-trigger="click throttle:2s"
+                      hx-post="{{route('user.htmxcreate')}}"
+                      method="post">
                     @csrf
                 <div class="ti-modal-body px-4">
                     <div class="xl:col-span-4 lg:col-span-6 md:col-span-6 sm:col-span-12 col-span-12 mb-4">
@@ -77,7 +79,7 @@
                     </div>
                 </div>
                 <div class="ti-modal-footer">
-                    <button class="ti-btn bg-primary text-white !font-medium">დამატება</button>
+                    <button data-hs-overlay="#createuser" class="ti-btn bg-primary text-white !font-medium ">დამატება</button>
                 </div>
                 </form>
             </div>
@@ -87,7 +89,7 @@
     <table id="userstable" class="display nowrap" style="width:100%">
         <thead>
         <tr style="text-align: center!important;">
-            <td style="text-align: center!important;">შექმნის თარიღი</td>
+
             <td style="text-align: center!important;">მომხმარებელი</td>
             <td style="text-align: center!important;">როლი</td>
             <td style="text-align: center!important;">მეილი</td>
@@ -100,7 +102,7 @@
         @foreach($users as $index => $user)
             @if($user->name != 'developer')
             <tr style="text-align: center!important;" >
-                <td style="text-align: center!important;">{{$user->created_at}}</td>
+
                 <td style="text-align: center!important;">{{$user->name}}</td>
                 <td style="text-align: center!important;">{{$user->roles->first()->name}}</td>
                 <td style="text-align: center!important;">{{$user->email}}</td>
@@ -108,7 +110,7 @@
                 <td style="text-align: center!important;">
 
 
-    <span style="cursor: pointer" hx-get="{{route('user.apps',$user->id)}}" hx-target="#userdetails" data-hs-overlay="#hs-full-screen-modal"  style="font-size: 1.2rem" class="badge !bg-warning/10 !text-warning !py-[0.25rem] !px-[0.45rem] !text-[0.75em] ms-2">{{$user->applications_count}}</span>
+    <span style="cursor: pointer" hx-get="{{route('user.apps',$user->id)}}" hx-target="#userdetails" hx-indicator="#indicator" data-hs-overlay="#hs-full-screen-modal"  style="font-size: 1.2rem" class="badge !bg-warning/10 !text-warning !py-[0.25rem] !px-[0.45rem] !text-[0.75em] ms-2">{{$user->applications_count}}</span>
 
                 </td>
                 <td style="text-align: center!important;">
@@ -118,7 +120,7 @@
                     </td>
 
             </tr>
-            <div id="userpasswordupdate{{$index}}" class="hs-overlay hidden ti-modal">
+            <div id="userpasswordupdate{{$index}}" class="hs-overlay hidden ti-modal [--overlay-backdrop:static]">
                 <div class="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out">
                     <div class="ti-modal-content">
                         <form action="{{route('user.password.change')}}" method="post" target="hidden_iframe">
@@ -159,4 +161,48 @@
 {{--        </tfoot>--}}
     </table>
 
-@endsection
+<script>
+
+    if (typeof userstable !== 'undefined'  ) {
+        userstable.destroy();
+    }
+
+    userstable = new DataTable('#userstable', {
+        //Generall SETTINGS
+        lengthMenu: [50, 100, 150, {label: 'All', value: -1}],
+
+        columnDefs: [
+            {orderable: true, targets: [0, 1, 2]}
+        ],
+        order: [[0, 'desc']],
+
+        // lengthMenu: [ {label: 'All', value: -1}],
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/2.0.5/i18n/ka.json',
+        },
+
+        scrollX: true,
+        scrollY: 700,
+
+
+        layout: {
+
+            topStart: {
+                buttons: ['pageLength', 'colvis',
+                    {
+                        text: 'მომხმარებლის დამატება',
+                        action: function (e, dt, node, config) {
+
+                            document.getElementById('click').click()
+                        }
+                    }
+                ],
+            },
+
+            topEnd: {
+                search: '',
+            }
+        },
+    });
+
+</script>

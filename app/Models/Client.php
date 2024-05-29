@@ -8,10 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Client extends Model
 {
     use HasFactory;
+
     protected $guarded = [];
 
 
-    public function applications(){
-        return   $this->hasMany(Application::class);
+    public function applications()
+    {
+        return $this->hasMany(Application::class);
     }
+
+
 }

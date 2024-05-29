@@ -3,12 +3,20 @@
     <div class="text-center">
         <p>განაცხადი</p>
         <input style="max-width:100px!important;" class="form-control text-center " disabled type="text"
-               value="{{$application->number}}">
+               value="{{$application->id}}">
     </div>
+    @if($potentialclient)
+    <div class="text-center">
+        <p>პირველადი</p>
+        <input style="max-width:100px!important;" class="form-control text-center " disabled type="text"
+               value="{{$potentialclient->user->name}}">
+    </div>
+    @endif
     <div class="text-center">
         <p>ოპერატორი</p>
         <input style="max-width:100px!important;" class="form-control text-center " disabled type="text"
                value="{{$application->user->name}}">
+
     </div>
     <div class="text-center">
         <p>შეიქმნა</p>
@@ -19,7 +27,7 @@
     <div class="text-center">
         <p>ბოლო განახლება</p>
         <button style="max-width:250px!important;z-index: -5;color: red!important" class="form-control text-center " disabled type="text"
-                value="">  <a style="z-index: 200;color: red!important;" target="_blank" href="{{route('customlogviewer',['query'=>$application->number])}}">{{$application->updated_at}} </a>
+                value="">  <a style="z-index: 200;color: red!important;" target="_blank" href="{{route('customlogviewer',['query'=>'განაცხადში No: '.$application->id])}}">{{$application->updated_at}} </a>
         </button>
     </div>
     @endif
@@ -144,7 +152,7 @@
 
                 @endforeach
             </div>
-            @if(auth()->user()->id === $application->user_id)
+            @if(auth()->user()->id === $application->user_id || auth()->user()->hasRole('admin|developer') )
                 <div class="flex justify-center mt-7  mb-4">
                     <button id="newcompany2" type="button" class="ti-btn ti-btn-primary-full ti-btn-wave">
                         ახალი კომპანიის დამატება
@@ -178,7 +186,7 @@
                 <div class="md:col-span-3 col-span-12 mb-4">
                     <label class="form-label">მოდელი</label>
 
-                    <select data-disabled-input name="model" class="ti-form-select rounded-sm !p-0" id="modelsselect2"
+                    <select data-disabled-input name="model" class="form-control" id="modelsselect2"
                             autocomplete="off">
                         @if($application->car_id!==null)
                             <option value="{{$application->car_model_id}}">{{$application->model->name}}</option>
@@ -327,7 +335,13 @@
 
 <script>
 
-    new TomSelect("#carsselect2", {
+    if(typeof carselectt !== 'undefined'){
+        carselectt.destroy();
+
+    }
+
+
+    carselectt = new TomSelect("#carsselect2", {
         create: true,
         sortField: {
             field: "text",

@@ -5,8 +5,8 @@
     <thead>
     <tr>
         <td><input type="text" id="col1" class="form-control searchinput"></td>
+        <td><input type="text" id="col1" class="form-control searchinput"></td>
         <td><input type="text" id="col2" class="form-control searchinput"></td>
-        <td><input type="text" id="col3" class="form-control searchinput"></td>
         <td><input type="text" id="col4" class="form-control searchinput"></td>
         <td><input type="text" id="col5" class="form-control searchinput"></td>
         <td><input type="text" id="col6" class="form-control searchinput"></td>
@@ -19,9 +19,9 @@
 
     </tr>
     <tr style="text-align: center">
+        <th style="text-align: center">ნომერი</th>
         <th style="text-align: center">შექმნის დრო</th>
         <th style="text-align: center">განახლების დრო</th>
-        <th style="text-align: center">ნომერი</th>
         <th style="text-align: center">ოპერაოტრი</th>
         <th style="text-align: center">კლიენტი</th>
         <th style="text-align: center">მობილური</th>
@@ -36,10 +36,9 @@
     <tbody>
     @foreach($applications as $index=> $application)
         <tr style="text-align: center!important">
-
+            <td>{{$application->id}}</td>
             <td style="white-space: normal !important;text-align: center!important">{{$application->created_at}}</td>
             <td style="white-space: normal !important;text-align: center!important">{{$application->updated_at}}</td>
-            <td>{{$application->number}}</td>
             <td>{{$application->user->name}}</td>
             <td style="white-space: normal !important;">
                 {{$application->client->name}}
@@ -129,12 +128,13 @@
     </tbody>
     <tfoot>
     <tr>
+        <th>ნომერი</th>
+
         <th>შექმნის დრო</th>
         <th>განახლების დრო</th>
         <th>ნომერი</th>
         <th>ოპერაოტრი</th>
         <th>კლიენტი</th>
-        <th>ნომერი</th>
         <th>წყარო</th>
         <th>სტატუსი</th>
         <th>პროდუქტი</th>
@@ -150,14 +150,15 @@
 
     <script>
 
-        if (typeof table{{$counter-1}} !== 'undefined'  ) {
-            table{{$counter-1}}.destroy();
-        }
 
 
-        let table{{$counter}};
 
-       table{{$counter}} = new DataTable('#example', {
+table.destroy();
+
+
+        {{--let table{{$counter}};--}}
+
+       table = new DataTable('#example', {
             //Generall SETTINGS
 
             lengthMenu: [10, 100, 150, {label: 'All', value: -1}],
@@ -195,49 +196,49 @@
 
 
         $('#col1').on('keyup', function () {
-            table{{$counter}}
+            table
                 .columns(0)
                 .search(this.value)
                 .draw();
         });
         $('#col2').on('keyup', function () {
-            table{{$counter}}
+            table
                 .columns(1)
                 .search(this.value)
                 .draw();
         });
         $('#col3').on('keyup', function () {
-            table{{$counter}}
+            table
                 .columns(2)
                 .search(this.value)
                 .draw();
         });
         $('#col4').on('keyup', function () {
-            table{{$counter}}
+            table
                 .columns(3)
                 .search(this.value)
                 .draw();
         });
         $('#col5').on('keyup', function () {
-            table{{$counter}}
+            table
                 .columns(4)
                 .search(this.value)
                 .draw();
         });
         $('#col6').on('keyup', function () {
-            table{{$counter}}
+            table
                 .columns(5)
                 .search(this.value)
                 .draw();
         });
         $('#col7').on('keyup', function () {
-            table{{$counter}}
+            table
                 .columns(6)
                 .search(this.value)
                 .draw();
         });
         $('#col8').on('keyup', function () {
-            table{{$counter}}
+            table
                 .columns(7)
                 .search(this.value)
                 .draw();
@@ -249,21 +250,19 @@
         {{--        .draw();--}}
         {{--});--}}
         $('#col10').on('keyup', function () {
-            table{{$counter}}
+            table
                 .columns(9)
                 .search(this.value)
                 .draw();
         });
         $('#col11').on('keyup', function () {
-            table{{$counter}}
+            table
                 .columns(10)
                 .search(this.value)
                 .draw();
         });
 
-        if (typeof table{{$counter-1}} !== 'undefined'  ) {
-            table{{$counter-1}}.destroy();
-        }
+
 
 
     </script>

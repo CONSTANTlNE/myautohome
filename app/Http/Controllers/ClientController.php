@@ -23,7 +23,7 @@ class ClientController extends Controller
 
     public function potentialIndex()
     {
-        $potentialclients = PotentialClient::all();
+        $potentialclients = PotentialClient::with('user')->get();
         $cars             = Car::all();
 
         return view('pages.potentialclients', compact('potentialclients','cars'));
@@ -34,7 +34,7 @@ class ClientController extends Controller
         $validate=Validator::make($request->all(), [
             'pid' => 'nullable|string',
             'name' => 'nullable|string',
-            'mobile' => 'required|string',
+            'mobile' => 'required|string|unique:potential_clients',
             'comment' => 'nullable|string',
         ]);
 
@@ -50,6 +50,7 @@ class ClientController extends Controller
         $client->pid     = $validated['pid'];
         $client->name    = $validated['name'];
         $client->mobile  = $validated['mobile'];
+        $client->user_id     = auth()->user()->id;
         $client->comment = $validated['comment'];
         $client->save();
 
@@ -78,6 +79,7 @@ class ClientController extends Controller
         $client          = PotentialClient::find($validated['id']);
         $client->pid     = $validated['pid'];
         $client->name    = $validated['name'];
+        $client->user_id     = auth()->user()->id;
         $client->mobile  = $validated['mobile'];
         $client->comment = $validated['comment'];
         $client->save();
@@ -103,7 +105,7 @@ class ClientController extends Controller
             $request->session()->put('request_counter', $counter);
         }
 
-        $potentialclients = PotentialClient::all();
+        $potentialclients = PotentialClient::with('user')->get();
 
 
         return view('htmx.htmxpotentialclients',compact('potentialclients','counter'));
@@ -139,11 +141,12 @@ class ClientController extends Controller
         $client          = new PotentialClient();
         $client->pid     = $validated['pid'];
         $client->name    = $validated['name'];
+        $client->user_id     = auth()->user()->id;
         $client->mobile  = $validated['mobile'];
         $client->comment = $validated['comment'];
         $client->save();
 
-        $potentialclients = PotentialClient::all();
+        $potentialclients = PotentialClient::with('user')->get();
 
         return view('htmx.htmxpotentialclients',compact('potentialclients','counter'));
     }
