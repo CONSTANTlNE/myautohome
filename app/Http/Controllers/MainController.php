@@ -35,25 +35,25 @@ class MainController extends Controller
 //            'companies:id,name'
         ])  ->orderBy('created_at', 'desc')
             ->latest()
-            ->limit(1000)
+            ->limit(500)
             ->get();
 
         $companies=Company::all();
         $statuses=Status::all();
         $products=Product::all();
         $sources=Source::all();
-//        $cars=Car::with('models')->get();
         $cars=Car::all();
-        $ips=Allowedip::all();
+        $authuser=auth()->user();
+
 //        $carsJson =$cars->toJson();
-        return view('pages.main' ,compact('companies','statuses','products','sources','applications','cars','ips'));
+        return view('pages.main' ,compact('companies','statuses','products','sources','applications','cars','authuser'));
 
     }
 
 
     public function appsearch(Request $request){
 
-
+        $authuser=auth()->user();
         $applications = Client::where('mobile1', $request->search)
             ->orWhere('pid', $request->search)
             ->orWhere('name', 'like', "%{$request->search}%")
@@ -73,33 +73,33 @@ class MainController extends Controller
 //        dd ($applications);
 
 
-        return view('pages.appsearch', compact('applications'));
+        return view('pages.appsearch', compact('applications','authuser'));
     }
 
     public function dateRange(Request $request)
     {
 
         $range = $request->input('range');
-
+        $authuser=auth()->user();
 
         list($startDateString, $endDateString) = explode(' to ', $range);
 
         $startDate = Carbon::createFromFormat('Y-m-d', $startDateString);
         $endDate   = Carbon::createFromFormat('Y-m-d', $endDateString);
 
-        $applications = Application::with('client', 'source', 'status', 'product', 'car.models', 'comments.user', 'user', 'companies')
+        $applications = Application::with('client', 'source', 'status', 'product', 'car.models', 'comments.user', 'user', 'companies',)
             ->whereBetween('created_at', [$startDate,  $endDate])
             ->latest()
-            ->limit(500)
+
             ->get();
         $companies=Company::all();
         $statuses=Status::all();
         $products=Product::all();
         $sources=Source::all();
         $cars=Car::all();
-        $ips=Allowedip::all();
 
-        return view('pages.main',compact('companies','statuses','products','sources','applications','cars','ips'));
+
+        return view('pages.main',compact('companies','statuses','products','sources','applications','cars','authuser'));
 
     }
 
@@ -112,12 +112,13 @@ class MainController extends Controller
     {
 
         $range = $request->input('range');
+        $authuser=auth()->user();
 
 
         list($startDateString, $endDateString) = explode(' to ', $range);
 
-        $startDate = Carbon::createFromFormat('Y-m-d', $startDateString);
-        $endDate   = Carbon::createFromFormat('Y-m-d', $endDateString);
+        $startDate = Carbon::createFromFormat('Y-m-d', $startDateString)->startOfDay();
+        $endDate = Carbon::createFromFormat('Y-m-d', $endDateString)->endOfDay();
 
         $applications = Application::with('client', 'source', 'status', 'product', 'car.models', 'comments.user', 'user', 'companies')
             ->whereBetween('created_at', [$startDate,  $endDate])
@@ -128,9 +129,9 @@ class MainController extends Controller
 //        $products=Product::all();
 //        $sources=Source::all();
 //        $cars=Car::all();
-        $ips=Allowedip::all();
+//        $ips=Allowedip::all();
 
-        return view('htmx.htmx' ,compact('applications',));
+        return view('htmx.htmx' ,compact('applications','authuser'));
 
     }
 
@@ -150,8 +151,9 @@ class MainController extends Controller
 
         ])  ->orderBy('created_at', 'desc')
             ->latest()
-            ->limit(1000)
+            ->limit(500)
             ->get();
+        $authuser=auth()->user();
 
 //        $companies=Company::all();
 //        $statuses=Status::all();
@@ -163,7 +165,7 @@ class MainController extends Controller
 
 //        $carsJson =$cars->toJson();
 //        return view('htmx.htmx' ,compact('companies','statuses','products','sources','applications','cars','counter'));
-        return view('htmx.htmx' ,compact('applications',));
+        return view('htmx.htmx' ,compact('applications','authuser'));
     }
 
 
@@ -173,7 +175,9 @@ class MainController extends Controller
             ->orWhere('name', 'like', "%{$request->search}%")
             ->with('applications.status', 'applications.user')
             ->first();
-        return view('htmx.htmxsearch', compact('applications'));
+        $authuser=auth()->user();
+
+        return view('htmx.htmxsearch', compact('applications','authuser'));
     }
 
 

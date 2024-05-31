@@ -43,4 +43,9 @@
         </tfoot>
     </table>
 
+
+    <script>
+
+    </script>
+
 @endsection

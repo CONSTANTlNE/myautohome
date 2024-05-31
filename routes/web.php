@@ -15,22 +15,16 @@ use App\Http\Controllers\StatusController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserController;
 use App\Models\Notification;
+use App\Models\PotentialClient;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
 
-//
-//Route::get('/', function () {
-//    return view('login');
-//});
-
 Route::fallback(function () {
     return redirect()->route('main');
 });
-
-
 
 
 Route::group(['middleware' => ['auth']], function () {
@@ -90,9 +84,14 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('app/clients/potential',[ClientController::class, 'potentialIndex'])->name('potential.clients');
     Route::post('app/clients/potential/create',[ClientController::class, 'createPotential'])->name('potential.clients.create');
     Route::post('app/clients/potential/update',[ClientController::class, 'updatePotential'])->name('potential.clients.update');
+    // Clients HTMX
     Route::get('app/clients/potential/htmx',[ClientController::class, 'htmxpotentialIndex'])->name('htmx.potential.clients');
     Route::post('app/clients/potential/htmx/create',[ClientController::class, 'htmxcreatePotential'])->name('htmx.potential.clients.create');
     Route::post('app/clients/potential/htmx/update',[ClientController::class, 'htmxupdatePotential'])->name('htmx.potential.clients.update');
+    Route::post('app/clients/potential/htmx/daterange',[ClientController::class, 'htmxclientdaterange'])->name('htmx.potential.clients.daterange');
+    Route::get('app/clients/potential/htmx/search',[ClientController::class, 'htmxsearchpotential'])->name('search.potential.htmx');
+
+
 
     // changepassword
     Route::post('password/change',[UserController::class, 'changePassword'])->name('password.change');
@@ -136,13 +135,13 @@ Route::get('memory',function(){
     echo 'Current memory usage: ' . $memoryUsageMB . ' MB';
 });
 
-Route::get('test',function(Request $request){
 
-dd(\App\Models\PotentialClient::with('user')->get());
+Route::get('deletepotential',function(Request $request){
+
+ $potentials=PotentialClient::all();
+ foreach ($potentials as $potential){
+     $potential->delete();
+ }
 
 });
-
-Route::get('/ip',[AllowedipController::class, 'index'])->name('iperror');
-
-// ============== Fortify===============
 

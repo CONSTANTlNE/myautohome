@@ -42,7 +42,7 @@ class ApplicationController extends Controller
             'car'             => 'nullable|integer|exists:cars,id',
             'model'           => 'nullable|integer|exists:car_models,id',
             'link'            => 'nullable|string',
-            'engine'          => 'nullable|numeric',
+            'engine'          => 'nullable|string',
             'year'            => 'nullable|integer',
             'comment'         => 'nullable|string',
         ]);
@@ -66,8 +66,7 @@ class ApplicationController extends Controller
 
         $user=auth()->user()->id;
 
-        $client = Client::firstOrCreate(
-            ['pid' => $validated['customer_pid']],
+        $client = Client::create(
             [
                 'name'    => $validated['customer_name'],
                 'mobile1' => $validated['customer_mobile']
@@ -386,8 +385,7 @@ class ApplicationController extends Controller
         $validated = $validate->validated();
         $user=auth()->user()->id;
 
-        $client = Client::firstOrCreate(
-            ['pid' => $validated['customer_pid']],
+        $client = Client::create(
             [
                 'name'    => $validated['customer_name'],
                 'mobile1' => $validated['customer_mobile']
@@ -489,6 +487,7 @@ class ApplicationController extends Controller
     // For users for their applications
 public function htmxupdate(Request $request){
 
+        $authuser=auth()->user();
 //    START UPDATING LOGIC
 
     $app = Application::with('client', 'source', 'status', 'product', 'car', 'comments.user', 'user',
@@ -516,7 +515,7 @@ public function htmxupdate(Request $request){
         'car'             => 'nullable|integer|exists:cars,id',
         'model'           => 'nullable|integer|exists:car_models,id',
         'link'            => 'nullable|string',
-        'engine'          => 'nullable|numeric',
+        'engine'          => 'nullable|string',
         'year'            => 'nullable|integer',
         'comment'         => 'nullable|string',
         'commentids'      => 'nullable|array',
@@ -541,15 +540,13 @@ public function htmxupdate(Request $request){
                 $request->status)->first()->name.
             '-- ცვლილება განახორციელა '.auth()->user()->name);
 
-        foreach ($users as $user) {
-            if($user->id!=$app->user_id){
+
                 $notification = new Notification();
                 $notification->application_id = $app->id;
-                $notification->user_id        = $user->id;
-                $notification->type           = 'შეიცვალა სტატუსი';
+                $notification->user_id        = $app->user_id;
+                $notification->type           = 'განაცხადში No: '.$app->id.' შეიცვალა სტატუსი';
                 $notification->save();
-            }
-        }
+
 
         $app->status_id = $validated['status'];
         $app->save();
@@ -561,15 +558,13 @@ public function htmxupdate(Request $request){
         Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა პირადი ნომერი: -- '.$app->client->pid.' -- ახალი პირადი ნომერია: --'.$request->customer_pid.
             '-- ცვლილება განახორციელა '.auth()->user()->name);
 
-        foreach ($users as $user) {
-            if($user->id!=$app->user_id){
+
                 $notification = new Notification();
                 $notification->application_id = $app->id;
-                $notification->user_id        = $user->id;
-                $notification->type           = 'შეიცვალა კლიენტის პირადობა';
+                $notification->user_id        = $app->user_id;
+                $notification->type           = 'განაცხადში No: '.$app->id.'  შეიცვალა პირადი ნომერი';
                 $notification->save();
-            }
-        }
+
 
         $app->client->pid = $validated['customer_pid'];
         $app->client->save();
@@ -581,18 +576,16 @@ public function htmxupdate(Request $request){
     }
     if ($app->client->name !== $validated['customer_name']) {
 
-        Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა კლიენტი: -- '.$app->client->name.' -- ახალი კლიენტია: --'.$request->customer_name.
+        Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა კლიენტისახელი: -- '.$app->client->name.' -- ახალი კლიენტია: --'.$request->customer_name.
             '-- ცვლილება განახორციელა '.auth()->user()->name);
 
-        foreach ($users as $user) {
-            if($user->id!=$app->user_id){
+
                 $notification = new Notification();
                 $notification->application_id = $app->id;
-                $notification->user_id        = $user->id;
-                $notification->type           = 'შეიცვალა კლიენტის სახელი ';
+                $notification->user_id        = $app->user_id;
+                $notification->type           = 'განაცხადში No: '.$app->id.'  შეიცვალა კლიენტისახელი';
                 $notification->save();
-            }
-        }
+
 
         $app->client->name = $validated['customer_name'];
         $app->client->save();
@@ -604,15 +597,12 @@ public function htmxupdate(Request $request){
         Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა კლიენტის მობილური: -- '.$app->client->mobile1.' -- ახალი მობილურია: --'.$request->customer_mobile.
             '-- ცვლილება განახორციელა '.auth()->user()->name);
 
-        foreach ($users as $user) {
-            if($user->id!=$app->user_id){
                 $notification = new Notification();
                 $notification->application_id = $app->id;
-                $notification->user_id        = $user->id;
-                $notification->type           = 'შეიცვალა კლიენტის საკონტაქტო ';
+                $notification->user_id        = $app->user_id;
+                $notification->type           = 'განაცხადში No: '.$app->id.'  შეიცვალა კლიენტის მობილური';
                 $notification->save();
-            }
-        }
+
 
         $app->client->mobile1 = $validated['customer_mobile'];
         $app->client->save();
@@ -624,15 +614,12 @@ public function htmxupdate(Request $request){
                 $request->source)->first()->name.
             '-- ცვლილება განახორციელა '.auth()->user()->name);
 
-        foreach ($users as $user) {
-            if($user->id!=$app->user_id){
+
                 $notification = new Notification();
                 $notification->application_id = $app->id;
-                $notification->user_id        = $user->id;
-                $notification->type           = 'შეიცვალა წყარო';
+                $notification->user_id        = $app->user_id;
+                $notification->type           = 'განაცხადში No: '.$app->id.'  შეიცვალა წყარო';
                 $notification->save();
-            }
-        }
 
 
         $app->source_id=$validated['source'];
@@ -644,15 +631,13 @@ public function htmxupdate(Request $request){
                 $request->product)->first()->name.
             '-- ცვლილება განახორციელა '.auth()->user()->name);
 
-        foreach ($users as $user) {
-            if($user->id!=$app->user_id){
+
                 $notification = new Notification();
                 $notification->application_id = $app->id;
-                $notification->user_id        = $user->id;
-                $notification->type           = 'შეიცვალა პროდუქტი';
+                $notification->user_id        = $app->user_id;
+                $notification->type           = 'განაცხადში No: '.$app->id.'  შეიცვალა პროდუცტი';
                 $notification->save();
-            }
-        }
+
 
         $app->product_id  = $validated['product'];
         $app->save();
@@ -662,15 +647,13 @@ public function htmxupdate(Request $request){
         Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა ლინკი: --  '.$app->link.' -- ახალი ლინკია: -- '.$request->link.
             '-- ცვლილება განახორციელა '.auth()->user()->name);
 
-        foreach ($users as $user) {
-            if($user->id!=$app->user_id){
+
                 $notification = new Notification();
                 $notification->application_id = $app->id;
-                $notification->user_id        = $user->id;
-                $notification->type           = 'შეიცვალა ლინკი';
+                $notification->user_id        = $app->user_id;
+                $notification->type           = 'განაცხადში No: '.$app->id.'  შეიცვალა ლინკი';
                 $notification->save();
-            }
-        }
+
 
         $app->link = $validated['link'];
         $app->save();
@@ -688,15 +671,13 @@ public function htmxupdate(Request $request){
                 '-- ცვლილება განახორციელა '.auth()->user()->name);
         }
 
-        foreach ($users as $user) {
-            if($user->id!=$app->user_id){
+
                 $notification = new Notification();
                 $notification->application_id = $app->id;
-                $notification->user_id        = $user->id;
-                $notification->type           = 'შეიცვალა მწარმოებელი';
+                $notification->user_id        = $app->user_id;
+                $notification->type           = 'განაცხადში No: '.$app->id.'  შეიცვალა მანქანა';
                 $notification->save();
-            }
-        }
+
 
         $app->car_id = $validated['car'];
         $app->update();
@@ -713,15 +694,13 @@ public function htmxupdate(Request $request){
                 '-- ცვლილება განახორციელა '.auth()->user()->name);
         }
 
-        foreach ($users as $user) {
-            if($user->id!=$app->user_id){
+
                 $notification = new Notification();
                 $notification->application_id = $app->id;
-                $notification->user_id        = $user->id;
-                $notification->type           = 'შეიცვალა მანქანის მოდელი';
+                $notification->user_id        = $app->user_id;
+                $notification->type           = 'განაცხადში No: '.$app->id.'  შეიცვალა მანქანის მოდელი';
                 $notification->save();
-            }
-        }
+
 
         $app->car_model_id = $validated['model'];
         $app->save();
@@ -732,15 +711,12 @@ public function htmxupdate(Request $request){
         Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა მანქანის წელი: --'.$app->year.'-- ახალი წელია: --'.$request->year.
             '-- ცვლილება განახორციელა '.auth()->user()->name);
 
-        foreach ($users as $user) {
-            if($user->id!=$app->user_id){
+
                 $notification = new Notification();
                 $notification->application_id = $app->id;
-                $notification->user_id        = $user->id;
-                $notification->type           = 'შეიცვალა ავტომობილის წელი';
+                $notification->user_id        = $app->user_id;
+                $notification->type           = 'განაცხადში No: '.$app->id.'  შეიცვალა მანქანის წელი';
                 $notification->save();
-            }
-        }
 
         $app->year=$request->year;
         $app->save();
@@ -750,15 +726,13 @@ public function htmxupdate(Request $request){
         Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა ძრავის მოცულობა: --'.$app->engine.'-- ახალი წელია: --'.$request->engine.
             '-- ცვლილება განახორციელა '.auth()->user()->name);
 
-        foreach ($users as $user) {
-            if($user->id!=$app->user_id){
+
                 $notification = new Notification();
                 $notification->application_id = $app->id;
-                $notification->user_id        = $user->id;
-                $notification->type           = 'შეიცვალა ძრავის მოცულობა';
+                $notification->user_id        = $app->user_id;
+                $notification->type           = 'განაცხადში No: '.$app->id.'  შეიცვალა ძრავის მოცულობა';
                 $notification->save();
-            }
-        }
+
         $app->engine = $validated['engine'];
         $app->save();
 
@@ -789,15 +763,20 @@ public function htmxupdate(Request $request){
     }
 
     if($request->has('newcomment')){
-        foreach ($users as $user) {
-            if($user->id != auth()->user()->id){
+
+        $app->updated_at = Carbon::now();
+        $app->save();
+        Log::channel('changes')->info('განაცხადში No: '.$app->id.'  დაემატა ახალი კომენტარი '.
+            '-- ცვლილება განახორციელა '.auth()->user()->name);
+
+
                 $notification = new Notification();
                 $notification->application_id = $app->id;
-                $notification->user_id        = $user->id;
-                $notification->type           = 'დაემატა ახალი კომენტარი';
+                $notification->user_id        = $app->user_id;
+                $notification->type           = 'განაცხადში No: '.$app->id .'დაემატა ახალი კომენტარი';
                 $notification->save();
-            }
-        }
+
+
 
         foreach ($validated['newcomment'] as $newcomment) {
             $comment                 = new Comment();
@@ -824,15 +803,13 @@ public function htmxupdate(Request $request){
             $app->updated_at = Carbon::now();
             $app->save();
 
-            foreach ($users as $user) {
-                if($user->id!=$app->user_id){
+
                     $notification = new Notification();
                     $notification->application_id = $app->id;
-                    $notification->user_id        = $user->id;
-                    $notification->type           = 'წაიშალა კომპანია';
+                    $notification->user_id        = $app->user_id;
+                    $notification->type           = 'განაცხადში No: '.$app->id.' წაიშალა კომპანია';
                     $notification->save();
-                }
-            }
+
 
             Log::channel('changes')->info('განაცხადში No: '.$app->id.'  წაიშალა კომპანია: '.$companies->where('id',
                     $company->id)->first()->name.'-- ოპერატორი '.auth()->user()->name);
@@ -850,17 +827,12 @@ public function htmxupdate(Request $request){
     $totalApplications = count($validated['company']);
     foreach ($validated['company'] as $indexcompany => $company) {
         if (!in_array($company, $app->companies->pluck('id')->toArray())) {
-            foreach ($users as $user) {
-                if($user->id!=$app->user_id){
+
                     $notification = new Notification();
                     $notification->application_id = $app->id;
-                    $notification->user_id        = $user->id;
+                    $notification->user_id        = $app->user_id;
                     $notification->type           = 'დაემატა კომპანია ';
                     $notification->save();
-
-                }
-            }
-
 
             Log::channel('changes')->info('განაცხადში No: '.$app->id.'  დაემატა კომპანია: '.$companies->where('id',
                     $company)->first()->name.'-- ოპერატორი '.auth()->user()->name);
@@ -895,7 +867,7 @@ public function htmxupdate(Request $request){
 
 
 //    return view('htmx.htmx' ,compact('companies','statuses','products','sources','applications','cars'));
-    return view('htmx.htmx' ,compact('applications',));
+    return view('htmx.htmx' ,compact('applications', 'authuser'));
 
 
 }
@@ -911,7 +883,7 @@ public function htmxupdate(Request $request){
 
 
         $statuses=Status::all();
-        $users=User::all();
+        $authuser=auth()->user();
 
         // update Logic
         if ($app->status->id != $request->status) {
@@ -920,15 +892,14 @@ public function htmxupdate(Request $request){
                 '-- ცვლილება განახორციელა '.auth()->user()->name);
 
 
-            foreach ($users as $user) {
-                if($user->id!=$app->user_id && $user->id!=auth()->user()->id){
+
                     $notification = new Notification();
                     $notification->application_id = $app->id;
-                    $notification->user_id        = $user->id;
-                    $notification->type           = 'შეიცვალა სტატუსი';
+                    $notification->user_id        = $app->user_id;
+                    $notification->type           = 'განაცხადში No: ' .$app->id . ' შეიცვალა სტატუსი';
                     $notification->save();
-                }
-            }
+
+
 
             $app->status_id = $request->status;
             $app->save();
@@ -948,7 +919,7 @@ public function htmxupdate(Request $request){
             foreach ($commentids as $index => $commentid) {
                 // if comment changed
                 $comment = $appcomments->where('id', $commentid)->first();
-                if ($comment->comment != $comments[$index]) {
+                if ($comment->comment != $comments[$index] ) {
                     $comment->comment = $comments[$index];
                     $comment->user_id = auth()->user()->id;
                     $comment->save();
@@ -959,16 +930,16 @@ public function htmxupdate(Request $request){
 
 
         if($request->has('newcomment')){
-            foreach ($users as $user) {
-                if($user->id != auth()->user()->id){
+            $app->updated_at = Carbon::now();
+            $app->save();
+            Log::channel('changes')->info('განაცხადში No: '.$app->id.'  დაემატა ახალი კომენტარი '.
+                '-- ცვლილება განახორციელა '.auth()->user()->name);
+
                     $notification = new Notification();
                     $notification->application_id = $app->id;
-                    $notification->user_id        = $user->id;
-                    $notification->type           = 'დაემატა ახალი კომენტარი';
+                    $notification->user_id        = $app->user_id;
+                    $notification->type           = 'განაცხადში No: '.$app->id. 'დაემატა ახალი კომენტარი';
                     $notification->save();
-                }
-
-            }
 
 
             foreach ($request->newcomment as $newcomment) {
@@ -999,7 +970,7 @@ public function htmxupdate(Request $request){
             ->get();
 
 
-        return view('htmx.htmx' ,compact('applications',));
+        return view('htmx.htmx' ,compact('applications','authuser'));
 
 
     }

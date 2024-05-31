@@ -2,7 +2,6 @@
 
 
 
-
 const ANIMATION_DURATION = 300;
 
 const sidebar = document.getElementById("sidebar");

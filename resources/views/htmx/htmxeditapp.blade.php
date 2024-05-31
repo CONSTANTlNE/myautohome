@@ -239,13 +239,12 @@
                 </div>
                 @foreach($application->comments as $comment)
                     <div class="md:col-span-12 col-span-12 mb-4">
-                        <input type="hidden" name="commentids[]" value="{{$comment->id}}">
-                        <label class="form-label">კომენტარი {{$comment->user->name}} {{$comment->created_at}}</label>
-                        <textarea name="oldcomment[]" class="form-control" aria-label="With textarea"
+                        <input data-disabled-input type="hidden" name="commentids[]" value="{{$comment->id}}"  >
+                        <label class="form-label" >კომენტარი {{$comment->user->name}} {{$comment->created_at}}</label>
+                        <textarea data-disabled-input name="oldcomment[]" class="form-control" aria-label="With textarea"
                                   rows="3">{{$comment->comment}}</textarea>
                     </div>
                 @endforeach
-
 
             </div>
             <template id="commenttemplate">

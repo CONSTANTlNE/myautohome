@@ -3,12 +3,13 @@
     <!-- Start::main-sidebar-header -->
     <div style="padding:0!important" class="main-sidebar-header">
         <a
-                {{--                href="{{route('main')}}" --}}
+                {{--                                href="{{route('main')}}"--}}
                 href="javascript:void(0);"
                 hx-get="{{route('main2')}}"
                 hx-target="#main-content"
                 hx-indicator="#indicator"
                 class="header-logo"
+                id="mainpagelink1"
         >
             <img src="{{asset('assets/images/site-logo.svg')}}" alt="logo" class="desktop-logo">
             <img src="{{asset('assets/images/site-logo.svg')}}" alt="logo" class="toggle-logo">
@@ -52,14 +53,17 @@
                         </li>
                         <li class="slide htmxlink">
                             <a
-                               hx-get="{{route('htmx.users')}}" hx-trigger="click throttle:2s"
-                               hx-indicator="#indicator"
-                               hx-target="#main-content"
-                               class="side-menu__item htmxlink">მომხმარებლების მართვა</a>
+                                    hx-get="{{route('htmx.users')}}" hx-trigger="click throttle:2s"
+                                    hx-indicator="#indicator"
+                                    hx-target="#main-content"
+                                    id="userspage"
+                                    class="side-menu__item htmxlink">მომხმარებლების მართვა</a>
                         </li>
                         <li class="slide ">
                             <a
-{{--                                    href="{{route('other')}}"--}}
+                                    {{--                                    href="{{route('other')}}"--}}
+
+                                    id="controlpanelpage"
                                     href="javascript:void(0);"
                                     hx-get="{{route('htmx.other')}}" hx-trigger="click "
                                     hx-target="#main-content" hx-indicator="#indicator"
@@ -82,33 +86,34 @@
                                 <span class="side-menu__label">ავტომობილის დამატება</span>
                             </a>
                         </li>
-                        <li class="slide">
-                            <a href="javascript:void(0);" data-hs-overlay="#ips"
-                               hx-get="{{route('htmx.create')}}"
-                               hx-target="#iptarget"
-                               hx-indicator="#indicator"
-                               class="side-menu__item hs-dropdown-toggle">
-                                <span class="side-menu__label">IP დაშვება</span>
-                            </a>
-                        </li>
+{{--                        <li class="slide">--}}
+{{--                            <a href="javascript:void(0);" data-hs-overlay="#ips"--}}
+{{--                               hx-get="{{route('htmx.create')}}"--}}
+{{--                               hx-target="#iptarget"--}}
+{{--                               hx-indicator="#indicator"--}}
+{{--                               class="side-menu__item hs-dropdown-toggle">--}}
+{{--                                <span class="side-menu__label">IP დაშვება</span>--}}
+{{--                            </a>--}}
+{{--                        </li>--}}
                     </ul>
                 </li>
                 @endrole
 
                 {{--                General Menu--}}
-{{--                <li class="slide ">--}}
-{{--                    <a href="{{route('existing.clients')}}" class="side-menu__item">--}}
-{{--                        <span style="color:green;margin-right: 5px" class="material-symbols-outlined">group</span>--}}
-{{--                        <span class="side-menu__label">არსებული კლიენტები</span>--}}
-{{--                    </a>--}}
-{{--                </li>--}}
+                {{--                <li class="slide ">--}}
+                {{--                    <a href="{{route('existing.clients')}}" class="side-menu__item">--}}
+                {{--                        <span style="color:green;margin-right: 5px" class="material-symbols-outlined">group</span>--}}
+                {{--                        <span class="side-menu__label">არსებული კლიენტები</span>--}}
+                {{--                    </a>--}}
+                {{--                </li>--}}
                 <li class="slide ">
                     <a
-                            {{--                            href="{{route('potential.clients')}}" --}}
+                            {{--                                                        href="{{route('potential.clients')}}"--}}
                             href="javascript:void(0);"
                             hx-get="{{route('htmx.potential.clients')}}"
                             hx-indicator="#indicator"
                             hx-target="#main-content"
+                            id="potentialclientsbtn"
                             class="side-menu__item">
                         <span style="color:orange;margin-right: 5px" class="material-symbols-outlined">group</span>
                         <span class="side-menu__label">პოტენციური კლიენტები</span>
@@ -146,7 +151,7 @@
                 <div class="ti-modal-header">
                     <h6 class="modal-title text-[1rem] font-semibold" id="mail-ComposeLabel">
                         @if(auth()->check())
-                            {{auth()->user()->name}}
+                            {{$authuser->name}}
                         @endif
                     </h6>
                     <button type="button" class="hs-dropdown-toggle !text-[1rem] !font-semibold !text-defaulttextcolor"
@@ -172,6 +177,7 @@
     </div>
 </div>
 {{--    ADD new Car Modal--}}
+@role('admin')
 <div id="cars" class="hs-overlay hidden ti-modal [--overlay-backdrop:static]">
     <div class="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out">
         <div class="ti-modal-content">
@@ -232,7 +238,7 @@
         <iframe name="hidden_iframe2" style="display:none;"></iframe>
     </div>
 </div>
-
+@endrole
 {{--    ADD new Ip Modal--}}
 <div id="ips" class="hs-overlay hidden ti-modal [--overlay-backdrop:static]">
     <div class="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out" id="iptarget">

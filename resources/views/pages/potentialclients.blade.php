@@ -29,11 +29,13 @@
                     <div class="ti-modal-body px-4">
                         <div class="xl:col-span-4 lg:col-span-6 md:col-span-6 sm:col-span-12 col-span-12 mb-4">
                             <p class="mb-2 text-muted">პირადი ნომერი</p>
-                            <input type="text" name="pid" class="form-control" >
+                            <input
+
+                                    type="text" name="pid" class="form-control" >
                         </div>
                         <div class="xl:col-span-4 lg:col-span-6 md:col-span-6 sm:col-span-12 col-span-12 mb-4">
                             <p class="mb-2 text-muted">სახელი</p>
-                            <input type="text" name="name" class="form-control" >
+                            <input  type="text" name="name" class="form-control" >
                         </div>
 
                         <div class="xl:col-span-4 lg:col-span-6 md:col-span-6 sm:col-span-12 col-span-12 mb-4">
@@ -51,6 +53,7 @@
                                 hx-post="{{route('potential.clients.create')}}"
                                 hx-target="#main-content"
                                 hx-indicator="#indicator"
+                                data-hs-overlay="#createpotentialclient"
                                 class="ti-btn bg-primary text-white !font-medium">დამატება</button>
                     </div>
                 </form>
@@ -62,6 +65,15 @@
 
     <table id="potentialclients" class="display nowrap" style="width:100%">
         <thead>
+        <tr>
+            <td><input type="text"  id="col1" class="form-control searchinput"></td>
+            <td><input type="text" id="col2"  class="form-control searchinput"></td>
+            <td><input type="text" id="col3"  class="form-control searchinput"></td>
+            <td><input type="text"  id="col4" class="form-control searchinput"></td>
+            <td><input type="text"  id="col5" class="form-control searchinput"></td>
+            <td><input type="text" id="col6"  class="form-control searchinput"></td>
+            <td></td>
+        </tr>
         <tr style="text-align: center!important;">
             <td style="text-align: center!important;">შექმნის თარიღი</td>
             <td style="text-align: center!important;">ოპერატორი</td>
@@ -80,7 +92,7 @@
                 <td style="text-align: center!important;">{{$client->pid}}</td>
                 <td style="text-align: center!important;">{{$client->name}}</td>
                 <td style="text-align: center!important;">{{$client->mobile}}</td>
-                <td style="text-align: center!important;">{{$client->comment}}</td>
+                <td style="text-align: center!important;white-space: normal !important;max-width: 250px!important">{{$client->comment}}</td>
 
                 <td style="text-align: center!important;">
                     @hasanyrole('admin|developer')
@@ -107,7 +119,11 @@
                                     <div class="ti-modal-body px-4">
                                         <div class="xl:col-span-4 lg:col-span-6 md:col-span-6 sm:col-span-12 col-span-12 mb-4">
                                             <p class="mb-2 text-muted">პირადი ნომერი</p>
-                                            <input type="text" value="{{$client->pid}}" name="pid" class="form-control" >
+                                            <input
+                                                    @if($client->user_id!=$authuser->id && $authuser->hasAnyRole('operator') )
+                                                        disabled
+                                                    @endif
+                                                    type="text" value="{{$client->pid}}" name="pid" class="form-control" >
                                         </div>
                                         <div class="xl:col-span-4 lg:col-span-6 md:col-span-6 sm:col-span-12 col-span-12 mb-4">
                                             <p class="mb-2 text-muted">სახელი</p>

@@ -113,14 +113,14 @@
 
                             {{--ADMIN ROUTES--}}
                             @hasanyrole('admin|developer')
-                            <li>
-                                <a href="javascript:void(0);"
-                                   class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
-                                   data-hs-overlay="#delete{{$index}}"
-                                >წაშლა
+{{--                            <li>--}}
+{{--                                <a href="javascript:void(0);"--}}
+{{--                                   class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"--}}
+{{--                                   data-hs-overlay="#delete{{$index}}"--}}
+{{--                                >წაშლა--}}
 
-                                </a>
-                            </li>
+{{--                                </a>--}}
+{{--                            </li>--}}
                             @endhasanyrole
 
 

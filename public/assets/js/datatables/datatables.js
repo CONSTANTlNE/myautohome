@@ -1000,7 +1000,7 @@
 
     //
     // Backwards compatibility. Alias to pre 1.10 Hungarian notation counter parts
-    //
+
     $.extend( _ext, {
         afnFiltering: _ext.search,
         aTypes:       _ext.type.detect,

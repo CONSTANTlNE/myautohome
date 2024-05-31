@@ -12,7 +12,7 @@
                     <i class="ri-close-line"></i>
                 </button>
             </div>
-            <form action="{{route('potential.clients.create')}}" method="post">
+            <form action="{{route('htmx.potential.clients.create')}}" method="post">
                 @csrf
                 <div class="ti-modal-body px-4">
                     <div class="xl:col-span-4 lg:col-span-6 md:col-span-6 sm:col-span-12 col-span-12 mb-4">
@@ -53,6 +53,15 @@
 
 <table id="potentialclients" class="display nowrap" style="width:100%">
     <thead>
+    <tr>
+        <td><input type="text"  id="column1" class="form-control searchinput"></td>
+        <td><input type="text" id="column2"  class="form-control searchinput"></td>
+        <td><input type="text" id="column3"  class="form-control searchinput"></td>
+        <td><input type="text"  id="column4" class="form-control searchinput"></td>
+        <td><input type="text"  id="column5" class="form-control searchinput"></td>
+        <td><input type="text" id="column6"  class="form-control searchinput"></td>
+        <td></td>
+    </tr>
     <tr style="text-align: center!important;">
         <td style="text-align: center!important;">შექმნის თარიღი</td>
         <td style="text-align: center!important;">ოპერატორი</td>
@@ -75,10 +84,7 @@
             <td style="text-align: center!important;">{{$client->comment}}</td>
 
             <td style="text-align: center!important;">
-                @hasanyrole('admin|developer')
 
-                წაშლა
-                @endhasanyrole
 
                 <a   href="javascript:void(0);" class="hs-dropdown-toggle ti-btn ti-btn-primary-full" data-hs-overlay="#editpotentialclient{{$index}}">რედაქტირება
                 </a>
@@ -100,23 +106,40 @@
                                 <div class="ti-modal-body px-4">
                                     <div class="xl:col-span-4 lg:col-span-6 md:col-span-6 sm:col-span-12 col-span-12 mb-4">
                                         <p class="mb-2 text-muted">პირადი ნომერი</p>
-                                        <input type="text" value="{{$client->pid}}" name="pid" class="form-control" >
+                                        <input
+                                                @if($client->user_id!=$authuser->id && $authuser->hasAnyRole('operator|callcenter') )
+                                                    disabled
+                                                @endif
+                                                type="text" value="{{$client->pid}}" name="pid" class="form-control" >
                                     </div>
                                     <div class="xl:col-span-4 lg:col-span-6 md:col-span-6 sm:col-span-12 col-span-12 mb-4">
                                         <p class="mb-2 text-muted">სახელი</p>
-                                        <input type="text"  value="{{$client->name}}"  name="name" class="form-control" >
+                                        <input
+                                                @if($client->user_id!=$authuser->id && $authuser->hasAnyRole('operator|callcenter') )
+                                                    disabled
+                                                @endif
+                                                type="text"  value="{{$client->name}}"  name="name" class="form-control" >
                                     </div>
 
                                     <div class="xl:col-span-4 lg:col-span-6 md:col-span-6 sm:col-span-12 col-span-12 mb-4">
                                         <p class="mb-2 text-muted">მობილური</p>
-                                        <input type="text" value="{{$client->mobile}}"  name="mobile" class="form-control" >
+                                        <input
+                                                @if($client->user_id!=$authuser->id && $authuser->hasAnyRole('operator|callcenter') )
+                                                    disabled
+                                                @endif
+                                                type="text" value="{{$client->mobile}}"  name="mobile" class="form-control" >
                                     </div>
 
                                     <div class="xl:col-span-4 lg:col-span-6 md:col-span-6 sm:col-span-12 col-span-12 mb-4">
                                         <p class="mb-2 text-muted">კომენტარი</p>
-                                        <textarea name="comment" class="form-control"  rows="3">{{$client->comment}}</textarea>
+                                        <textarea
+                                                @if($client->user_id!=$authuser->id && $authuser->hasAnyRole('operator') )
+                                                    disabled
+                                                @endif
+                                                name="comment" class="form-control"  rows="3">{{$client->comment}}</textarea>
                                     </div>
                                 </div>
+                                @if($client->user_id!=$authuser->id && $authuser->hasAnyRole('admin|callcenter|developer') )
                                 <div class="ti-modal-footer">
                                     <button data-hs-overlay="#editpotentialclient{{$index}}"
                                             hx-post="{{route('htmx.potential.clients.update')}}"
@@ -125,6 +148,7 @@
                                             hx-indicator="#indicator"
                                             class="ti-btn bg-primary text-white !font-medium">შენახვა</button>
                                 </div>
+                                @endif
                             </form>
                         </div>
                     </div>
@@ -151,20 +175,22 @@
 
 
 <script>
-    if (typeof potentialclients{{$counter-1}} !== 'undefined'  ) {
-        potentialclients{{$counter-1}}.destroy();
+
+
+    if (typeof potentialclients !== 'undefined'  ) {
+        potentialclients.destroy();
     }
 
 
-    let potentialclients{{$counter}};
 
-    potentialclients{{$counter}}= new DataTable('#potentialclients', {
+    potentialclients= new DataTable('#potentialclients', {
         //Generall SETTINGS
-        lengthMenu: [50, 100, 150, {label: 'All', value: -1}],
+        lengthMenu: [10, 100, 150, {label: 'All', value: -1}],
 
         columnDefs: [
-            {orderable: true, targets: [0, 1, 2]}
+            {orderable: false, targets: [1, 2, 3, 4, 5, 6]}
         ],
+        order: [[0, 'desc']],
 
 
         // lengthMenu: [ {label: 'All', value: -1}],
@@ -179,7 +205,7 @@
         layout: {
 
             topStart: {
-                buttons: ['pageLength', 'colvis','excel',
+                buttons: ['pageLength', 'colvis' @if($authuser->hasAnyRole('admin|developer')) , 'excel' @endif ,
                     {
                         text: ' დამატება',
                         action: function (e, dt, node, config) {
@@ -194,10 +220,55 @@
             },
 
             topEnd: {
-                search: '',
+                // search: '',
             }
         },
 
 
     });
+
+    $('#column1').on('keyup', function () {
+        potentialclients
+            .columns(0)
+            .search(this.value)
+            .draw();
+    });
+
+    $('#column2').on('keyup', function () {
+        potentialclients
+            .columns(1)
+            .search(this.value)
+            .draw();
+    });
+    $('#column3').on('keyup', function () {
+        potentialclients
+            .columns(2)
+            .search(this.value)
+            .draw();
+    });
+    $('#column4').on('keyup', function () {
+        potentialclients
+            .columns(3)
+            .search(this.value)
+            .draw();
+    });
+    $('#column5').on('keyup', function () {
+        potentialclients
+            .columns(4)
+            .search(this.value)
+            .draw();
+    });
+    $('#column6').on('keyup', function () {
+        potentialclients
+            .columns(5)
+            .search(this.value)
+            .draw();
+    });
+    $('#column7').on('keyup', function () {
+        potentialclients
+            .columns(6)
+            .search(this.value)
+            .draw();
+    });
+
 </script>

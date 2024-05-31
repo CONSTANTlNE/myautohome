@@ -112,6 +112,8 @@ class UserController extends Controller
         $user->mobile = $validated['mobile'];
         $user->save();
 
+        $user->assignRole($request->role);
+
 
         $users = User::with('roles')->withCount('applications')->get();
 

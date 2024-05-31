@@ -105,20 +105,17 @@ class UploadController extends Controller
 
         $array = Excel::toArray(new CarsImport(),  $request->file('potential'));
 
-
+//dd($array[0]);
 
         foreach ($array[0] as $key => $value){
 
             $client=new PotentialClient();
             $client->created_at =  Carbon::createFromFormat('d/m/Y', $value['tarighi']);
             $client->updated_at = null;
-            $client->name = $value['klientis_sakheli_gvari'];
-            $client->user_id = $value['operaotri'];
-            $client->pid = $value['piradi_nomeri'];
+            $client->user_id = $value['operatori'];
             $client->mobile = $value['mobiluri'];
             $client->comment = $value['komentari'];
             $client->save();
-
 
 
         }

@@ -18,7 +18,7 @@
                         <div class="md:col-span-3  col-start-2 col-span-12 mb-4 ">
 
                             <input disabled name="customer_pid" type="text" class="form-control"
-                                   aria-label="ninedigitnumber" value="{{$application->number}}">
+                                   aria-label="ninedigitnumber" value="{{$application->id}}">
                         </div>
                         <div class="md:col-span-3  col-start-2 col-span-12 mb-4">
 
@@ -33,7 +33,15 @@
                                    aria-label="ninedigitnumber" value="{{$application->client->pid}}">
                         </div>
                         <div class="md:col-span-3  col-start-2 col-span-12 mb-4">
-                            <a style="margin:auto!important;" class="form-control " href="{{route('app.details',$application->id)}}" target="_blank">დეტალურად</a>
+                            <a style="margin:auto!important;"
+                               data-hs-overlay="#editmodal"
+                               hx-get="{{route('edit.htmx', $application->id)}}"
+                               hx-target="#edittarget"
+                               hx-indicator="#indicator"
+                               class="form-control "
+                               href="javascript:void(0)"
+{{--                               href="{{route('app.details',$application->id)}}" --}}
+                               >დეტალურად</a>
                         </div>
 
                     @endforeach

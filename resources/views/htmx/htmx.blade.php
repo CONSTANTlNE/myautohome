@@ -1,6 +1,3 @@
-
-
-
 <table id="example" class="display nowrap" style="width:100%">
     <thead>
     <tr>
@@ -13,7 +10,7 @@
         <td><input type="text" id="col7" class="form-control searchinput"></td>
         <td><input type="text" id="col8" class="form-control searchinput"></td>
         <td><input type="text" id="col9" class="form-control searchinput"></td>
-{{--        <td><input type="text" id="col10" class="form-control searchinput"></td>--}}
+        {{--        <td><input type="text" id="col10" class="form-control searchinput"></td>--}}
         <td><input type="text" id="col11" class="form-control searchinput"></td>
         <td></td>
 
@@ -28,7 +25,7 @@
         <th style="text-align: center">წყარო</th>
         <th style="text-align: center;width: 100px!important">სტატუსი</th>
         <th style="text-align: center">პროდუქტი</th>
-{{--        <th style="text-align: center">კომპანია</th>--}}
+        {{--        <th style="text-align: center">კომპანია</th>--}}
         <th style="text-align: center">ბოლო კომენტარი</th>
         <th style="text-align: center">მოქმედება</th>
     </tr>
@@ -47,15 +44,16 @@
             <td>{{$application->client->mobile1}}</td>
             <td>{{$application->source->name}}</td>
             <td style="text-align: center!important;width: 100px;!important;white-space: normal !important">
-                <span  style="font-size: 15px;text-align: center!important" class="{{$application->status->color}}">{{$application->status->name}}</span>
+                <span style="font-size: 15px;text-align: center!important"
+                      class="{{$application->status->color}}">{{$application->status->name}}</span>
 
             </td>
             <td>{{$application->product->name}}</td>
-{{--            <td>--}}
-{{--                @foreach($application->companies as $index2c=> $company)--}}
-{{--                    {{$company->name}}<br>--}}
-{{--                @endforeach--}}
-{{--            </td>--}}
+            {{--            <td>--}}
+            {{--                @foreach($application->companies as $index2c=> $company)--}}
+            {{--                    {{$company->name}}<br>--}}
+            {{--                @endforeach--}}
+            {{--            </td>--}}
             <td style="white-space: normal !important;max-width: 250px!important;">{{$application->comments->last()?->comment}}</td>
 
             <td>
@@ -138,7 +136,7 @@
         <th>წყარო</th>
         <th>სტატუსი</th>
         <th>პროდუქტი</th>
-{{--        <th>კომპანია</th>--}}
+        {{--        <th>კომპანია</th>--}}
         <th>ბოლო კომენტარი</th>
         <th>მოქმედება</th>
 
@@ -148,121 +146,113 @@
 </table>
 
 
-    <script>
+<script>
 
 
+    table.destroy();
 
 
-table.destroy();
+    {{--let table{{$counter}};--}}
+
+        table = new DataTable('#example', {
+        //Generall SETTINGS
+
+        lengthMenu: [10, 100, 150, {label: 'All', value: -1}],
+
+        columnDefs: [
+            {orderable: false, targets: [2, 3, 4, 5, 6, 7, 8, 9, 10]}
+        ],
+        order: [[0, 'desc']],
+
+        // lengthMenu: [ {label: 'All', value: -1}],
+        language: {
+            url: 'https://cdn.datatables.net/plug-ins/2.0.5/i18n/ka.json',
+        },
+
+        scrollX: true,
+        scrollY: 700,
 
 
-        {{--let table{{$counter}};--}}
+        layout: {
 
-       table = new DataTable('#example', {
-            //Generall SETTINGS
-
-            lengthMenu: [10, 100, 150, {label: 'All', value: -1}],
-
-            columnDefs: [
-                {orderable: false, targets: [ 2, 3, 4, 5, 6, 7, 8, 9, 10]}
-            ],
-           order: [[0, 'desc']],
-
-            // lengthMenu: [ {label: 'All', value: -1}],
-            language: {
-                url: 'https://cdn.datatables.net/plug-ins/2.0.5/i18n/ka.json',
+            topStart: {
+                buttons: ['pageLength', 'colvis' @if($authuser->hasAnyRole('admin|developer')) , 'excel' @endif ],
+                // pageLength: {
+                //   menu: [ 10, 25, 50, 100,5000 ]
+                // }
             },
 
-            scrollX: true,
-            scrollY: 700,
+            topEnd: {
+                // search: '',
+            }
+        },
 
 
-            layout: {
-
-                topStart: {
-                    buttons: ['pageLength', 'colvis', 'excel'],
-                    // pageLength: {
-                    //   menu: [ 10, 25, 50, 100,5000 ]
-                    // }
-                },
-
-                topEnd: {
-                    search: '',
-                }
-            },
+    });
 
 
-        });
+    $('#col1').on('keyup', function () {
+        table
+            .columns(1)
+            .search(this.value)
+            .draw();
+    });
+
+    $('#col2').on('keyup', function () {
+        table
+            .columns(2)
+            .search(this.value)
+            .draw();
+    });
+
+    $('#col4').on('keyup', function () {
+        table
+            .columns(3)
+            .search(this.value)
+            .draw();
+    });
+    $('#col5').on('keyup', function () {
+        table
+            .columns(4)
+            .search(this.value)
+            .draw();
+    });
+    $('#col6').on('keyup', function () {
+        table
+            .columns(5)
+            .search(this.value)
+            .draw();
+    });
+    $('#col7').on('keyup', function () {
+        table
+            .columns(6)
+            .search(this.value)
+            .draw();
+    });
+    $('#col8').on('keyup', function () {
+        table
+            .columns(7)
+            .search(this.value)
+            .draw();
+    });
+    // $('#col9').on('keyup', function () {
+    //     table
+    //         .columns(8)
+    //         .search(this.value)
+    //         .draw();
+    // });
+    $('#col10').on('keyup', function () {
+        table
+            .columns(8)
+            .search(this.value)
+            .draw();
+    });
+    $('#col11').on('keyup', function () {
+        table
+            .columns(9)
+            .search(this.value)
+            .draw();
+    });
 
 
-        $('#col1').on('keyup', function () {
-            table
-                .columns(0)
-                .search(this.value)
-                .draw();
-        });
-        $('#col2').on('keyup', function () {
-            table
-                .columns(1)
-                .search(this.value)
-                .draw();
-        });
-        $('#col3').on('keyup', function () {
-            table
-                .columns(2)
-                .search(this.value)
-                .draw();
-        });
-        $('#col4').on('keyup', function () {
-            table
-                .columns(3)
-                .search(this.value)
-                .draw();
-        });
-        $('#col5').on('keyup', function () {
-            table
-                .columns(4)
-                .search(this.value)
-                .draw();
-        });
-        $('#col6').on('keyup', function () {
-            table
-                .columns(5)
-                .search(this.value)
-                .draw();
-        });
-        $('#col7').on('keyup', function () {
-            table
-                .columns(6)
-                .search(this.value)
-                .draw();
-        });
-        $('#col8').on('keyup', function () {
-            table
-                .columns(7)
-                .search(this.value)
-                .draw();
-        });
-        {{--$('#col9').on('keyup', function () {--}}
-        {{--    table{{$counter}}--}}
-        {{--        .columns(8)--}}
-        {{--        .search(this.value)--}}
-        {{--        .draw();--}}
-        {{--});--}}
-        $('#col10').on('keyup', function () {
-            table
-                .columns(9)
-                .search(this.value)
-                .draw();
-        });
-        $('#col11').on('keyup', function () {
-            table
-                .columns(10)
-                .search(this.value)
-                .draw();
-        });
-
-
-
-
-    </script>
+</script>

@@ -6,6 +6,7 @@ use App\Models\Car;
 use App\Models\Client;
 use App\Models\PotentialClient;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Validator;
 
 class ClientController extends Controller
@@ -23,10 +24,24 @@ class ClientController extends Controller
 
     public function potentialIndex()
     {
-        $potentialclients = PotentialClient::with('user')->get();
-        $cars             = Car::all();
 
-        return view('pages.potentialclients', compact('potentialclients','cars'));
+        $potentialclients = PotentialClient::with('user')
+            ->orderBy('id','desc')
+            ->limit(500)
+            ->get();
+
+        $authuser=auth()->user();
+
+
+        if(auth()->user()->hasRole('admin')) {
+            $cars             = Car::all();
+
+            return view('pages.potentialclients', compact('potentialclients','cars','authuser'));
+
+        } else{
+            return view('pages.potentialclients', compact('potentialclients','authuser'));
+
+        }
     }
 
     public function createPotential(Request $request)
@@ -34,7 +49,7 @@ class ClientController extends Controller
         $validate=Validator::make($request->all(), [
             'pid' => 'nullable|string',
             'name' => 'nullable|string',
-            'mobile' => 'required|string|unique:potential_clients',
+            'mobile' => 'required|string',
             'comment' => 'nullable|string',
         ]);
 
@@ -96,31 +111,20 @@ class ClientController extends Controller
     public function htmxpotentialIndex(Request $request)
     {
 
-        if($request->session()->has('request_counter')) {
-            $counter = $request->session()->get('request_counter')+1;
-            $request->session()->put('request_counter', $counter);
-
-        } else {
-            $counter = 1;
-            $request->session()->put('request_counter', $counter);
-        }
-
-        $potentialclients = PotentialClient::with('user')->get();
+        $potentialclients = PotentialClient::with('user')
+            ->orderBy('id','desc')
+            ->limit(500)
+            ->get();
 
 
-        return view('htmx.htmxpotentialclients',compact('potentialclients','counter'));
+        $authuser=auth()->user();
+
+
+        return view('htmx.htmxpotentialclients',compact('potentialclients','authuser'));
     }
 
     public function htmxcreatePotential(Request $request)
     {
-        if($request->session()->has('request_counter')) {
-            $counter = $request->session()->get('request_counter')+1;
-            $request->session()->put('request_counter', $counter);
-
-        } else {
-            $counter = 1;
-            $request->session()->put('request_counter', $counter);
-        }
 
 
         $validate=Validator::make($request->all(), [
@@ -146,29 +150,28 @@ class ClientController extends Controller
         $client->comment = $validated['comment'];
         $client->save();
 
-        $potentialclients = PotentialClient::with('user')->get();
+        $potentialclients = PotentialClient::with('user')
+           ->orderBy('id','desc')
+            ->limit(500)
+            ->get();
 
-        return view('htmx.htmxpotentialclients',compact('potentialclients','counter'));
+        $authuser=auth()->user();
+
+
+            return view('pages.potentialclients', compact('potentialclients','authuser'));
+
     }
 
 
     public function htmxupdatePotential(Request $request)
     {
 
-        if($request->session()->has('request_counter')) {
-            $counter = $request->session()->get('request_counter')+1;
-            $request->session()->put('request_counter', $counter);
-
-        } else {
-            $counter = 1;
-            $request->session()->put('request_counter', $counter);
-        }
 
 
         $validate=Validator::make($request->all(), [
             'pid' => 'nullable|string',
             'name' => 'nullable|string',
-            'mobile' => 'required|string',
+            'mobile' => 'sometimes|string',
             'comment' => 'nullable|string',
             'id' => 'required|integer|exists:potential_clients,id',
         ]);
@@ -189,10 +192,50 @@ class ClientController extends Controller
         $client->save();
 
 
-        $potentialclients = PotentialClient::all();
+        $potentialclients = PotentialClient::with('user')
+            ->orderBy('id','desc')
+            ->limit(500)
+            ->get();
 
-      return view('htmx.htmxpotentialclients',compact('potentialclients','counter'));
+        $authuser=auth()->user();
 
+
+        return view('htmx.htmxpotentialclients',compact('potentialclients','authuser'));
+
+    }
+
+
+    public function htmxclientdaterange(Request $request)
+    {
+
+        $range = $request->input('range');
+        $authuser=auth()->user();
+
+
+        list($startDateString, $endDateString) = explode(' to ', $range);
+
+        $startDate = Carbon::createFromFormat('Y-m-d', $startDateString)->startOfDay();
+        $endDate = Carbon::createFromFormat('Y-m-d', $endDateString)->endOfDay();
+
+        $potentialclients = PotentialClient::with('user')
+           ->whereBetween('created_at', [$startDate,  $endDate])
+            ->latest()
+            ->get();
+
+
+        return view('htmx.htmxpotentialclients',compact('potentialclients','authuser'));
+
+    }
+
+    public function htmxsearchpotential(Request $request){
+        $potentials = PotentialClient::where('mobile', 'like',"%{$request->search}%")
+            ->orWhere('pid', 'like', "%{$request->search}%")
+            ->orWhere('name', 'like', "%{$request->search}%")
+            ->with('user')
+            ->get();
+        $authuser=auth()->user();
+
+        return view('htmx.htmxpotentialsearch', compact('potentials','authuser'));
     }
 
 

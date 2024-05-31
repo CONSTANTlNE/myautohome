@@ -44,10 +44,7 @@
                 </div>
                 <form
 {{--                      action="{{route('user.create')}}"--}}
-                      hx-target="#main-content"
-                      hx-indicator="#indicator"
-                      hx-trigger="click throttle:2s"
-                      hx-post="{{route('user.htmxcreate')}}"
+
                       method="post">
                     @csrf
                 <div class="ti-modal-body px-4">
@@ -74,12 +71,19 @@
                         <option selected=""></option>
                         <option value="operator">ოპერატორი</option>
                         <option value="admin">ადმინისტრატორი</option>
+                        <option value="callcenter">ქოლცენტრის ოპერატორი</option>
 
                     </select>
                     </div>
                 </div>
                 <div class="ti-modal-footer">
-                    <button data-hs-overlay="#createuser" class="ti-btn bg-primary text-white !font-medium ">დამატება</button>
+                    <button data-hs-overlay="#createuser"
+
+                            hx-target="#main-content"
+                            hx-indicator="#indicator"
+                            hx-trigger="click throttle:2s"
+                            hx-post="{{route('user.htmxcreate')}}"
+                            class="ti-btn bg-primary text-white !font-medium ">დამატება</button>
                 </div>
                 </form>
             </div>
@@ -100,7 +104,7 @@
         </thead>
         <tbody>
         @foreach($users as $index => $user)
-            @if($user->name != 'developer')
+            @if($user->name !== 'developer')
             <tr style="text-align: center!important;" >
 
                 <td style="text-align: center!important;">{{$user->name}}</td>
