@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateAppRequest;
+use App\Http\Requests\UpdateAppRequest;
 use App\Models\Application;
 use App\Models\Car;
 use App\Models\CarModel;
@@ -33,7 +35,7 @@ class ApplicationController extends Controller
         $validate = Validator::make($request->all(), [
             'customer_pid'    => 'required',
             'customer_name'   => 'required|string',
-            'customer_mobile' => 'required|integer',
+            'customer_mobile' => 'required',
             'source'          => 'required|integer|exists:sources,id',
             'status'          => 'required|integer|exists:statuses,id',
             'product'         => 'required|integer|exists:products,id',
@@ -48,13 +50,10 @@ class ApplicationController extends Controller
         ]);
 
 
-
-
-
-
         // If laravel validation fails return HTMX error page
         if ($validate->fails()) {
             $errors = $validate->errors();
+
             return view('htmx.errors')->with('errors', $errors);
         }
 
@@ -62,9 +61,7 @@ class ApplicationController extends Controller
         $validated = $validate->validated();
 
 
-
-
-        $user=auth()->user()->id;
+        $user = auth()->user()->id;
 
         $client = Client::create(
             [
@@ -137,23 +134,24 @@ class ApplicationController extends Controller
         $cars      = Car::all();
 
         return view('pages.editapp',
-            compact('application', 'companies', 'statuses', 'products', 'sources','cars','products'));
+            compact('application', 'companies', 'statuses', 'products', 'sources', 'cars', 'products'));
 
     }
 
     public function update(Request $request)
     {
 
+
         $app = Application::with('client', 'source', 'status', 'product', 'car', 'comments.user', 'user',
             'companies', 'model')
             ->find($request->id);
 
         $companies = Company::all();
-        $statuses     = Status::all();
-        $sources      = Source::all();
-        $products     = Product::all();
-        $cars         = Car::all();
-        $models       = CarModel::all();
+        $statuses  = Status::all();
+        $sources   = Source::all();
+        $products  = Product::all();
+        $cars      = Car::all();
+        $models    = CarModel::all();
 
 //dd($request->status);
         if ($app->status->id != $request->status) {
@@ -328,51 +326,39 @@ class ApplicationController extends Controller
             'companies', 'model')
             ->find($id);
 
-       $userid=auth()->user()->id;
-        $companies = Company::all();
-        $statuses  = Status::all();
-        $products  = Product::all();
-        $sources   = Source::all();
-        $cars      = Car::all();
-        $potentialclient=PotentialClient::with('user')
-            ->where('pid',$application->client->pid)
-            ->orwhere('mobile',$application->client->mobile1)
+        $userid          = auth()->user()->id;
+        $companies       = Company::all();
+        $statuses        = Status::all();
+        $products        = Product::all();
+        $sources         = Source::all();
+        $cars            = Car::all();
+        $potentialclient = PotentialClient::with('user')
+            ->where('pid', $application->client->pid)
+            ->orwhere('mobile', $application->client->mobile1)
             ->first();
 
 //
 
         return view('htmx.htmxeditapp',
-            compact('application', 'companies', 'statuses', 'products', 'sources', 'cars','userid','potentialclient'));
+            compact('application', 'companies', 'statuses', 'products', 'sources', 'cars', 'userid',
+                'potentialclient'));
 
     }
 
 
     public function htmxstore(Request $request)
     {
+        $authuser = auth()->user();
 
-        $validate = Validator::make($request->all(), [
-            'customer_pid'    => 'required',
-            'customer_name'   => 'required|string',
-            'customer_mobile' => 'required|integer',
-            'source'          => 'required|integer|exists:sources,id',
-            'status'          => 'required|integer|exists:statuses,id',
-            'product'         => 'required|integer|exists:products,id',
-            'company'         => 'required|array',
-            'company.*'       => 'integer|exists:companies,id',
-            'car'             => 'nullable|integer|exists:cars,id',
-            'model'           => 'nullable|integer|exists:car_models,id',
-            'link'            => 'nullable|string',
-            'engine'          => 'nullable|float',
-            'year'            => 'nullable|integer',
-            'newcomment'        => 'nullable|array',
-            'newcomment.*'      => 'string',
-        ]);
 
+
+        $validate = Validator::make($request->all(), (new CreateAppRequest())->rules(),
+            (new CreateAppRequest())->messages());
 
         if ($validate->fails()) {
             $errors = $validate->errors();
 
-            return response()->view('htmx.errors', compact('errors'))->setStatusCode(500);
+            return response()->view('htmx.errors', compact('errors', 'authuser'))->setStatusCode(500);
         }
 
 //
@@ -383,10 +369,11 @@ class ApplicationController extends Controller
 
 
         $validated = $validate->validated();
-        $user=auth()->user()->id;
+        $user      = auth()->user()->id;
 
         $client = Client::create(
             [
+                'pid'     => $validated['customer_pid'],
                 'name'    => $validated['customer_name'],
                 'mobile1' => $validated['customer_mobile']
             ]
@@ -421,13 +408,14 @@ class ApplicationController extends Controller
             'car_model_id' => $validated['model'],
             'link'         => $validated['link'],
             'engine'       => $validated['engine'],
-            'year'         => $validated['year']
+            'year'         => $validated['year'],
+            'updated_at'   => null
         ]);
 
         if ($request->comment) {
             $app->comments()->create([
                 'user_id' => $user,
-                'comment' => $validated['newcomment']
+                'comment' => $validated['comment']
             ]);
         }
 
@@ -440,7 +428,7 @@ class ApplicationController extends Controller
         $applications = Application::with([
             'client:id,name,mobile1,pid',
             'source:id,name',
-            'status:id,name',
+            'status:id,name,color',
             'product:id,name',
 //            'car:id,make',
             'comments.user:id,name',
@@ -460,7 +448,7 @@ class ApplicationController extends Controller
 
 //        $carsJson =$cars->toJson();
         return view('htmx.htmx',
-            compact('companies', 'statuses', 'products', 'sources', 'applications', 'cars',));
+            compact('companies', 'statuses', 'products', 'sources', 'applications', 'cars', 'authuser'));
 
     }
 
@@ -482,408 +470,463 @@ class ApplicationController extends Controller
             compact('application', 'companies', 'statuses', 'products', 'sources',));
     }
 
+    public function htmxdelete($id)
+    {
+
+        $application = Application::find($id);
+
+
+        return view('htmx.htmxdeleteapp',
+            compact('application'));
+    }
+
+    public function htmxdestroy(Request $request,)
+    {
+
+
+        $app = Application::find($request->id);
+
+        Log::channel('changes')->info('წაიშალა განაცხადი No: '.$app->id.' პირადი ნომერი: '.$app->client->pid.' მობილური: '.$app->client->mobile1.' მომხმარებელი: '.auth()->user()->name);
+
+
+        $app->delete();
+
+
+        $applications = Application::with([
+            'client:id,name,mobile1,pid',
+            'source:id,name',
+            'status:id,name,color',
+            'product:id,name',
+//            'car:id,make',
+            'comments.user:id,name',
+            'user:id,name',
+//            'companies:id,name'
+        ])->orderBy('created_at', 'desc')
+            ->latest()
+            ->limit(300)
+            ->get();
+
+        $companies = Company::all();
+        $statuses  = Status::all();
+        $products  = Product::all();
+        $sources   = Source::all();
+        $authuser  = auth()->user();
+        $cars      = Car::all();
+
+        return view('htmx.htmx',
+            compact('companies', 'statuses', 'products', 'sources', 'applications', 'cars', 'authuser'));
+
+    }
 
 
     // For users for their applications
-public function htmxupdate(Request $request){
+    public function htmxupdate(Request $request)
+    {
 
-        $authuser=auth()->user();
+        $authuser = auth()->user();
 //    START UPDATING LOGIC
 
-    $app = Application::with('client', 'source', 'status', 'product', 'car', 'comments.user', 'user',
-        'companies', 'model')
-        ->find($request->id);
+        $app = Application::with('client', 'source', 'status', 'product', 'car', 'comments.user', 'user',
+            'companies', 'model')
+            ->find($request->id);
 
-    $companies = Company::all();
-    $statuses     = Status::all();
-    $sources      = Source::all();
-    $products     = Product::all();
-    $cars         = Car::all();
-    $models       = CarModel::all();
-    $users        = User::all();
-
-
-    $validate = Validator::make($request->all(), [
-        'customer_pid'    => 'required',
-        'customer_name'   => 'required|string',
-        'customer_mobile' => 'required|integer',
-        'source'          => 'required|integer|exists:sources,id',
-        'status'          => 'required|integer|exists:statuses,id',
-        'product'         => 'required|integer|exists:products,id',
-        'company'         => 'required|array',
-        'company.*'       => 'integer|exists:companies,id',
-        'car'             => 'nullable|integer|exists:cars,id',
-        'model'           => 'nullable|integer|exists:car_models,id',
-        'link'            => 'nullable|string',
-        'engine'          => 'nullable|string',
-        'year'            => 'nullable|integer',
-        'comment'         => 'nullable|string',
-        'commentids'      => 'nullable|array',
-        'commentids.*'    => 'integer|exists:comments,id',
-        'oldcomment'      => 'nullable|array',
-        'oldcomment.*'    => 'string',
-        'newcomment'      => 'nullable|array',
-        'newcomment.*'    => 'string',
-    ]);
+        $companies = Company::all();
+        $statuses  = Status::all();
+        $sources   = Source::all();
+        $products  = Product::all();
+        $cars      = Car::all();
+        $models    = CarModel::all();
 
 
-    if ($validate->fails()) {
-        $errors = $validate->errors();
-        return view('htmx.errors')->with('errors', $errors);
-    }
+        $validate = Validator::make($request->all(), (new UpdateAppRequest())->rules(),
+            (new UpdateAppRequest())->messages());
 
-    $validated = $validate->validated();
+        if ($validate->fails()) {
+            $errors = $validate->errors();
+
+            return response()->view('htmx.errors', compact('errors', 'authuser'))->setStatusCode(500);
+
+        }
+
+
+        $validated = $validate->validated();
 
 //dd($request->status);
-    if ($app->status->id != $validated['status']) {
-        Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა სტატუსი: -- '.$app->status->name.' -- ახალი სტატუსია: --'.$statuses->where('id',
-                $request->status)->first()->name.
-            '-- ცვლილება განახორციელა '.auth()->user()->name);
+        if ($app->status->id != $validated['status']) {
+            Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა სტატუსი: -- '.$app->status->name.' -- ახალი სტატუსია: --'.$statuses->where('id',
+                    $request->status)->first()->name.
+                '-- ცვლილება განახორციელა '.auth()->user()->name);
 
-
-                $notification = new Notification();
+            if ($app->user->id != $authuser->id) {
+                $notification                 = new Notification();
                 $notification->application_id = $app->id;
                 $notification->user_id        = $app->user_id;
                 $notification->type           = 'განაცხადში No: '.$app->id.' შეიცვალა სტატუსი';
                 $notification->save();
+            }
 
 
-        $app->status_id = $validated['status'];
-        $app->save();
+            $app->status_id = $validated['status'];
+            $app->save();
 
 
+        }
+        if ($app->client->pid !== $validated['customer_pid']) {
+            Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა პირადი ნომერი: -- '.$app->client->pid.' -- ახალი პირადი ნომერია: --'.$request->customer_pid.
+                '-- ცვლილება განახორციელა '.auth()->user()->name);
 
-    }
-    if ($app->client->pid !== $validated['customer_pid']) {
-        Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა პირადი ნომერი: -- '.$app->client->pid.' -- ახალი პირადი ნომერია: --'.$request->customer_pid.
-            '-- ცვლილება განახორციელა '.auth()->user()->name);
-
-
-                $notification = new Notification();
+            if ($app->user->id != $authuser->id) {
+                $notification                 = new Notification();
                 $notification->application_id = $app->id;
                 $notification->user_id        = $app->user_id;
                 $notification->type           = 'განაცხადში No: '.$app->id.'  შეიცვალა პირადი ნომერი';
                 $notification->save();
+            }
 
 
-        $app->client->pid = $validated['customer_pid'];
-        $app->client->save();
+            $app->client->pid = $validated['customer_pid'];
+            $app->client->save();
 
 
+        }
+        if ($app->client->name !== $validated['customer_name']) {
 
-
-
-    }
-    if ($app->client->name !== $validated['customer_name']) {
-
-        Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა კლიენტისახელი: -- '.$app->client->name.' -- ახალი კლიენტია: --'.$request->customer_name.
-            '-- ცვლილება განახორციელა '.auth()->user()->name);
-
-
-                $notification = new Notification();
+            Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა კლიენტისახელი: -- '.$app->client->name.' -- ახალი კლიენტია: --'.$request->customer_name.
+                '-- ცვლილება განახორციელა '.auth()->user()->name);
+            if ($app->user->id != $authuser->id) {
+                $notification                 = new Notification();
                 $notification->application_id = $app->id;
                 $notification->user_id        = $app->user_id;
                 $notification->type           = 'განაცხადში No: '.$app->id.'  შეიცვალა კლიენტისახელი';
                 $notification->save();
+            }
 
 
-        $app->client->name = $validated['customer_name'];
-        $app->client->save();
+            $app->client->name = $validated['customer_name'];
+            $app->client->save();
 
 
-    }
-    if ($app->client->mobile1 !== $validated['customer_mobile']) {
+        }
+        if ($app->client->mobile1 !== $validated['customer_mobile']) {
 
-        Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა კლიენტის მობილური: -- '.$app->client->mobile1.' -- ახალი მობილურია: --'.$request->customer_mobile.
-            '-- ცვლილება განახორციელა '.auth()->user()->name);
+            Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა კლიენტის მობილური: -- '.$app->client->mobile1.' -- ახალი მობილურია: --'.$request->customer_mobile.
+                '-- ცვლილება განახორციელა '.auth()->user()->name);
 
-                $notification = new Notification();
+            if ($app->user->id != $authuser->id) {
+                $notification                 = new Notification();
                 $notification->application_id = $app->id;
                 $notification->user_id        = $app->user_id;
                 $notification->type           = 'განაცხადში No: '.$app->id.'  შეიცვალა კლიენტის მობილური';
                 $notification->save();
+            }
 
 
-        $app->client->mobile1 = $validated['customer_mobile'];
-        $app->client->save();
+            $app->client->mobile1 = $validated['customer_mobile'];
+            $app->client->save();
 
 
-    }
-    if ($app->source->id != $validated['source']) {
-        Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა წყარო: -- '.$app->source->name.'-- ახალი წყაროა: -- '.$sources->where('id',
-                $request->source)->first()->name.
-            '-- ცვლილება განახორციელა '.auth()->user()->name);
+        }
+        if ($app->source->id != $validated['source']) {
+            Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა წყარო: -- '.$app->source->name.'-- ახალი წყაროა: -- '.$sources->where('id',
+                    $request->source)->first()->name.
+                '-- ცვლილება განახორციელა '.auth()->user()->name);
 
-
-                $notification = new Notification();
+            if ($app->user->id != $authuser->id) {
+                $notification                 = new Notification();
                 $notification->application_id = $app->id;
                 $notification->user_id        = $app->user_id;
                 $notification->type           = 'განაცხადში No: '.$app->id.'  შეიცვალა წყარო';
                 $notification->save();
+            }
 
 
-        $app->source_id=$validated['source'];
-        $app->save();
+            $app->source_id = $validated['source'];
+            $app->save();
 
-    }
-    if ($app->product->id != $validated['product']) {
-        Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა პროდუცტი: -- '.$app->product->name.' -- ახალი პროდუქტია: --'.$products->where('id',
-                $request->product)->first()->name.
-            '-- ცვლილება განახორციელა '.auth()->user()->name);
+        }
+        if ($app->product->id != $validated['product']) {
+            Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა პროდუცტი: -- '.$app->product->name.' -- ახალი პროდუქტია: --'.$products->where('id',
+                    $request->product)->first()->name.
+                '-- ცვლილება განახორციელა '.auth()->user()->name);
 
-
-                $notification = new Notification();
+            if ($app->user->id != $authuser->id) {
+                $notification                 = new Notification();
                 $notification->application_id = $app->id;
                 $notification->user_id        = $app->user_id;
                 $notification->type           = 'განაცხადში No: '.$app->id.'  შეიცვალა პროდუცტი';
                 $notification->save();
+            }
 
 
-        $app->product_id  = $validated['product'];
-        $app->save();
+            $app->product_id = $validated['product'];
+            $app->save();
 
-    }
-    if ($app->link !== $validated['link']) {
-        Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა ლინკი: --  '.$app->link.' -- ახალი ლინკია: -- '.$request->link.
-            '-- ცვლილება განახორციელა '.auth()->user()->name);
+        }
+        if ($app->link !== $validated['link']) {
+            Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა ლინკი: --  '.$app->link.' -- ახალი ლინკია: -- '.$request->link.
+                '-- ცვლილება განახორციელა '.auth()->user()->name);
 
-
-                $notification = new Notification();
+            if ($app->user->id != $authuser->id) {
+                $notification                 = new Notification();
                 $notification->application_id = $app->id;
                 $notification->user_id        = $app->user_id;
                 $notification->type           = 'განაცხადში No: '.$app->id.'  შეიცვალა ლინკი';
                 $notification->save();
+            }
 
 
-        $app->link = $validated['link'];
-        $app->save();
+            $app->link = $validated['link'];
+            $app->save();
 
-    }
-    if ($validated['car']!==null && $app->car_id!=$validated['car']) {
-        if($app->car===null){
-            Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა მანქანა: -- '. '----------'.' -- ახალი მანქანა: -- '.$cars->where('id',
-                    $request->car)->first()->name.
-                '-- ცვლილება განახორციელა '.auth()->user()->name);
-
-        }else{
-            Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა მანქანა: -- '.  $app->car->make.' -- ახალი მანქანა: -- '.$cars->where('id',
-                    $request->car)->first()->name.
-                '-- ცვლილება განახორციელა '.auth()->user()->name);
         }
+        if ($validated['car'] !== null && $app->car_id != $validated['car']) {
+            if ($app->car === null) {
+                Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა მანქანა: -- '.'----------'.' -- ახალი მანქანა: -- '.$cars->where('id',
+                        $request->car)->first()->make.
+                    '-- ცვლილება განახორციელა '.auth()->user()->name);
 
+            } else {
+                Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა მანქანა: -- '.$app->car->make.' -- ახალი მანქანა: -- '.$cars->where('id',
+                        $request->car)->first()->name.
+                    '-- ცვლილება განახორციელა '.auth()->user()->name);
+            }
 
-                $notification = new Notification();
+            if ($app->user->id != $authuser->id) {
+                $notification                 = new Notification();
                 $notification->application_id = $app->id;
                 $notification->user_id        = $app->user_id;
                 $notification->type           = 'განაცხადში No: '.$app->id.'  შეიცვალა მანქანა';
                 $notification->save();
+            }
 
 
-        $app->car_id = $validated['car'];
-        $app->update();
+            $app->car_id = $validated['car'];
+            $app->update();
 
-    }
-    if ($validated['model']!==null && $app->car_model_id!=$validated['model']) {
-        if($app->car_model_id==null){
-            Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა მანქანის მოდელი: --'. '----------'.'-- ახალი მანქანის მოდელია: --'.$models->where('id',
-                    $request->model)->first()->name.
-                '-- ცვლილება განახორციელა '.auth()->user()->name);
         } else {
-            Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა მანქანის მოდელი: --'.  $app->model->name .'-- ახალი მანქანის მოდელია: --'.$models->where('id',
-                    $request->model)->first()->name.
-                '-- ცვლილება განახორციელა '.auth()->user()->name);
+            $app->car_id       = null;
+            $app->car_model_id = null;
+            $app->update();
         }
 
 
-                $notification = new Notification();
+        if ($validated['model'] !== null && $app->car_model_id != $validated['model']) {
+            if ($app->car_model_id == null) {
+                Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა მანქანის მოდელი: --'.'----------'.'-- ახალი მანქანის მოდელია: --'.$models->where('id',
+                        $request->model)->first()->name.
+                    '-- ცვლილება განახორციელა '.auth()->user()->name);
+            } else {
+                Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა მანქანის მოდელი: --'.$app->model->name.'-- ახალი მანქანის მოდელია: --'.$models->where('id',
+                        $request->model)->first()->name.
+                    '-- ცვლილება განახორციელა '.auth()->user()->name);
+            }
+
+            if ($app->user->id != $authuser->id) {
+                $notification                 = new Notification();
                 $notification->application_id = $app->id;
                 $notification->user_id        = $app->user_id;
                 $notification->type           = 'განაცხადში No: '.$app->id.'  შეიცვალა მანქანის მოდელი';
                 $notification->save();
+            }
 
 
-        $app->car_model_id = $validated['model'];
-        $app->save();
+            $app->car_model_id = $validated['model'];
+            $app->save();
 
-    }
-    if ($app->year !== $validated['year']) {
+        }
+        if ($app->year !== $validated['year']) {
 
-        Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა მანქანის წელი: --'.$app->year.'-- ახალი წელია: --'.$request->year.
-            '-- ცვლილება განახორციელა '.auth()->user()->name);
+            Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა მანქანის წელი: --'.$app->year.'-- ახალი წელია: --'.$request->year.
+                '-- ცვლილება განახორციელა '.auth()->user()->name);
 
 
-                $notification = new Notification();
+            if ($app->user->id != $authuser->id) {
+                $notification                 = new Notification();
                 $notification->application_id = $app->id;
                 $notification->user_id        = $app->user_id;
                 $notification->type           = 'განაცხადში No: '.$app->id.'  შეიცვალა მანქანის წელი';
                 $notification->save();
-
-        $app->year=$request->year;
-        $app->save();
-
-    }
-    if ($app->engine !== $validated['engine']) {
-        Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა ძრავის მოცულობა: --'.$app->engine.'-- ახალი წელია: --'.$request->engine.
-            '-- ცვლილება განახორციელა '.auth()->user()->name);
+            }
 
 
-                $notification = new Notification();
+            $app->year = $request->year;
+            $app->save();
+
+        }
+        if ($app->engine !== $validated['engine']) {
+            Log::channel('changes')->info('განაცხადში No: '.$app->id.'  შეიცვალა ძრავის მოცულობა: --'.$app->engine.'-- ახალი წელია: --'.$request->engine.
+                '-- ცვლილება განახორციელა '.auth()->user()->name);
+
+            if ($app->user->id != $authuser->id) {
+                $notification                 = new Notification();
                 $notification->application_id = $app->id;
                 $notification->user_id        = $app->user_id;
                 $notification->type           = 'განაცხადში No: '.$app->id.'  შეიცვალა ძრავის მოცულობა';
                 $notification->save();
-
-        $app->engine = $validated['engine'];
-        $app->save();
-
-    }
+            }
 
 
-    if($request->has('commentids')){
+            $app->engine = $validated['engine'];
+            $app->save();
+
+        }
 
 
-        // COMMENTS
-        $commentids = $validated['commentids'];
-        $comments    = $validated['oldcomment'];
-        $appcomments = $app->comments;
+        if ($request->has('commentids')) {
 
 
-        // update existing comment
-        foreach ($commentids as $index => $commentid) {
-            // if comment changed
-            $comment = $appcomments->where('id', $commentid)->first();
-            if ($comment->comment != $comments[$index]) {
-                $comment->comment = $comments[$index];
-                $comment->user_id = auth()->user()->id;
-                $comment->save();
-                $app->updated_at = Carbon::now();
-                $app->save();
+            // COMMENTS
+            $commentids  = $validated['commentids'];
+            $comments    = $validated['oldcomment'];
+            $appcomments = $app->comments;
+
+
+            // update existing comment
+            foreach ($commentids as $index => $commentid) {
+                // if comment changed
+                $comment = $appcomments->where('id', $commentid)->first();
+                if ($comment->comment != $comments[$index]) {
+
+                    Log::channel('changes')->info('განაცხადში No: '.$app->id.' დაკორექტირდა  კომენტარი '.
+                        '-- ცვლილება განახორციელა '.auth()->user()->name);
+
+                    if ($app->user->id != $authuser->id) {
+                        $notification                 = new Notification();
+                        $notification->application_id = $app->id;
+                        $notification->user_id        = $app->user_id;
+                        $notification->type           = 'განაცხადში No: '.$app->id.'დაკორექტირდა  კომენტარი';
+                        $notification->save();
+                    }
+
+
+
+                    $comment->comment = $comments[$index];
+                    $comment->user_id = auth()->user()->id;
+                    $comment->save();
+                    $app->updated_at = Carbon::now();
+                    $app->save();
+                }
             }
         }
-    }
 
-    if($request->has('newcomment')){
+        if ($request->has('newcomment')) {
 
-        $app->updated_at = Carbon::now();
-        $app->save();
-        Log::channel('changes')->info('განაცხადში No: '.$app->id.'  დაემატა ახალი კომენტარი '.
-            '-- ცვლილება განახორციელა '.auth()->user()->name);
+            $app->updated_at = Carbon::now();
+            $app->save();
+            Log::channel('changes')->info('განაცხადში No: '.$app->id.'  დაემატა ახალი კომენტარი '.
+                '-- ცვლილება განახორციელა '.auth()->user()->name);
 
-
-                $notification = new Notification();
+            if ($app->user->id != $authuser->id) {
+                $notification                 = new Notification();
                 $notification->application_id = $app->id;
                 $notification->user_id        = $app->user_id;
-                $notification->type           = 'განაცხადში No: '.$app->id .'დაემატა ახალი კომენტარი';
+                $notification->type           = 'განაცხადში No: '.$app->id.'დაემატა ახალი კომენტარი';
                 $notification->save();
+            }
 
 
+            foreach ($validated['newcomment'] as $newcomment) {
+                $comment                 = new Comment();
+                $comment->comment        = $newcomment;
+                $comment->user_id        = auth()->user()->id;
+                $comment->application_id = $app->id;
+                $comment->save();
 
-        foreach ($validated['newcomment'] as $newcomment) {
-            $comment                 = new Comment();
-            $comment->comment        = $newcomment;
-            $comment->user_id        = auth()->user()->id;
-            $comment->application_id = $app->id;
-            $comment->save();
+            }
 
-        }
-
-        $app->updated_at = Carbon::now();
-        $app->save();
-
-
-    }
-
-    //  Detach company if removed
-    foreach ($app->companies as $company) {
-
-
-        if (!in_array($company->id, $validated['company'])){
-
-            $app->companies()->detach($company->id);
             $app->updated_at = Carbon::now();
             $app->save();
 
 
-                    $notification = new Notification();
+        }
+
+        //  Detach company if removed
+        foreach ($app->companies as $company) {
+
+
+            if (!in_array($company->id, $validated['company'])) {
+
+                $app->companies()->detach($company->id);
+                $app->updated_at = Carbon::now();
+                $app->save();
+
+                if ($app->user->id != $authuser->id) {
+                    $notification                 = new Notification();
                     $notification->application_id = $app->id;
                     $notification->user_id        = $app->user_id;
                     $notification->type           = 'განაცხადში No: '.$app->id.' წაიშალა კომპანია';
                     $notification->save();
+                }
 
 
-            Log::channel('changes')->info('განაცხადში No: '.$app->id.'  წაიშალა კომპანია: '.$companies->where('id',
-                    $company->id)->first()->name.'-- ოპერატორი '.auth()->user()->name);
+                Log::channel('changes')->info('განაცხადში No: '.$app->id.'  წაიშალა კომპანია: '.$companies->where('id',
+                        $company->id)->first()->name.'-- ოპერატორი '.auth()->user()->name);
 
 
+            }
         }
-    }
 
 
+        //  Attach new or change company
+        $totalApplications = count($validated['company']);
+        foreach ($validated['company'] as $indexcompany => $company) {
+            if (!in_array($company, $app->companies->pluck('id')->toArray())) {
 
-
-
-
-    //  Attach new or change company
-    $totalApplications = count($validated['company']);
-    foreach ($validated['company'] as $indexcompany => $company) {
-        if (!in_array($company, $app->companies->pluck('id')->toArray())) {
-
-                    $notification = new Notification();
+                if ($app->user->id != $authuser->id) {
+                    $notification                 = new Notification();
                     $notification->application_id = $app->id;
                     $notification->user_id        = $app->user_id;
                     $notification->type           = 'დაემატა კომპანია ';
                     $notification->save();
+                }
 
-            Log::channel('changes')->info('განაცხადში No: '.$app->id.'  დაემატა კომპანია: '.$companies->where('id',
-                    $company)->first()->name.'-- ოპერატორი '.auth()->user()->name);
-            $app->updated_at = Carbon::now();
-            $app->save();
-            $app->companies()->attach($company);
+
+                Log::channel('changes')->info('განაცხადში No: '.$app->id.'  დაემატა კომპანია: '.$companies->where('id',
+                        $company)->first()->name.'-- ოპერატორი '.auth()->user()->name);
+                $app->updated_at = Carbon::now();
+                $app->save();
+                $app->companies()->attach($company);
+
+            }
 
         }
-        // Check if this is the last iteration
-        if ($indexcompany === $totalApplications - 1) {
-        }
-    }
 
 //    DATA FOR HTMX VIEW with table to main page
 
 
-
-
-    $applications = Application::with([
-        'client:id,name,mobile1,pid',
-        'source:id,name',
-        'status',
-        'product:id,name',
+        $applications = Application::with([
+            'client:id,name,mobile1,pid',
+            'source:id,name',
+            'status',
+            'product:id,name',
 //        'car:id,make',
-        'comments.user:id,name',
-        'user:id,name',
+            'comments.user:id,name',
+            'user:id,name',
 
-    ])  ->orderBy('created_at', 'desc')
-        ->latest()
-        ->get();
-
+        ])->orderBy('created_at', 'desc')
+            ->latest()
+            ->limit(300)
+            ->get();
 
 
 //    return view('htmx.htmx' ,compact('companies','statuses','products','sources','applications','cars'));
-    return view('htmx.htmx' ,compact('applications', 'authuser'));
+        return view('htmx.htmx', compact('applications', 'authuser'));
 
 
-}
-
+    }
 
 
 // update only status and comment by other users
-    public function htmxupdate2(Request $request){
+    public function htmxupdate2(Request $request)
+    {
 
         $app = Application::with('client', 'source', 'status', 'product', 'car', 'comments.user', 'user',
             'companies', 'model')
             ->find($request->id);
 
 
-        $statuses=Status::all();
-        $authuser=auth()->user();
+        $statuses = Status::all();
+        $authuser = auth()->user();
 
         // update Logic
         if ($app->status->id != $request->status) {
@@ -892,13 +935,13 @@ public function htmxupdate(Request $request){
                 '-- ცვლილება განახორციელა '.auth()->user()->name);
 
 
-
-                    $notification = new Notification();
-                    $notification->application_id = $app->id;
-                    $notification->user_id        = $app->user_id;
-                    $notification->type           = 'განაცხადში No: ' .$app->id . ' შეიცვალა სტატუსი';
-                    $notification->save();
-
+            if ($app->user_id != $authuser->id) {
+                $notification                 = new Notification();
+                $notification->application_id = $app->id;
+                $notification->user_id        = $app->user_id;
+                $notification->type           = 'განაცხადში No: '.$app->id.' შეიცვალა სტატუსი';
+                $notification->save();
+            }
 
 
             $app->status_id = $request->status;
@@ -908,7 +951,6 @@ public function htmxupdate(Request $request){
         }
 
 
-
         $commentids = $request->commentids;
 //        dd($commentids);
         $comments    = $request->oldcomment;
@@ -916,30 +958,49 @@ public function htmxupdate(Request $request){
 
         // update existing comment
         if ($commentids != null) {
+
+
             foreach ($commentids as $index => $commentid) {
                 // if comment changed
+
+
                 $comment = $appcomments->where('id', $commentid)->first();
-                if ($comment->comment != $comments[$index] ) {
+                if ($comment->comment != $comments[$index]) {
+
                     $comment->comment = $comments[$index];
                     $comment->user_id = auth()->user()->id;
                     $comment->save();
+
+                    Log::channel('changes')->info('განაცხადში No: '.$app->id.' დაკორექტირდა  კომენტარი '.
+                        '-- ცვლილება განახორციელა '.auth()->user()->name);
+                    if ($app->user->id != $authuser->id) {
+                        $notification                 = new Notification();
+                        $notification->application_id = $app->id;
+                        $notification->user_id        = $app->user_id;
+                        $notification->type           = 'განაცხადში No: '.$app->id.'დაკორექტირდა  კომენტარი';
+                        $notification->save();
+                    }
+
                 }
             }
 
         }
 
 
-        if($request->has('newcomment')){
+        if ($request->has('newcomment')) {
             $app->updated_at = Carbon::now();
             $app->save();
             Log::channel('changes')->info('განაცხადში No: '.$app->id.'  დაემატა ახალი კომენტარი '.
                 '-- ცვლილება განახორციელა '.auth()->user()->name);
 
-                    $notification = new Notification();
-                    $notification->application_id = $app->id;
-                    $notification->user_id        = $app->user_id;
-                    $notification->type           = 'განაცხადში No: '.$app->id. 'დაემატა ახალი კომენტარი';
-                    $notification->save();
+            if ($app->user_id != $authuser->id) {
+                $notification                 = new Notification();
+                $notification->application_id = $app->id;
+                $notification->user_id        = $app->user_id;
+                $notification->type           = 'განაცხადში No: '.$app->id.'დაემატა ახალი კომენტარი';
+                $notification->save();
+
+            }
 
 
             foreach ($request->newcomment as $newcomment) {
@@ -965,16 +1026,16 @@ public function htmxupdate(Request $request){
             'comments.user:id,name',
             'user:id,name',
 
-        ])  ->orderBy('created_at', 'desc')
+        ])->orderBy('created_at', 'desc')
             ->latest()
+            ->limit(300)
             ->get();
 
 
-        return view('htmx.htmx' ,compact('applications','authuser'));
+        return view('htmx.htmx', compact('applications', 'authuser'));
 
 
     }
-
 
 
 }

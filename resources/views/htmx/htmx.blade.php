@@ -1,3 +1,5 @@
+
+
 <table id="example" class="display nowrap" style="width:100%">
     <thead>
     <tr>
@@ -41,7 +43,7 @@
                 {{$application->client->name}}
                 {{$application->client->pid}}
             </td>
-            <td>{{$application->client->mobile1}}</td>
+            <td style="white-space: normal !important">{{$application->client->mobile1}}</td>
             <td>{{$application->source->name}}</td>
             <td style="text-align: center!important;width: 100px;!important;white-space: normal !important">
                 <span style="font-size: 15px;text-align: center!important"
@@ -106,9 +108,11 @@
                         <li>
                             <a href="javascript:void(0);"
                                class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
-                               data-hs-overlay="#delete{{$index}}"
+                               data-hs-overlay="#delete"
+                               hx-get="{{route('app.htmx.deletete', $application->id)}}"
+                               hx-target="#deletedetails"
+                               hx-indicator="#indicator"
                             >წაშლა
-
                             </a>
                         </li>
                         @endrole
@@ -144,7 +148,6 @@
     </tr>
     </tfoot>
 </table>
-
 
 <script>
 

@@ -1,3 +1,6 @@
+{{--@php--}}
+{{--dd($users)--}}
+{{--@endphp--}}
 <header class="app-header">
     <nav class="main-header !h-[3.75rem]" aria-label="Global">
         <div class="main-header-container ps-[0.725rem] pe-[1rem] ">
@@ -45,10 +48,14 @@
                     <div style="padding-bottom: 10px" class="input-group flex flex-row justify-center gap-4 ">
 
                         @csrf
-                        {{--                        <select name="invoice" class=" form-control ti-form-select rounded-sm !py-2 !px-3">--}}
-                        {{--                            <option  value="purchase">Only Purchase</option>--}}
-                        {{--                            <option value="sales">Only Sales</option>--}}
-                        {{--                        </select>--}}
+{{--                                                <select name="invoice" class=" form-control ti-form-select rounded-sm !py-2 !px-3">--}}
+{{--                                                    @foreach($users as $index => $user)--}}
+
+{{--                                                        <option  value="{{$index}}">{{$user}}</option>--}}
+
+{{--                                                    @endforeach--}}
+
+{{--                                                </select>--}}
                         <div class="input-group-text text-[#8c9097] dark:text-white/50"><i class="ri-calendar-line"></i>
                         </div>
                         <input name="range" type="text" class="form-control flatpickr-input active" id="daterange"
@@ -68,11 +75,12 @@
                     </div>
                 </form>
 
+                @if($authuser->hasAnyRole('admin|operator|developer'))
                 <button type="button" class="hs-dropdown-toggle ti-btn ti-btn-light ti-btn-wave"
                         data-hs-overlay="#hs-large-modal">
                     ახალი განაცხადი
                 </button>
-
+                @endif
 
                 <button type="button" class="hs-dropdown-toggle ti-btn ti-btn-light ti-btn-wave"
                         data-hs-overlay="#searchmodal">

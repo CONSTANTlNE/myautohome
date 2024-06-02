@@ -7,7 +7,7 @@
     </div>
     @if($potentialclient)
         <div class="text-center">
-            <p>პირველადი</p>
+            <p>პოტენციური</p>
             <input style="max-width:100px!important;" class="form-control text-center " disabled type="text"
                    value="{{$potentialclient->user->name}}">
         </div>
@@ -38,13 +38,10 @@
 </div>
 <div class="flex justify-center w-full">
     <form style="max-width: 650px!important;background-color: rgb(var(--body-bg));padding: 20px"
-          @if($userid==$application->user->id || auth()->user()->hasanyrole('admin|developer'))
-              action="{{route('app.update')}}"
-          @else
-              action="{{route('update2.htmx')}}"
-          @endif
+
 
           method="post">
+        <div id="errors2"></div>
         @csrf
         <input type="hidden" name="id" value="{{$application->id}}">
 
@@ -231,7 +228,7 @@
 
                 </div>
                 <div class="md:col-span-2 col-span-12 mt-2">
-                    <a style="margin:auto!important;" class="form-control "
+                    <a style="margin:auto!important;cursor: pointer" class="form-control "
                        @if($application->link!==null)
                            href="{{$application->link}}"
                        @endif
@@ -239,9 +236,9 @@
                 </div>
                 @foreach($application->comments as $comment)
                     <div class="md:col-span-12 col-span-12 mb-4">
-                        <input data-disabled-input type="hidden" name="commentids[]" value="{{$comment->id}}"  >
+                        <input  type="hidden" name="commentids[]" value="{{$comment->id}}"  >
                         <label class="form-label" >კომენტარი {{$comment->user->name}} {{$comment->created_at}}</label>
-                        <textarea data-disabled-input name="oldcomment[]" class="form-control" aria-label="With textarea"
+                        <textarea @if($comment->user->id !==auth()->user()->id ) readonly style="background-color: #2b2e31!important;" @endif  name="oldcomment[]" class="form-control" aria-label="With textarea"
                                   rows="3">{{$comment->comment}}</textarea>
                     </div>
                 @endforeach
@@ -277,13 +274,14 @@
                 id="editappsubmit"
                 class="ti-btn ti-btn-primary-full ti-btn-wave w-full">შენახვა
         </button>
+
     </form>
-    <div id="errors2"></div>
+
 </div>
 
 
 {{--If app was not created by user, disable inputs--}}
-@if($userid!==$application->user->id && auth()->user()->hasanyrole('operator'))
+@if($userid!==$application->user->id && auth()->user()->hasanyrole('operator|callcenter'))
     <script>
         document.querySelectorAll('[data-disabled-input]').forEach((input) => {
 

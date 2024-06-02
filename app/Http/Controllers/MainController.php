@@ -11,6 +11,7 @@ use App\Models\Company;
 use App\Models\Product;
 use App\Models\Source;
 use App\Models\Status;
+use Illuminate\Foundation\Auth\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -23,7 +24,6 @@ class MainController extends Controller
 //            ->latest()
 //            ->limit(500)
 //            ->get();
-
         $applications = Application::with([
             'client:id,name,mobile1,pid',
             'source:id,name',
@@ -35,7 +35,7 @@ class MainController extends Controller
 //            'companies:id,name'
         ])  ->orderBy('created_at', 'desc')
             ->latest()
-            ->limit(500)
+            ->limit(300)
             ->get();
 
         $companies=Company::all();
@@ -44,9 +44,10 @@ class MainController extends Controller
         $sources=Source::all();
         $cars=Car::all();
         $authuser=auth()->user();
+        $users=User::pluck('name','id');
 
 //        $carsJson =$cars->toJson();
-        return view('pages.main' ,compact('companies','statuses','products','sources','applications','cars','authuser'));
+        return view('pages.main' ,compact('companies','statuses','products','sources','applications','cars','authuser','users'));
 
     }
 
@@ -110,9 +111,28 @@ class MainController extends Controller
 
     public function htmxdateRange(Request $request)
     {
-
-        $range = $request->input('range');
         $authuser=auth()->user();
+
+        if($request->input('range') == null){
+            $applications = Application::with([
+                'client:id,name,mobile1,pid',
+                'source:id,name',
+                'status:id,name,color',
+                'product:id,name',
+//            'car:id,make',
+                'comments.user:id,name',
+                'user:id,name',
+//            'companies:id,name'
+            ])  ->orderBy('created_at', 'desc')
+                ->latest()
+                ->limit(300)
+                ->get();
+
+            return view('htmx.htmx' ,compact('applications','authuser'));
+
+
+        }
+        $range = $request->input('range');
 
 
         list($startDateString, $endDateString) = explode(' to ', $range);
@@ -131,11 +151,11 @@ class MainController extends Controller
 //        $cars=Car::all();
 //        $ips=Allowedip::all();
 
+
+
         return view('htmx.htmx' ,compact('applications','authuser'));
 
     }
-
-
 
     public function index2(Request $request)
     {
@@ -151,7 +171,7 @@ class MainController extends Controller
 
         ])  ->orderBy('created_at', 'desc')
             ->latest()
-            ->limit(500)
+            ->limit(300)
             ->get();
         $authuser=auth()->user();
 
@@ -168,19 +188,23 @@ class MainController extends Controller
         return view('htmx.htmx' ,compact('applications','authuser'));
     }
 
-
     public function htmxsearch(Request $request){
-        $applications = Client::where('mobile1', 'like',"%{$request->search}%")
+
+        if(empty($request->search)){
+            return view('htmx.clear');
+        }
+
+
+        $clients = Client::where('mobile1', 'like',"%{$request->search}%")
             ->orWhere('pid', 'like', "%{$request->search}%")
             ->orWhere('name', 'like', "%{$request->search}%")
             ->with('applications.status', 'applications.user')
-            ->first();
-        $authuser=auth()->user();
+            ->get();
 
-        return view('htmx.htmxsearch', compact('applications','authuser'));
+
+
+        return view('htmx.htmxsearch', compact('clients',));
     }
-
-
 
     public function clearSearch(Request $request){
 
@@ -195,5 +219,6 @@ class MainController extends Controller
 
         return view('htmx.carmodels',compact('models',));
     }
+
 
 }

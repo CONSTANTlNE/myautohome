@@ -9,13 +9,21 @@ use App\Http\Controllers\LogViewerController;
 use App\Http\Controllers\MainController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PanelController;
+use App\Http\Controllers\PotentialStatusController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SourceController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\UserController;
+use App\Models\Application;
+use App\Models\Car;
+use App\Models\Client;
+use App\Models\Company;
 use App\Models\Notification;
 use App\Models\PotentialClient;
+use App\Models\Product;
+use App\Models\Source;
+use App\Models\Status;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -33,17 +41,25 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/clear',[MainController::class, 'clearSearch'])->name('search.clear');
 
 
+
     // HTMX routes
     Route::get('/htmx',[MainController::class, 'index2'])->name('main2');
+
+    // app htmx
     Route::get('/searchhtmx',[MainController::class, 'htmxsearch'])->name('search.htmx');
     Route::get('htmx/edit/{id}',[ApplicationController::class, 'htmxedit'])->name('edit.htmx');
     // for users who can change their applications
     Route::post('htmx/update',[ApplicationController::class, 'htmxupdate'])->name('update.htmx');
     // for users who can change only status and comment
     Route::post('htmx/update2',[ApplicationController::class, 'htmxupdate2'])->name('update2.htmx');
-    Route::get('htmx/carsearch',[MainController::class, 'carsearch'])->name('carsearch');
     Route::post('htmx/app/create',[ApplicationController::class, 'htmxstore'])->name('htmxstore');
     Route::get('htmx/details/{id}',[ApplicationController::class, 'htmxdetails'])->name('htmxdetails');
+    Route::get('htmx/delete/{id}',[ApplicationController::class, 'htmxdelete'])->name('app.htmx.deletete');
+    Route::post('htmx/app/destroy',[ApplicationController::class, 'htmxdestroy'])->name('app.htmx.destroy');
+    Route::post('htmx/potential/destroy',[ClientController::class, 'htmxdestroypotential'])->name('potential.htmx.deletete');
+
+    Route::get('htmx/carsearch',[MainController::class, 'carsearch'])->name('carsearch');
+
     Route::get('/htmx/admin/users',[UserController::class, 'htmxindex'])->name('htmx.users');
     Route::post('/admin/htmx/user/create',[UserController::class, 'htmxstore'])->name('user.htmxcreate');
     Route::get('/admin/htmx/manage',[PanelController::class, 'htmxindex'])->name('htmx.other');
@@ -73,24 +89,30 @@ Route::group(['middleware' => ['auth']], function () {
 
 
 
-    // App
+    // App - for testing only, not in production
     Route::post('app/create',[ApplicationController::class, 'store'])->name('app.create');
     Route::get('app/edit/{id}',[ApplicationController::class, 'edit'])->name('app.edit');
     Route::post('app/update',[ApplicationController::class, 'update'])->name('app.update');
     Route::get('app/details/{id}',[ApplicationController::class, 'details'])->name('app.details');
 
-    // clients
+
+
+    // clients - for testing only, not in production
     Route::get('app/clients/existing',[ClientController::class, 'existingIndex'])->name('existing.clients');
     Route::get('app/clients/potential',[ClientController::class, 'potentialIndex'])->name('potential.clients');
     Route::post('app/clients/potential/create',[ClientController::class, 'createPotential'])->name('potential.clients.create');
     Route::post('app/clients/potential/update',[ClientController::class, 'updatePotential'])->name('potential.clients.update');
-    // Clients HTMX
-    Route::get('app/clients/potential/htmx',[ClientController::class, 'htmxpotentialIndex'])->name('htmx.potential.clients');
-    Route::post('app/clients/potential/htmx/create',[ClientController::class, 'htmxcreatePotential'])->name('htmx.potential.clients.create');
-    Route::post('app/clients/potential/htmx/update',[ClientController::class, 'htmxupdatePotential'])->name('htmx.potential.clients.update');
-    Route::post('app/clients/potential/htmx/daterange',[ClientController::class, 'htmxclientdaterange'])->name('htmx.potential.clients.daterange');
-    Route::get('app/clients/potential/htmx/search',[ClientController::class, 'htmxsearchpotential'])->name('search.potential.htmx');
 
+
+    // Clients HTMX
+    Route::get('/clients/potential/index/htmx',[ClientController::class, 'htmxpotentialIndex'])->name('htmx.potential.clients');
+    Route::post('/clients/potential/htmx/create',[ClientController::class, 'htmxcreatePotential'])->name('htmx.potential.clients.create');
+    Route::post('/clients/potential/htmx/update',[ClientController::class, 'htmxupdatePotential'])->name('htmx.potential.clients.update');
+    Route::post('/clients/potential/htmx/daterange',[ClientController::class, 'htmxclientdaterange'])->name('htmx.potential.clients.daterange');
+    Route::get('/clients/potential/htmx/search',[ClientController::class, 'htmxsearchpotential'])->name('search.potential.htmx');
+    Route::get('/clients/potential/htmx/search/edit/{id}',[ClientController::class, 'editsearchpotential'])->name('edit.search.potential');
+    Route::post('/clients/potential/status/create/htmx',[PotentialStatusController::class, 'createpotentialstatus'])->name('htmx.potential.status.create');
+    Route::post('/clients/potential/status/update/htmx',[PotentialStatusController::class, 'updatepotentialstatus'])->name('htmx.potential.status.update');
 
 
     // changepassword
@@ -143,5 +165,48 @@ Route::get('deletepotential',function(Request $request){
      $potential->delete();
  }
 
+
+
+
 });
 
+Route::get('deletenotification',function(Request $request){
+
+    $notifications=Notification::all();
+    foreach ($notifications as $notification){
+        $notification->delete();
+    }
+
+});
+
+
+
+
+
+Route::get('test',function(Request $request){
+
+    $applications = Application::with([
+        'client:id,name,mobile1,pid',
+        'source:id,name',
+        'status:id,name,color',
+        'product:id,name',
+//            'car:id,make',
+        'comments.user:id,name',
+        'user:id,name',
+//            'companies:id,name'
+    ])  ->orderBy('created_at', 'desc')
+        ->latest()
+        ->get();
+
+    $companies=Company::all();
+    $statuses=Status::all();
+    $products=Product::all();
+    $sources=Source::all();
+    $cars=Car::all();
+    $authuser=auth()->user();
+
+//        $carsJson =$cars->toJson();
+    return view('tests.alldata' ,compact('companies','statuses','products','sources','applications','cars','authuser'));
+
+
+});

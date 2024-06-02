@@ -22,6 +22,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-         Application::observe(ApplicationObserver::class);
+//         Application::observe(ApplicationObserver::class);
     }
 }

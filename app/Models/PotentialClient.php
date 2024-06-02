@@ -14,4 +14,14 @@ class PotentialClient extends Model
     {
      return  $this->belongsTo(User::class);
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class, 'potentialclient_id');
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(PotentialStatus::class);
+    }
 }

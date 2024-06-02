@@ -60,7 +60,7 @@ createmodal.addEventListener('mouseover', () => {
 
 
     const errorMessage = document.getElementById('errorMessage');
-    const errorMessage2 = document.getElementById('errorMessage2');
+    // const errorMessage2 = document.getElementById('errorMessage2');
 
     // PID must be numbers and 11 digits
     customerpid.addEventListener('input', function () {
@@ -77,17 +77,17 @@ createmodal.addEventListener('mouseover', () => {
     })
 
     // mobile must be numbers and 9 digits
-    customermobile.addEventListener('input', function () {
-        // Remove non-numeric characters
-        this.value = this.value.replace(/\D/g, '');
-
-        // Display error message if input length is not 11
-        if (this.value.length !== 9) {
-            errorMessage2.style.display = 'block';
-        } else {
-            errorMessage2.style.display = 'none';
-        }
-    })
+    // customermobile.addEventListener('input', function () {
+    //     // Remove non-numeric characters
+    //     this.value = this.value.replace(/\D/g, '');
+    //
+    //     // Display error message if input length is not 11
+    //     if (this.value.length !== 9) {
+    //         errorMessage2.style.display = 'block';
+    //     } else {
+    //         errorMessage2.style.display = 'none';
+    //     }
+    // })
 
 
 })

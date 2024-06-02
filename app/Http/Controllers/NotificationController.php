@@ -105,40 +105,26 @@ class NotificationController extends Controller
         }
 
 
-
-        if($request->session()->has('request_counter')) {
-            $counter = $request->session()->get('request_counter')+1;
-            $request->session()->put('request_counter', $counter);
-
-        } else {
-            $counter = 1;
-            $request->session()->put('request_counter', $counter);
-        }
-
+          $authuser = auth()->user();
         $applications = Application::with([
             'client:id,name,mobile1,pid',
             'source:id,name',
             'status',
             'product:id,name',
-            'car:id,make',
+//        'car:id,make',
             'comments.user:id,name',
             'user:id,name',
-            'companies:id,name'
-        ])  ->orderBy('created_at', 'desc')
+
+        ])->orderBy('created_at', 'desc')
             ->latest()
             ->limit(300)
             ->get();
 
-        $companies=Company::all();
-        $statuses=Status::all();
-        $products=Product::all();
-        $sources=Source::all();
-//        $cars=Car::with('models')->get();
-        $cars=Car::all();
+
+//    return view('htmx.htmx' ,compact('companies','statuses','products','sources','applications','cars'));
+        return view('htmx.htmx', compact('applications', 'authuser'));
 
 
 
-
-        return view('htmx.htmx' ,compact('companies','statuses','products','sources','applications','cars','counter'));
     }
 }

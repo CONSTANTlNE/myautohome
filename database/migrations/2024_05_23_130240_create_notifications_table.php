@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained();
             $table->string('type')->index();
-            $table->foreignId('application_id')->constrained('applications');
+            $table->foreignId('application_id')->constrained('applications')->onDelete('cascade');
             $table->boolean('read')->default(false);
             $table->timestamps();
         });

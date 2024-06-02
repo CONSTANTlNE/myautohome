@@ -20,7 +20,8 @@ class UploadController extends Controller
 {
     public function index(){
         $cars = Car::all();
-        return view('pages.upload', compact('cars'));
+        $authuser=auth()->user();
+        return view('pages.upload', compact('cars', 'authuser'));
     }
 
 

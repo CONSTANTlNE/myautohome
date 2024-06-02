@@ -18,4 +18,8 @@ class Comment extends Model
     public function application(){
         return   $this->belongsTo(Application::class, 'application_id', 'id');
     }
+
+    public function potentialclients(){
+        return   $this->belongsTo(PotentialClient::class, 'potentialclient_id', 'id');
+    }
 }

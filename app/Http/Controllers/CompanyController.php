@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Company;
+use App\Models\PotentialStatus;
 use App\Models\Product;
 use App\Models\Source;
 use App\Models\Status;
@@ -31,8 +32,9 @@ class CompanyController extends Controller
         $statuses  = Status::all();
         $products  = Product::all();
         $sources   = Source::all();
+        $potentialstatus  = PotentialStatus::all();
 
-        return view('htmx.htmxother', compact('companies', 'statuses', 'products', 'sources'));
+        return view('htmx.htmxother', compact('companies', 'statuses', 'products', 'sources', 'potentialstatus'));
 
 
     }
@@ -61,8 +63,9 @@ class CompanyController extends Controller
         $statuses  = Status::all();
         $products  = Product::all();
         $sources   = Source::all();
+        $potentialstatus  = PotentialStatus::all();
 
-        return view('htmx.htmxother', compact('companies', 'statuses', 'products', 'sources'));
+        return view('htmx.htmxother', compact('companies', 'statuses', 'products', 'sources', 'potentialstatus'));
 
     }
 }

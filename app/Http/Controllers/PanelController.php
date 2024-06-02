@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Car;
 use App\Models\CarModel;
 use App\Models\Company;
+use App\Models\PotentialStatus;
 use App\Models\Product;
 use App\Models\Source;
 use App\Models\Status;
@@ -40,8 +41,9 @@ class PanelController extends Controller
         $statuses  = Status::all();
         $products  = Product::all();
         $sources   = Source::all();
+        $potentialstatus  = PotentialStatus::all();
 
-        return view('htmx.htmxother', compact('companies', 'statuses', 'products', 'sources'));
+        return view('htmx.htmxother', compact('companies', 'statuses', 'products', 'sources', 'potentialstatus'));
     }
 
     public function index2()
@@ -78,5 +80,10 @@ class PanelController extends Controller
 
         return back();
     }
+
+
+
+
+
 
 }

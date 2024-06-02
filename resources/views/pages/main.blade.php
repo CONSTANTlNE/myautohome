@@ -5,7 +5,7 @@
 @endphp
 @section('main')
 
-    <table id="example" class="display nowrap" style="width:100%">
+        <table id="example" class="display nowrap" style="width:100%">
         <thead>
         <tr>
             <td><input type="text"  class="form-control searchinput"></td>
@@ -50,7 +50,7 @@
                     {{$application->client->name}}
                     {{$application->client->pid}}
                 </td>
-                <td>{{$application->client->mobile1}}</td>
+                <td style="white-space: normal !important">{{$application->client->mobile1}}</td>
                 <td>{{$application->source->name}}</td>
                 <td style="text-align: center!important;width: 100px;!important;white-space: normal !important">
                     <span  style="font-size: 15px;text-align: center!important" class="{{$application->status->color}}">{{$application->status->name}}</span>
@@ -89,18 +89,6 @@
                             </li>
                             @endrole
 
-{{--                            <li>--}}
-{{--                                <a data-hs-overlay="#detailsmodal" href="javascript:void(0);"--}}
-{{--                                   hx-get="{{route('htmxdetails', $application->id)}}"--}}
-{{--                                   hx-target="#detailtarget"--}}
-{{--                                   hx-trigger="click"--}}
-
-{{--                                   class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"--}}
-{{--                                >დეტალურად</a>--}}
-{{--                            </li>--}}
-
-{{--                            @if($application->user->id == auth()->user()->id || auth()->user()->hasRole('admin'))--}}
-
                                 <li
                                     hx-get="{{route('edit.htmx', $application->id)}}"
                                     hx-target="#edittarget"
@@ -113,14 +101,16 @@
 
                             {{--ADMIN ROUTES--}}
                             @hasanyrole('admin|developer')
-{{--                            <li>--}}
-{{--                                <a href="javascript:void(0);"--}}
-{{--                                   class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"--}}
-{{--                                   data-hs-overlay="#delete{{$index}}"--}}
-{{--                                >წაშლა--}}
-
-{{--                                </a>--}}
-{{--                            </li>--}}
+                            <li>
+                                <a href="javascript:void(0);"
+                                   class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
+                                   data-hs-overlay="#delete"
+                                   hx-get="{{route('app.htmx.deletete', $application->id)}}"
+                                   hx-target="#deletedetails"
+                                   hx-indicator="#indicator"
+                                >წაშლა
+                                </a>
+                            </li>
                             @endhasanyrole
 
 

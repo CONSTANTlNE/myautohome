@@ -53,7 +53,7 @@
                         </li>
                         <li class="slide htmxlink">
                             <a
-                                    hx-get="{{route('htmx.users')}}" hx-trigger="click throttle:2s"
+                                    hx-get="{{route('htmx.users')}}" hx-trigger="click"
                                     hx-indicator="#indicator"
                                     hx-target="#main-content"
                                     id="userspage"
@@ -177,7 +177,7 @@
     </div>
 </div>
 {{--    ADD new Car Modal--}}
-@role('admin')
+
 <div id="cars" class="hs-overlay hidden ti-modal [--overlay-backdrop:static]">
     <div class="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out">
         <div class="ti-modal-content">
@@ -238,11 +238,10 @@
         <iframe name="hidden_iframe2" style="display:none;"></iframe>
     </div>
 </div>
-@endrole
+
 {{--    ADD new Ip Modal--}}
 <div id="ips" class="hs-overlay hidden ti-modal [--overlay-backdrop:static]">
     <div class="hs-overlay-open:mt-7 ti-modal-box mt-0 ease-out" id="iptarget">
-
 
     </div>
 </div>
