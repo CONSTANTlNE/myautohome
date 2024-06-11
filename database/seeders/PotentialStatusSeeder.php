@@ -18,6 +18,6 @@ class PotentialStatusSeeder extends Seeder
         PotentialStatus::create(['name' => 'დაინტერესებულია, მოვა ფილიალში', 'color' => 'badge bg-outline-success']);
         PotentialStatus::create(['name' => 'გადაიფიქრა', 'color' => 'badge bg-outline-danger']);
         PotentialStatus::create(['name' => 'შეაფსო განაცხადი', 'color' => 'badge bg-outline-secondary']);
-        PotentialStatus::create(['name' => 'ვერ დავუკავშირდი', 'color' => 'badge bg-outline-danger']);
+        PotentialStatus::create(['name' => 'დუბლიკატი', 'color' => 'badge bg-outline-danger']);
     }
 }

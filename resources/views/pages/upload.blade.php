@@ -3,6 +3,10 @@
 
 @section('upload')
 
+  @php
+//dd($apps)
+ @endphp
+
   <div class="flex flex-col">
   <div class="mb-5 w-1/4">
      <p>Cars</p>
@@ -54,6 +58,8 @@
       </form>
     </div>
   </div>
+
+
 
 
 @endsection

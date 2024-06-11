@@ -63,7 +63,7 @@ class CreateAppRequest extends FormRequest
             'product.exists'           => 'პროდუქტი არ მოიძებნა',
             'company.required'         => 'კომპანიის მითითება სავალდებულოა',
             'company.array'            => 'Company must be an array.',
-            'company.*.integer'        => 'Each company ID must be an integer.',
+            'company.*.integer'        => 'დაამატეთ ან წაშალეთ ახალი კომპანია',
             'company.*.exists'         => 'კომპანია არ მოიძებნა',
             'car.integer'              => 'Car must be an integer.',
             'car.exists'               => 'მწარმოებელი არ მოიძებნა',

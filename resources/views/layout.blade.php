@@ -139,7 +139,7 @@
         }
 
         thead {
-            background-color: #252729;
+            /*background-color: #252729;*/
         }
 
         #dataTable thead {
@@ -769,7 +769,12 @@
 
     });
 
-
+    $('#col0').on('keyup', function () {
+        table
+            .columns(0)
+            .search(this.value)
+            .draw();
+    });
     $('#col1').on('keyup', function () {
         table
             .columns(1)
@@ -1000,6 +1005,10 @@
 </script>
 
 
+<script>
+
+
+</script>
 
 
 </body>

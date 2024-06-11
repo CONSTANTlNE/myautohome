@@ -47,12 +47,13 @@ class PotentialStatusController extends Controller
     public function updatepotentialstatus(Request $request)
     {
 
-
+// return $request->all();
         if ($request->has('name')) {
 
             $validate  = Validator::make($request->all(), [
                 'name' => 'required|string',
             ]);
+
             $validated = $validate->validated();
 
             if ($validate->fails()) {
@@ -61,7 +62,7 @@ class PotentialStatusController extends Controller
                 return view('htmx.errors')->with('errors', $errors);
             }
 
-            $status       = Status::find($request->id);
+            $status        = PotentialStatus::find($request->id);
             $status->name = $validated['name'];
             $status->save();
 

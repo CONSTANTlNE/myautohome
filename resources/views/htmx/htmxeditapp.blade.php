@@ -38,8 +38,12 @@
 </div>
 <div class="flex justify-center w-full">
     <form style="max-width: 650px!important;background-color: rgb(var(--body-bg));padding: 20px"
-
-
+{{--          @if($userid==$application->user->id || auth()->user()->hasanyrole('admin|developer'))--}}
+{{--              action="{{route('update.htmx')}}"--}}
+{{--          @else--}}
+{{--              action="{{route('update2.htmx')}}"--}}
+{{--          @endif--}}
+{{--   target="nohtmx"--}}
           method="post">
         <div id="errors2"></div>
         @csrf
@@ -218,7 +222,7 @@
                     >
                 </div>
                 <div class="md:col-span-10 col-span-12 mb-4">
-
+                    <label class="form-label">ლინკი</label>
                     <input data-disabled-input name="link" type="url" class="form-control"
                            aria-label="url"
                            @if($application->link!==null)
@@ -228,6 +232,7 @@
 
                 </div>
                 <div class="md:col-span-2 col-span-12 mt-2">
+                    <br>
                     <a style="margin:auto!important;cursor: pointer" class="form-control "
                        @if($application->link!==null)
                            href="{{$application->link}}"
@@ -238,7 +243,7 @@
                     <div class="md:col-span-12 col-span-12 mb-4">
                         <input  type="hidden" name="commentids[]" value="{{$comment->id}}"  >
                         <label class="form-label" >კომენტარი {{$comment->user->name}} {{$comment->created_at}}</label>
-                        <textarea @if($comment->user->id !==auth()->user()->id ) readonly style="background-color: #2b2e31!important;" @endif  name="oldcomment[]" class="form-control" aria-label="With textarea"
+                        <textarea  @readonly($comment->user->id !==auth()->user()->id) style=""   name="oldcomment[]" class="form-control" aria-label="With textarea"
                                   rows="3">{{$comment->comment}}</textarea>
                     </div>
                 @endforeach
@@ -268,9 +273,9 @@
                 @else
                     hx-post="{{route('update2.htmx')}}"
                 @endif
-                hx-target="#main-content"
+{{--                hx-target="#main-content"--}}
                 hx-target-error="#errors2"
-                hx-indicator="#indicator"
+{{--                hx-indicator="#indicator"--}}
                 id="editappsubmit"
                 class="ti-btn ti-btn-primary-full ti-btn-wave w-full">შენახვა
         </button>
@@ -278,7 +283,7 @@
     </form>
 
 </div>
-
+{{--<iframe name="nohtmx" style="display: none"></iframe>--}}
 
 {{--If app was not created by user, disable inputs--}}
 @if($userid!==$application->user->id && auth()->user()->hasanyrole('operator|callcenter'))

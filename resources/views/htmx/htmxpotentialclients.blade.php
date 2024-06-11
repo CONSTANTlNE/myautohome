@@ -101,18 +101,18 @@
                           class="{{$client->status->color}}">{{$client->status->name}}</span>
                 @endif
             </td>
-            <td style="text-align: center!important;">
+            <td style="text-align: center!important;white-space: normal;max-width: 300px">
                 @if(!$client->comments->isEmpty())
                     @foreach($client->comments as $comment)
                         @if($loop->last)
-                            <p>{{$comment->user->name}} - {{$comment->created_at}}</p>
-                            <p>{{$comment->comment}}</p>
+                            <p style="white-space: normal">{{$comment->user->name}} - {{$comment->created_at}}</p>
+                            <p style="white-space: normal">{{$comment->comment}}</p>
                         @endif
                     @endforeach
                 @else
                     @if($client->comment!==null)
-                    <p>{{$client->user->name}} - {{$client->created_at}}</p>
-                    <p>{{$client->comment}}</p>
+                    <p style="white-space: normal">{{$client->user->name}} - {{$client->created_at}}</p>
+                    <p style="white-space: normal">{{$client->comment}}</p>
                     @endif
                 @endif
 
@@ -121,6 +121,7 @@
                 <button data-hs-overlay="#editpotentialclientinsearch"
                         hx-get="{{route('edit.search.potential',$client->id)}}"
                         hx-target="#potentialeditform"
+                        id="editpotentialbutton"
                         hx-indicator="#indicator"
                         class="ti-btn bg-primary text-white !font-medium">რედაქტირება
                 </button>

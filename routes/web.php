@@ -26,6 +26,7 @@ use App\Models\Source;
 use App\Models\Status;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
 
@@ -48,6 +49,7 @@ Route::group(['middleware' => ['auth']], function () {
     // app htmx
     Route::get('/searchhtmx',[MainController::class, 'htmxsearch'])->name('search.htmx');
     Route::get('htmx/edit/{id}',[ApplicationController::class, 'htmxedit'])->name('edit.htmx');
+
     // for users who can change their applications
     Route::post('htmx/update',[ApplicationController::class, 'htmxupdate'])->name('update.htmx');
     // for users who can change only status and comment
@@ -92,9 +94,12 @@ Route::group(['middleware' => ['auth']], function () {
     // App - for testing only, not in production
     Route::post('app/create',[ApplicationController::class, 'store'])->name('app.create');
     Route::get('app/edit/{id}',[ApplicationController::class, 'edit'])->name('app.edit');
+    //temprary to change only created_at
+    Route::get('app/edit2/{id}',[ApplicationController::class, 'edit2'])->name('app.edit2');
     Route::post('app/update',[ApplicationController::class, 'update'])->name('app.update');
+    //temprary to change only created_at
+    Route::post('app/update2',[ApplicationController::class, 'update2'])->name('app.update2');
     Route::get('app/details/{id}',[ApplicationController::class, 'details'])->name('app.details');
-
 
 
     // clients - for testing only, not in production
@@ -166,8 +171,6 @@ Route::get('deletepotential',function(Request $request){
  }
 
 
-
-
 });
 
 Route::get('deletenotification',function(Request $request){
@@ -179,6 +182,15 @@ Route::get('deletenotification',function(Request $request){
 
 });
 
+
+Route::get('deleteapps',function(Request $request){
+
+   $applications=Application::all();
+   foreach ($applications as $application){
+       $application->delete();
+   }
+
+});
 
 
 
@@ -207,6 +219,60 @@ Route::get('test',function(Request $request){
 
 //        $carsJson =$cars->toJson();
     return view('tests.alldata' ,compact('companies','statuses','products','sources','applications','cars','authuser'));
+
+
+});
+
+Route::get('datechange',function(Request $request){
+
+    $applications = Application::where('created_at', '>=', Carbon::now())
+
+        ->with([
+        'client:id,name,mobile1,pid',
+        'source:id,name',
+        'status:id,name,color',
+        'product:id,name',
+//            'car:id,make',
+        'comments.user:id,name',
+        'user:id,name',
+//            'companies:id,name'
+    ])  ->orderBy('created_at', 'desc')
+        ->latest()
+        ->get();
+
+    $companies=Company::all();
+    $statuses=Status::all();
+    $products=Product::all();
+    $sources=Source::all();
+    $cars=Car::all();
+    $authuser=auth()->user();
+
+//        $carsJson =$cars->toJson();
+    return view('tests.alldata2' ,compact('companies','statuses','products','sources','applications','cars','authuser'));
+
+
+});
+
+
+Route::get('argamoiyenot',function(Request $request){
+
+    $applications = Application::where('status_id', 1)
+        ->with([
+            'client:id,name,mobile1,pid',
+            'status:id,name,color',
+        ])
+        ->withCount('client')
+        ->orderBy('created_at', 'desc')
+
+        ->get();
+
+    foreach ($applications as $application){
+        $application->status_id = 3;
+        $application->save();
+    }
+
+
+
 
 
 });

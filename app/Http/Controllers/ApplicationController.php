@@ -137,6 +137,25 @@ class ApplicationController extends Controller
             compact('application', 'companies', 'statuses', 'products', 'sources', 'cars', 'products'));
 
     }
+    public function edit2($id)
+    {
+
+        $application = Application::with('client', 'source', 'status', 'product', 'car', 'comments.user', 'user',
+            'companies', 'model')
+            ->find($id);
+
+        $companies = Company::all();
+        $statuses  = Status::all();
+        $products  = Product::all();
+        $sources   = Source::all();
+        $products  = Product::all();
+        $cars      = Car::all();
+        $authuser = auth()->user();
+
+        return view('pages.editapp2',
+            compact('application', 'companies', 'statuses', 'products', 'sources', 'cars', 'products', 'authuser'));
+
+    }
 
     public function update(Request $request)
     {
@@ -297,6 +316,18 @@ class ApplicationController extends Controller
 
 
     }
+    public function update2(Request $request)
+    {
+
+//        dd($request->all());
+        $app = Application::find($request->id);
+        $parsedDate = Carbon::createFromFormat('Y-m-d', $request->created_at);
+//dd($parsedDate);
+            $app->created_at = $parsedDate;
+            $app->save();
+            return back();
+
+    }
 
     public function details($id)
     {
@@ -451,7 +482,6 @@ class ApplicationController extends Controller
             compact('companies', 'statuses', 'products', 'sources', 'applications', 'cars', 'authuser'));
 
     }
-
 
     public function htmxdetails($id)
     {
@@ -704,6 +734,7 @@ class ApplicationController extends Controller
             $app->update();
 
         } else {
+
             $app->car_id       = null;
             $app->car_model_id = null;
             $app->update();
@@ -891,27 +922,25 @@ class ApplicationController extends Controller
 
         }
 
-//    DATA FOR HTMX VIEW with table to main page
+//   ======== Return HTMX =============
 
 
-        $applications = Application::with([
-            'client:id,name,mobile1,pid',
-            'source:id,name',
-            'status',
-            'product:id,name',
-//        'car:id,make',
-            'comments.user:id,name',
-            'user:id,name',
+//        $applications = Application::with([
+//            'client:id,name,mobile1,pid',
+//            'source:id,name',
+//            'status',
+//            'product:id,name',
+//            'comments.user:id,name',
+//            'user:id,name',
+//
+//        ])->orderBy('created_at', 'desc')
+//            ->latest()
+//            ->limit(300)
+//            ->get();
 
-        ])->orderBy('created_at', 'desc')
-            ->latest()
-            ->limit(300)
-            ->get();
 
-
-//    return view('htmx.htmx' ,compact('companies','statuses','products','sources','applications','cars'));
-        return view('htmx.htmx', compact('applications', 'authuser'));
-
+//        return view('htmx.htmx', compact('applications', 'authuser'));
+//        return response()->noContent();
 
     }
 
@@ -919,6 +948,23 @@ class ApplicationController extends Controller
 // update only status and comment by other users
     public function htmxupdate2(Request $request)
     {
+
+        $validation = [
+            'status'       => 'required|integer|exists:statuses,id',
+            'newcomment'   => 'array',
+            'newcomment.*' => 'required|string|max:1000',
+            'oldcomment'   => 'array',
+            'oldcomment.*' => 'required|string|max:1000',
+        ];
+
+        $validator = Validator::make($request->all(), $validation);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            return view('htmx.errors')->with('errors', $errors);
+        }
+
+        $validated = $validator->validated();
 
         $app = Application::with('client', 'source', 'status', 'product', 'car', 'comments.user', 'user',
             'companies', 'model')
@@ -987,7 +1033,7 @@ class ApplicationController extends Controller
         }
 
 
-        if ($request->has('newcomment')) {
+        if ($request->has('newcomment') && $request->newcomment != null) {
             $app->updated_at = Carbon::now();
             $app->save();
             Log::channel('changes')->info('განაცხადში No: '.$app->id.'  დაემატა ახალი კომენტარი '.
@@ -1003,7 +1049,7 @@ class ApplicationController extends Controller
             }
 
 
-            foreach ($request->newcomment as $newcomment) {
+            foreach ($validated['newcomment'] as $newcomment) {
                 $comment                 = new Comment();
                 $comment->comment        = $newcomment;
                 $comment->user_id        = auth()->user()->id;
@@ -1014,26 +1060,27 @@ class ApplicationController extends Controller
         }
 
 
-        // RETURN HTML VIEW
 
 
-        $applications = Application::with([
-            'client:id,name,mobile1,pid',
-            'source:id,name',
-            'status',
-            'product:id,name',
-//            'car:id,make',
-            'comments.user:id,name',
-            'user:id,name',
 
-        ])->orderBy('created_at', 'desc')
-            ->latest()
-            ->limit(300)
-            ->get();
+// ============ Return HTMX==================
 
+//        $applications = Application::with([
+//            'client:id,name,mobile1,pid',
+//            'source:id,name',
+//            'status',
+//            'product:id,name',
+//            'comments.user:id,name',
+//            'user:id,name',
+//
+//        ])->orderBy('created_at', 'desc')
+//            ->latest()
+//            ->limit(300)
+//            ->get();
 
-        return view('htmx.htmx', compact('applications', 'authuser'));
+//        return view('htmx.htmx', compact('applications', 'authuser'));
 
+//        return response()->noContent();
 
     }
 

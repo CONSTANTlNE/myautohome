@@ -21,7 +21,9 @@ class UploadController extends Controller
     public function index(){
         $cars = Car::all();
         $authuser=auth()->user();
-        return view('pages.upload', compact('cars', 'authuser'));
+
+
+        return view('pages.upload', compact('cars', 'authuser', 'apps'));
     }
 
 
@@ -75,7 +77,7 @@ class UploadController extends Controller
             $client->save();
 
             $app=new Application();
-            $app->created_at = Carbon::createFromFormat('d/m/Y', $value['tarighi']);
+            $app->created_at = Carbon::createFromFormat('Y/m/d', $value['tarighi']);
             $app->updated_at = null;
 
             $app->user_id = $value['operaotri'];
@@ -111,9 +113,10 @@ class UploadController extends Controller
         foreach ($array[0] as $key => $value){
 
             $client=new PotentialClient();
-            $client->created_at =  Carbon::createFromFormat('d/m/Y', $value['tarighi']);
+            $client->created_at =  Carbon::createFromFormat('Y/m/d', $value['tarighi']);
             $client->updated_at = null;
             $client->user_id = $value['operatori'];
+            $client->status_id = $value['statusi'];
             $client->mobile = $value['mobiluri'];
             $client->comment = $value['komentari'];
             $client->save();

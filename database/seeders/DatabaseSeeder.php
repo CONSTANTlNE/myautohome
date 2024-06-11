@@ -17,16 +17,17 @@ class DatabaseSeeder extends Seeder
 
     public function run(): void
     {
-        $this->call(IpSeeder::class);
+//        $this->call(IpSeeder::class);
+        $this->call(PotentialStatusSeeder::class);
         $this->call(PermissionSeeder::class);
         $this->call(RoleSeeder::class);
 //        User::factory(10)->create();
-//        Client::factory(1000)->create();
+        Client::factory(200)->create();
 
         $this->call(UserSeeder::class);
         $this->call(GeneralSeeder::class);
 
-//        Application::factory(2000)->create();
+        Application::factory(2000)->create();
     }
 
 

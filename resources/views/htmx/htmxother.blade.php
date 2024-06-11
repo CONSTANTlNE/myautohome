@@ -1052,7 +1052,7 @@
                                                             {{--                                                   გაუქმება--}}
                                                             {{--                                                </button>--}}
                                                             <button type="button"
-                                                                    hx-post="{{route('status.update')}}"
+                                                                    hx-post="{{route('htmx.potential.status.update')}}"
                                                                     hx-target="#main-content"
                                                                     hx-indicator="#indicator"
                                                                     data-hs-overlay="#status999{{$indexstatus2}}"

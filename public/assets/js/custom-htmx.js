@@ -8,7 +8,7 @@ document.addEventListener('htmx:afterOnLoad', function (event) {
     // Check errors if any
     let response = event.detail.xhr.response;
     // FOR DEBUGGING !!!!!
-    // console.log(response)
+    console.log(response)
     // htmx.logAll();
     // check which button send the request
     const initiator = event.target;
@@ -63,6 +63,22 @@ document.addEventListener('htmx:afterOnLoad', function (event) {
             document.getElementById('toggleButton').click();
 
         }
+
+        // Close edit app modal when not using htmx response
+
+        // if(initiator.id==='editbuttonnohtmx'){
+        // document.getElementById('editappsubmit').addEventListener('click',()=>{
+        //
+        //         document.getElementById('closeeditmodal').click();
+        //
+        //     })
+        // }
+
+        // Close edit modal for potential when not using htmx response
+        // if(initiator.id='editpotentialbutton'){
+        //
+        // }
+
 
         // Close edit modal
         if (initiator.id === 'editappsubmit') {

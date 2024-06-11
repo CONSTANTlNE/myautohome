@@ -54,6 +54,8 @@ class MainController extends Controller
 
     public function appsearch(Request $request){
 
+
+
         $authuser=auth()->user();
         $applications = Client::where('mobile1', $request->search)
             ->orWhere('pid', $request->search)
@@ -125,7 +127,6 @@ class MainController extends Controller
 //            'companies:id,name'
             ])  ->orderBy('created_at', 'desc')
                 ->latest()
-                ->limit(300)
                 ->get();
 
             return view('htmx.htmx' ,compact('applications','authuser'));

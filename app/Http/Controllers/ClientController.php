@@ -245,14 +245,19 @@ class ClientController extends Controller
 
         $client->save();
 
-        $potentialclients = PotentialClient::with('user', 'comments.user', 'status')
-            ->orderBy('id', 'desc')
-            ->limit(300)
-            ->get();
-        $potentialstatuses=PotentialStatus::all();
+
+        // ==========  Return HTMX =========
+
+//        $potentialclients = PotentialClient::with('user', 'comments.user', 'status')
+//            ->orderBy('id', 'desc')
+//            ->limit(300)
+//            ->get();
+//        $potentialstatuses=PotentialStatus::all();
 
 
-        return view('htmx.htmxpotentialclients', compact('potentialclients', 'authuser','potentialstatuses'));
+//        return view('htmx.htmxpotentialclients', compact('potentialclients', 'authuser','potentialstatuses'));
+
+        return response()->noContent();
 
     }
 
@@ -282,15 +287,25 @@ class ClientController extends Controller
 
     public function htmxsearchpotential(Request $request)
     {
+        if(trim($request->search) == ""){
+            $authuser   = auth()->user();
+            $potentials=[];
+            $potentialstatuses=PotentialStatus::all();
+            return view('htmx.htmxpotentialsearch', compact( 'authuser','potentialstatuses','potentials'));
+        }
+
         $potentials = PotentialClient::where('mobile', 'like', "%{$request->search}%")
             ->orWhere('pid', 'like', "%{$request->search}%")
             ->orWhere('name', 'like', "%{$request->search}%")
             ->with('user', 'comments.user', 'status')
             ->get();
+
         $authuser   = auth()->user();
 
         $potentialstatuses=PotentialStatus::all();
-        return view('htmx.htmxpotentialsearch', compact('potentials', 'authuser','potentialstatuses'));
+
+            return view('htmx.htmxpotentialsearch', compact('potentials', 'authuser','potentialstatuses'));
+
     }
 
     public function editsearchpotential($id)

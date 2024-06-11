@@ -8,7 +8,7 @@
         <table id="example" class="display nowrap" style="width:100%">
         <thead>
         <tr>
-            <td><input type="text"  class="form-control searchinput"></td>
+            <td><input type="text" id="col0" class="form-control searchinput"></td>
             <td><input type="text" id="col1" class="form-control searchinput"></td>
             <td><input type="text" id="col2" class="form-control searchinput"></td>
             <td><input type="text" id="col4" class="form-control searchinput"></td>
@@ -90,6 +90,7 @@
                             @endrole
 
                                 <li
+                                        id="editbuttonnohtmx"
                                     hx-get="{{route('edit.htmx', $application->id)}}"
                                     hx-target="#edittarget"
                                    hx-indicator="#indicator"

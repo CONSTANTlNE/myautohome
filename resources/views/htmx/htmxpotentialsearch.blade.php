@@ -19,6 +19,7 @@
         <label class="form-label">რედაქტირება</label>
     </div>
 
+    @if($potentials)
     @foreach($potentials as $index5 => $potential)
 
         <div class="md:col-span-2  col-span-12 mb-4 ">
@@ -55,8 +56,20 @@
                     hx-indicator="#indicator"
 
             class="ti-btn bg-primary text-white !font-medium">რედაქტირება</button>
-
+            @if($authuser->hasAnyrole('admin|developer'))
+                <form>
+                    @csrf
+                    <input type="hidden" name="id" value="{{$potential->id}}">
+                    <a style="color:red" href="javascript:void(0);"
+                       class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
+                       hx-post="{{route('potential.htmx.deletete')}}"
+                       hx-target="#main-content"
+                       hx-indicator="#indicator"
+                    >წაშლა</a>
+                </form>
+            @endif
         </div>
-    @endforeach
 
+    @endforeach
+    @endif
 </div>

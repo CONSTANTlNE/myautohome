@@ -21,6 +21,8 @@
 
                             <input disabled name="customer_pid" type="text" class="form-control"
                                    aria-label="ninedigitnumber" value="{{$application->id}}">
+                            <input disabled name="customer_pid" type="text" class="form-control"
+                                   aria-label="ninedigitnumber" value="{{$application->user->name}}">
                         </div>
                         <div class="md:col-span-3  col-start-2 col-span-12 mb-4">
 
@@ -36,6 +38,7 @@
                         </div>
                         <div class="md:col-span-3  col-start-2 col-span-12 mb-4">
                             <a style="margin:auto!important;"
+                               class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
                                data-hs-overlay="#editmodal"
                                hx-get="{{route('edit.htmx',$application->id)}}"
                                hx-target="#edittarget"
@@ -44,6 +47,15 @@
                                href="javascript:void(0)"
 {{--                               href="{{route('app.details',$application->id)}}" --}}
                                >დეტალურად</a>
+
+                            <a href="javascript:void(0);"
+                               class="ti-dropdown-item !py-2 !px-[0.9375rem] !text-[0.8125rem] !font-medium block"
+                               data-hs-overlay="#delete"
+                               hx-get="{{route('app.htmx.deletete', $application->id)}}"
+                               hx-target="#deletedetails"
+                               hx-indicator="#indicator"
+                            >წაშლა
+                            </a>
                         </div>
          @endforeach
                     @endforeach

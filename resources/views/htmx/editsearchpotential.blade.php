@@ -102,7 +102,7 @@
     <div class="ti-modal-footer">
         <button data-hs-overlay="#editpotentialclientinsearch"
                 hx-post="{{route('htmx.potential.clients.update')}}"
-                hx-target="#main-content"
+{{--                hx-target="#main-content"--}}
                 {{--                                                hx-target-error="#errors"--}}
                 hx-indicator="#indicator"
                 class="ti-btn bg-primary text-white !font-medium">შენახვა</button>
